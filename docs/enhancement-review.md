@@ -1,6 +1,10 @@
-# Enhancement round: for review (not deployed)
+# Enhancement round: deployed 26 Nov 2026
 
-Branch `about-redesign`, committed locally, **not pushed**. The live site at https://baswet.github.io/the-breez-hotel/ is unchanged.
+Approved and merged from `about-redesign` into `main` (merge commit f3f98d2). Published through `gh-pages` (83aa88a); the GitHub Pages run "pages-build-deployment #2" succeeded.
+
+- Live site: https://baswet.github.io/the-breez-hotel/
+- Motion lab: https://baswet.github.io/the-breez-hotel/lab/ (noindex, disallowed in robots.txt, not in the sitemap)
+- Rollback: branch `rollback-live-2026-11-26` holds the previous published site (c0b7707). To restore it, force-push that branch to `gh-pages`. The `backup-2026-11-26` branch is also preserved.
 
 This round combines four briefs: the About page redesign, the hero family, the image-composition and gallery enhancement, the scroll and motion pass, and the dining photography.
 
