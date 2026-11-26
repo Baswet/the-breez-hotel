@@ -1,0 +1,8 @@
+/* Creative footer layout */
+.ft{background:var(--palm);color:var(--sand);padding:72px var(--gutter) 24px;overflow:hidden}
+.ft a{color:var(--sand)}.ft .label{color:var(--pool-light)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;align-items:start}
+.word{font:500 clamp(4rem,19vw,18rem)/.8 var(--font-display);margin:48px 0 0;letter-spacing:-.04em;color:var(--ochre);white-space:nowrap}
+.fine{font-size:13px;opacity:.75;margin:16px 0 0}
+.stamp{width:120px;justify-self:end;animation:spin 18s linear infinite}.stamp text{font:600 10px var(--font-body);letter-spacing:.2em;fill:var(--sand)}
+@keyframes spin{to{transform:rotate(360deg)}}

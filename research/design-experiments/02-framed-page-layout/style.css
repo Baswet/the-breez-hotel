@@ -1,0 +1,9 @@
+/* Framed page layout (inset double frame) */
+body{background:var(--palm)}
+.mat{padding:var(--page-margin);min-height:100vh}
+.sheet{background:var(--sand);min-height:calc(100vh - 2*var(--page-margin));outline:1px solid var(--ochre);outline-offset:-10px;padding:clamp(20px,4vw,56px)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font:600 28px var(--font-display)}
+.hero{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:var(--grid-gap);align-items:end;margin-top:clamp(40px,8vw,120px)}
+.hero .a{margin-bottom:60px}
+@media(max-width:760px){.hero{grid-template-columns:1fr 1fr}.hero h1{grid-column:1/-1}.hero .a{margin:0}}

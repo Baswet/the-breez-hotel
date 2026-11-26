@@ -1,0 +1,5 @@
+/* Image and typography overlap */
+.io{position:relative;padding:var(--section-gap) var(--gutter);min-height:100vh;display:grid;place-items:center}
+.pic{width:min(70vw,720px);aspect-ratio:4/5}
+.word{position:absolute;inset:auto 0 18% 0;margin:0;text-align:center;font:500 clamp(4rem,15vw,14rem)/.85 var(--font-display);color:var(--palm);display:grid;pointer-events:none}
+.word .a{mix-blend-mode:multiply}.word .b{font-style:italic;color:var(--ochre-deep);transform:translateX(8vw)}

@@ -1,0 +1,6 @@
+/* Editorial numbered sections */
+.wrap{max-width:var(--content-width);margin:0 auto;padding:var(--section-gap) var(--gutter);display:grid;gap:clamp(48px,8vw,120px)}
+.ns{display:grid;grid-template-columns:auto 1fr 1.2fr;gap:var(--gutter);align-items:start;border-top:var(--border-strong);padding-top:20px}
+.n{font:400 clamp(4rem,10vw,9rem)/.8 var(--font-display);color:var(--ochre)}
+.ns p{margin:8px 0 0}
+@media(max-width:760px){.ns{grid-template-columns:auto 1fr}.ns figure{grid-column:1/-1}}

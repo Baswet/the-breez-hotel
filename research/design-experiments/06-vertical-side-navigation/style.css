@@ -1,0 +1,10 @@
+/* Vertical side navigation */
+.shell{display:grid;grid-template-columns:96px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:24px 0;border-right:var(--border-subtle);background:var(--sand)}
+.logo{font:600 36px var(--font-display);color:var(--palm)}
+.side ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:28px}
+.side a{writing-mode:vertical-rl;transform:rotate(180deg);text-decoration:none;font:600 13px var(--font-body);letter-spacing:.18em;text-transform:uppercase}
+.side a:hover{color:var(--ochre-deep)}
+.vert{writing-mode:vertical-rl;transform:rotate(180deg)}
+.hero{min-height:100vh;display:flex;align-items:flex-end}.hero img{position:absolute;inset:0}.hero h1{position:relative;color:#fff;padding:32px;text-shadow:0 2px 30px rgba(0,0,0,.5)}
+@media(max-width:700px){.shell{grid-template-columns:1fr}.side{position:sticky;height:auto;flex-direction:row;padding:10px 14px;z-index:2;border-right:0;border-bottom:var(--border-subtle)}.side ul{flex-direction:row;gap:14px}.side a{writing-mode:horizontal-tb;transform:none;font-size:11px}.vert{display:none}.hero{min-height:70vh}}

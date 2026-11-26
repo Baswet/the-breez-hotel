@@ -1,0 +1,7 @@
+/* Editorial margin layout */
+.page{display:grid;grid-template-columns:minmax(var(--page-margin),1fr) minmax(0,62ch) minmax(var(--page-margin),1fr);gap:0 var(--gutter);padding:var(--section-gap) 0}
+.col{grid-column:2;display:grid;gap:24px}
+.wide{margin:16px calc(-1 * min(18vw,240px));}
+.margin-note{grid-column:1;justify-self:end;align-self:start;position:sticky;top:24px;max-width:160px;text-align:right}
+.margin-note--right{grid-column:3;justify-self:start;text-align:left;font:italic 15px/1.4 var(--font-display);color:var(--ink-soft);align-self:end}
+@media(max-width:860px){.page{grid-template-columns:1fr;padding:48px 20px}.col,.margin-note,.margin-note--right{grid-column:1;justify-self:start;text-align:left;position:static;max-width:none}.wide{margin:16px -20px}}

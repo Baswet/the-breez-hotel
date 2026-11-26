@@ -2,7 +2,9 @@
 
 A hospitality website for **The Breez Hotel, Busia, Kenya**: rooms, dining, the pool, conferences and events, and reservation enquiries, designed mobile-first for guests travelling through Busia and the Kenya–Uganda border.
 
-> **Status: research and design stage.** There is no website code in this repository yet. What is here is the project documentation, the design direction and original concept illustrations. Nothing in this repository has been approved by the hotel for publication.
+> **Status: design exploration (branch `design-lab`).** This branch adds 26 design experiments, a design laboratory, three homepage concepts and a design review page. The production website has not been built yet, and nothing here has been approved by the hotel for publication.
+>
+> **Hotel photographs are not in this repository.** The pages expect them in `assets/images/breez/` (excluded by `.gitignore` until written permission is on file), so images appear blank on GitHub.
 
 ![Concept illustrations: hotel exterior by day and at dusk, a guest room, a dining plate, a conference room and the pool](docs/images/concept-illustrations.webp)
 
@@ -65,6 +67,18 @@ the-breez-hotel/
 │   └── images/
 └── tools/
     └── make_illustrations.py   Regenerates the SVG illustrations
+```
+
+On the `design-lab` branch you will also find:
+
+```text
+assets/css/tokens.css, base.css   Design system (CSS variables + components)
+assets/js/site.js                 Reveal, lightbox, filters, menus, booking-request logic
+research/design-experiments/      26 standalone HTML/CSS experiments
+design-laboratory/index.html      All techniques side by side
+concepts/                         Three homepage concepts (A, B, C)
+design-review/index.html          Review environment: devices, mobile, compare, colour, inspiration
+tools/check_pages.py              Responsive QA at 1920/1440/1024/768/390/360 px
 ```
 
 `site/` (the website itself) will be added in the build stage.

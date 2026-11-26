@@ -1,0 +1,9 @@
+/* Masonry gallery with filters and lightbox */
+.wrap{max-width:var(--content-width);margin:0 auto;padding:var(--section-gap) var(--gutter)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}
+.filters button{min-height:44px;padding:0 16px;border:1px solid var(--ink);background:none;font:600 14px var(--font-body);cursor:pointer;border-radius:var(--pill)}
+.filters [aria-pressed=true]{background:var(--ink);color:var(--sand)}
+.masonry{columns:3 260px;column-gap:var(--grid-gap)}
+.m{display:block;break-inside:avoid;margin-bottom:var(--grid-gap);position:relative;overflow:hidden}
+.m img{transition:transform var(--transition-slow)}.m:hover img{transform:scale(1.05)}
+.m span{position:absolute;left:0;bottom:0;padding:8px 12px;font:600 13px var(--font-body);color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.6));width:100%;opacity:0;transition:opacity var(--transition-fast)}.m:hover span,.m:focus span{opacity:1}

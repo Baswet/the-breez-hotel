@@ -9,9 +9,13 @@ config.local.*
 
 # Private research and unapproved material (keep out of the public repo)
 private/
-research/
+research/screenshots/
 screenshots/
 *.private.*
+
+# Hotel photographs: used with permission in private previews only,
+# not published until written permission is on file
+assets/images/breez/
 
 # Dependencies and environments
 node_modules/

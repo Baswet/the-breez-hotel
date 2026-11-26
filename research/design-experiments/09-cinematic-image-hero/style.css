@@ -1,0 +1,6 @@
+/* Cinematic image hero (crossfade slideshow) */
+.cine{position:relative;height:100svh;min-height:520px;color:#fff;overflow:hidden}
+.slides,.s{position:absolute;inset:0}.s{opacity:0;transition:opacity 1.4s ease,transform 7s linear;transform:scale(1.08)}.s.is-on{opacity:1;transform:scale(1)}
+.cine::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,20,15,.7),transparent 70%)}
+.copy{position:absolute;z-index:2;left:var(--gutter);bottom:18%;display:grid;gap:12px}.copy .label{color:#f3d9a8}
+.dots{position:absolute;z-index:2;right:var(--gutter);bottom:32px;display:flex;gap:10px}.dots button{width:44px;height:44px;background:none;border:0;cursor:pointer;position:relative}.dots button::after{content:"";position:absolute;left:8px;right:8px;top:21px;height:2px;background:rgba(255,255,255,.45)}.dots [aria-selected=true]::after{background:#fff}

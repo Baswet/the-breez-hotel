@@ -1,0 +1,7 @@
+/* Layered image frames */
+.wrap{max-width:var(--content-width);margin:0 auto;padding:var(--section-gap) var(--gutter);display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:48px}
+.lf{margin:0;display:grid;gap:14px}.lf figcaption{font:600 12px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.f1 .ph{border:18px solid var(--paper);outline:1px solid var(--sand-deep);box-shadow:var(--shadow-soft)}
+.f2 .ph{overflow:visible}.f2 img{position:relative;z-index:1}
+.f3 .ph{overflow:visible}
+.arch{border-radius:999px 999px 0 0}

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>07 · Floating booking bar — Breez design experiment</title>
+<link rel="stylesheet" href="../../../assets/css/base.css"><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="xp-bar"><span>Experiment 07 — Floating booking bar</span><span>Inspired by: The Hoxton&#x27;s in-hero booking bar; Sarova&#x27;s docked widget; Ace Hotel&#x27;s header booking strip</span><a href="../../../design-laboratory/index.html">← Design laboratory</a></div>
+
+<header class="ph hero"><img src="../../../assets/images/breez/exterior/building-palms-umbrellas-1600.webp" alt="The hotel building with palms and striped parasols" class=""  decoding="async"><h1 class="display">Your stay. Your comfort.<br>Your Breez.</h1></header>
+<form class="bar" data-booking aria-label="Request a booking">
+  <label>Check-in<input type="date" name="checkin" required></label>
+  <label>Check-out<input type="date" name="checkout" required></label>
+  <label>Guests<select name="guests"><option>1 adult</option><option selected>2 adults</option><option>2 adults + 1 child</option><option>Family (4)</option></select></label>
+  <button class="btn btn--book" type="submit">Request to book</button>
+  <p class="note" data-nights aria-live="polite"></p>
+</form>
+<main class="filler"><p class="lead">Scroll: the bar docks to the top of the screen (position: sticky) and stays one tap away.</p></main>
+<script src="../../../assets/js/site.js"></script>
+</body></html>

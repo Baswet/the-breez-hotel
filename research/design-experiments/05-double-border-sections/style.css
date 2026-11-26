@@ -1,0 +1,7 @@
+/* Double-border sections */
+.wrap{max-width:var(--content-width);margin:0 auto;padding:var(--section-gap) var(--gutter);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--grid-gap)}
+.db{position:relative;padding:40px 32px;border:1px solid var(--ink);display:grid;gap:12px}
+.db::before{content:"";position:absolute;inset:6px;border:1px solid var(--ink);pointer-events:none}
+.db--ochre{border-color:var(--ochre-deep)}.db--ochre::before{border-color:var(--ochre-deep)}
+.db--palm{background:var(--palm);color:var(--sand);border-color:var(--sand)}.db--palm::before{border-color:var(--ochre)}.db--palm .label{color:var(--pool-light)}
+.db p{margin:0}

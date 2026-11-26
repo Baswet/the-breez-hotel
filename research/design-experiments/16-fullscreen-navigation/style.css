@@ -1,0 +1,11 @@
+/* Fullscreen navigation */
+.nav{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:16px var(--gutter);color:#fff;mix-blend-mode:difference}
+.logo{font:600 26px var(--font-display)}
+.burger{min-height:44px;padding:0 18px;background:none;border:1px solid #fff;color:#fff;font:600 13px var(--font-body);letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+.fs{position:fixed;inset:0;z-index:15;background:var(--palm);color:var(--sand);display:grid;grid-template-columns:1.2fr 1fr;clip-path:circle(0 at calc(100% - 60px) 36px);transition:clip-path .8s var(--ease-out);visibility:hidden}
+.fs[data-open]{clip-path:circle(150% at calc(100% - 60px) 36px);visibility:visible}
+.fs ul{list-style:none;margin:0;padding:96px var(--gutter);display:grid;align-content:center;gap:4px}
+.fs a{display:flex;align-items:baseline;gap:16px;text-decoration:none;font:500 clamp(2.4rem,6vw,5rem)/1.05 var(--font-display)}
+.fs a:hover{color:var(--ochre)}.fs small{font:500 13px var(--font-body);letter-spacing:.1em;opacity:.7}
+.hero{height:100svh}
+@media(max-width:760px){.fs{grid-template-columns:1fr}.fs figure{display:none}}

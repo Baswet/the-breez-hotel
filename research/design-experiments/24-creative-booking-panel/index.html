@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>24 · Creative booking panel — Breez design experiment</title>
+<link rel="stylesheet" href="../../../assets/css/base.css"><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="xp-bar"><span>Experiment 24 — Creative booking panel</span><span>Inspired by: Terreno&#x27;s circular BOOK NOW stamp; Hoxton&#x27;s friendly booking copy</span><a href="../../../design-laboratory/index.html">← Design laboratory</a></div>
+
+<main class="bp">
+  <figure class="ph"><img src="../../../assets/images/breez/rooms/room-four-poster-window-1600.webp" alt="Room with four-poster bed" class=""  decoding="async"></figure>
+  <form class="panel" data-booking aria-label="Booking request">
+    <p class="label">Booking request</p>
+    <h1 class="h2">When would you like to stay?</h1>
+    <div class="row"><label>Arriving<input type="date" name="checkin" required></label><label>Leaving<input type="date" name="checkout" required></label></div>
+    <fieldset><legend>Guests</legend><label><input type="radio" name="g" checked> Just me</label><label><input type="radio" name="g"> Two of us</label><label><input type="radio" name="g"> Family</label><label><input type="radio" name="g"> Group / company</label></fieldset>
+    <label>Room preference<select><option>No preference</option><option>Single</option><option>Double</option><option>Deluxe</option><option>Superior</option><option>King</option></select></label>
+    <p class="nights" data-nights aria-live="polite"></p>
+    <div class="actions"><button class="btn btn--book" type="submit">Send request</button><a class="btn" href="https://wa.me/254707461665">WhatsApp us</a></div>
+  </form>
+</main>
+<script src="../../../assets/js/site.js"></script>
+</body></html>

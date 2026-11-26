@@ -1,0 +1,4 @@
+/* Image mask transitions (clip-path reveal) */
+.wrap{max-width:900px;margin:0 auto;padding:40vh var(--gutter);display:grid;gap:30vh}
+.m2{transition-delay:.1s}.arch{border-radius:50% 50% 0 0/40% 40% 0 0}
+.reveal-mask img{transform:scale(1.15);transition:transform 1.4s var(--ease-out)}.reveal-mask.is-in img{transform:scale(1)}

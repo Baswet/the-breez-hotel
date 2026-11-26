@@ -1,0 +1,88 @@
+/* ==========================================================================
+   The Breez Hotel — visual design system (tokens)
+   Signature: "the courtyard frame" — an inset page frame of fine double
+   rules, architectural corner ticks, numbered sections and a vertical
+   "Karibu" side label, taken from the hotel's own sign and its
+   colonnaded courtyard.
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Karla:wght@400;500;600;700&family=Marcellus&family=Jost:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  /* ---- Colour: taken from the property --------------------------------- */
+  --sand:        #F5EEE1;  /* page ground: plaster, cream columns        */
+  --sand-deep:   #EADCC3;  /* alternate bands                            */
+  --ochre:       #C98A2E;  /* sandstone cladding — booking actions       */
+  --ochre-deep:  #9C6517;  /* ochre text on sand (AA)                    */
+  --terracotta:  #A8562F;  /* roof tiles, cushions                       */
+  --cocoa:       #4A3222;  /* striped parasols, dark-stained beds        */
+  --palm:        #23402F;  /* cypress and palm green — primary dark      */
+  --palm-soft:   #3F6B4C;
+  --pool:        #1C7F98;  /* pool water                                 */
+  --pool-light:  #BFE6EE;
+  --ink:         #231B14;  /* body text                                  */
+  --ink-soft:    #5C4D3C;  /* secondary text (AA on --sand)              */
+  --paper:       #FFFBF4;  /* cards                                      */
+  --white:       #FFFFFF;
+
+  /* ---- Type ------------------------------------------------------------ */
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-body:    "Karla", "Segoe UI", system-ui, sans-serif;
+  --font-arch:    "Marcellus", "Trajan Pro", Georgia, serif;   /* concept B */
+  --font-arch-ui: "Jost", "Futura", system-ui, sans-serif;     /* concept B */
+  --font-modern:  "Fraunces", Georgia, serif;                  /* concept C */
+  --font-modern-ui: "Plus Jakarta Sans", system-ui, sans-serif;/* concept C */
+
+  --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);  /* labels      */
+  --step-0:  clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);   /* body        */
+  --step-1:  clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);    /* lead        */
+  --step-2:  clamp(1.6rem, 1.3rem + 1.4vw, 2.4rem);     /* h3          */
+  --step-3:  clamp(2.2rem, 1.6rem + 3vw, 4rem);         /* h2          */
+  --step-4:  clamp(2.8rem, 1.6rem + 6vw, 7.5rem);       /* display     */
+  --heading-scale: 1.05;          /* heading line-height               */
+  --body-line-height: 1.6;
+  --label-tracking: 0.16em;
+
+  /* ---- Space ----------------------------------------------------------- */
+  --page-margin: clamp(12px, 3.2vw, 56px);   /* the frame inset          */
+  --gutter:      clamp(18px, 4vw, 72px);     /* inner padding            */
+  --content-width: 1240px;
+  --text-width:  62ch;
+  --section-gap: clamp(64px, 10vw, 160px);
+  --grid-gap:    clamp(12px, 1.6vw, 24px);
+  --grid-columns: 12;
+
+  /* ---- Lines, frames, radii -------------------------------------------- */
+  --hairline: 1px;
+  --border-subtle: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  --border-strong: 1px solid var(--ink);
+  --border-double: 3px double color-mix(in srgb, var(--ink) 55%, transparent);
+  --frame-gap: 6px;                 /* space between double frame lines */
+  --tick: 14px;                     /* corner tick length               */
+  --image-radius: 2px;              /* editorial (A, B)                 */
+  --image-radius-soft: 22px;        /* contemporary (C)                 */
+  --pill: 999px;
+
+  /* ---- Image ratios ---------------------------------------------------- */
+  --ratio-hero: 16 / 9;
+  --ratio-landscape: 3 / 2;
+  --ratio-portrait: 4 / 5;
+  --ratio-tall: 2 / 3;
+  --ratio-square: 1 / 1;
+  --ratio-panorama: 21 / 9;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-fast: 160ms var(--ease-out);
+  --transition-standard: 420ms var(--ease-out);
+  --transition-slow: 900ms var(--ease-out);
+
+  /* ---- Elevation ------------------------------------------------------- */
+  --shadow-soft: 0 18px 40px -18px rgba(35, 27, 20, 0.35);
+  --shadow-lift: 0 30px 60px -24px rgba(35, 27, 20, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --transition-fast: 0ms; --transition-standard: 0ms; --transition-slow: 0ms; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

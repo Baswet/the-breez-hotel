@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>09 · Cinematic image hero (crossfade slideshow) — Breez design experiment</title>
+<link rel="stylesheet" href="../../../assets/css/base.css"><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="xp-bar"><span>Experiment 09 — Cinematic image hero (crossfade slideshow)</span><span>Inspired by: Hemingways&#x27; aerial video hero; Serena&#x27;s three-word line</span><a href="../../../design-laboratory/index.html">← Design laboratory</a></div>
+
+<header class="cine" aria-roledescription="carousel">
+  <div class="slides">
+    <figure class="ph s is-on"><img src="../../../assets/images/breez/pools/pool-umbrellas-above-1600.webp" alt="Pool with parasols" class=""  decoding="async"></figure>
+    <figure class="ph s"><img src="../../../assets/images/breez/gardens/cottage-courtyard-swing-1600.webp" alt="Cottage courtyard" class="" loading="lazy" decoding="async"></figure>
+    <figure class="ph s"><img src="../../../assets/images/breez/exterior/building-palms-pool-court-1600.webp" alt="Hotel building and palms" class="" loading="lazy" decoding="async"></figure>
+  </div>
+  <div class="copy"><p class="label">The Breez Hotel · Busia</p><h1 class="display">Class. Comfort.<br>Serenity.</h1></div>
+  <div class="dots" role="tablist"><button aria-label="Slide 1" aria-selected="true"></button><button aria-label="Slide 2"></button><button aria-label="Slide 3"></button></div>
+</header>
+<script>{const s=[...document.querySelectorAll('.s')],d=[...document.querySelectorAll('.dots button')];let i=0;const go=n=>{s[i].classList.remove('is-on');d[i].setAttribute('aria-selected','false');i=(n+s.length)%s.length;s[i].classList.add('is-on');d[i].setAttribute('aria-selected','true')};d.forEach((b,k)=>b.onclick=()=>go(k));if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(()=>go(i+1),5000)}</script>
+<script src="../../../assets/js/site.js"></script>
+</body></html>
