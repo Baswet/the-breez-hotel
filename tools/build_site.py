@@ -200,16 +200,12 @@ def img(key, sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None):
 
 def ph(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, cap=True, alt=None, extra=''):
     m = IMAGES[key]
-    c = ''
-    if m['stock'] and cap:
-        c = f'<figcaption class="cap cap--illus">Photo · {STOCK[key][0]} / Unsplash</figcaption>'
+    c = ''   # stock credits are kept on the photo-credits page and in docs/, not on the image
     return f'<figure class="ph {cls}"{extra}>{img(key, sizes, eager, alt)}{c}</figure>'
 
 
 def hx(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None, num=None, extra=''):
     n = f'<figcaption class="hx-no">{num}</figcaption>' if num else ''
-    if IMAGES[key]['stock']:
-        n += f'<figcaption class="cap cap--illus">Photo · {STOCK[key][0]} / Unsplash</figcaption>'
     return f'<figure class="hx-ph {cls}"{extra}>{img(key, sizes, eager, alt)}{n}</figure>'
 
 def crumb(label):
@@ -488,6 +484,9 @@ def about():
   </div>
 </section>"""
 
+RX = [('room-four-poster-2', 'Four-poster bed and mosquito net', 'organic'), ('room-grey-bedding', 'Made up for the night', 'double'), ('room-desk-armchair', 'A desk and an armchair', 'diagonal'),
+      ('bed-detail', 'Fresh linen', 'arch'), ('bathroom-shower', 'The en-suite shower', 'circle'), ('room-fridge-tv', 'Fridge and TV in the room', 'full')]
+
 def rooms():
     order = [('single', 'single-room', 'bed-detail', False), ('double', 'room-four-poster-window', 'bathroom-shower', True),
              ('deluxe', 'room-grey-bedding', 'room-vanity', False), ('king', 'room-four-poster-2', 'room-desk-armchair', True)]
@@ -520,17 +519,20 @@ def rooms():
     <div class="xp-title"><span class="hx-k hx-k--light">Rooms at The Breez</span><h2 id="xp-h">Unwind, by the garden.</h2></div>
   </div>
 </section>
-<section class="sec" aria-labelledby="sl-h">
+<section class="sec rx-sec" aria-labelledby="sl-h">
   <div class="wrap">
-    {head('Inside the rooms', '<span id="sl-h" data-split="words">A closer look</span>', '<p>Photographs of rooms at The Breez. Furniture and layout vary by category.</p>')}
-    <div class="sl" data-slides tabindex="0" aria-roledescription="carousel" aria-label="Room photographs">
-      <div class="sl-stage">{''.join(f'<figure class="sl-slide{" on" if i == 0 else ""}" aria-roledescription="slide">{img(k, "(max-width:760px) 100vw, 80vw")}<figcaption>{c}</figcaption></figure>' for i, (k, c) in enumerate([('room-grey-bedding','Deluxe-style room'),('room-desk-armchair','Desk and armchair'),('bathroom-shower','En-suite shower'),('room-fridge-tv','Fridge and TV'),('bed-detail','Made for the night'),('room-four-poster-2','Four-poster bed')]))}</div>
-      <div class="sl-bar"><div class="sl-dots">{''.join(f'<button type="button" data-dot aria-label="Photo {i+1}"{" aria-current=true" if i == 0 else ""}></button>' for i in range(6))}</div>
-        <div class="sl-ctl"><span class="sl-count" data-count>01 / 06</span><button type="button" data-prev aria-label="Previous photo">←</button><button type="button" data-next aria-label="Next photo">→</button></div></div>
+    <div class="rx-head"><div><span class="label">Inside the rooms</span><h2 class="h-l" id="sl-h" data-split="words">A closer look</h2></div><p>Photographs of rooms at The Breez. Furniture and layout vary by category.</p></div>
+    <div class="rx" data-rx data-style="organic" tabindex="0" aria-roledescription="carousel" aria-label="Room photographs">
+      <div class="rx-stage"><div class="rx-deco" aria-hidden="true"><span class="rx-offset"></span><span class="rx-circle"></span><span class="rx-corner rx-c1"></span><span class="rx-corner rx-c2"></span>
+        <svg class="rx-trace" viewBox="0 0 100 100" preserveAspectRatio="none"><rect x=".4" y=".4" width="99.2" height="99.2" pathLength="100"/></svg></div>
+      <div class="rx-frame">{''.join(f'<figure class="rx-slide{" on" if i == 0 else ""}" data-style="{st}" data-cap="{html.escape(c, quote=True)}">{img(k, "(max-width:760px) 100vw, 1200px", eager=(i == 0))}</figure>' for i, (k, c, st) in enumerate(RX))}<span class="rx-cut rx-k1" aria-hidden="true"></span><span class="rx-cut rx-k2" aria-hidden="true"></span></div></div>
+      <div class="rx-meta"><span class="label">Room details</span><p class="rx-cap" aria-live="polite"><b data-count>01</b><span>{RX[0][1]}</span></p>
+        <div class="rx-ctl"><button type="button" data-prev aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><span class="rx-num"><b data-num>01</b> / {len(RX):02d}<i class="rx-prog"><i data-prog></i></i></span><button type="button" data-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button><button type="button" data-next aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      </div>
     </div>
   </div>
 </section>
-<section class="sec" style="padding-top:0"><div class="wrap">{sp}<p class="note">Photographs show rooms at The Breez Hotel; furniture and layout vary by room. Features are as listed on Booking.com in November 2026 and may change.</p></div></section>
+<section class="sec" style="padding-top:0"><div class="wrap">{sp}</div></section>
 <section class="sec" aria-labelledby="every-h">
   <div class="wrap">
     {head('Every stay', '<span id="every-h">Included with every room</span>')}
@@ -546,7 +548,7 @@ def pools():
              ('pool-loungers', 'Afternoons on the deck', 'Loungers and shade for long afternoons in the sun.')]
     media = ''.join(f'{ph(k, "on" if i == 0 else "", "50vw", alt=ALT[k])}' for i, (k, a, b) in enumerate(steps))
     st = ''.join(f'<div class="ss-step" data-step="{i}">{ph(k, "ph-m", "100vw")}<span class="label label--light">0{i+1}</span><h2>{a}</h2><p class="lead" style="color:#DCEFF3">{b}</p></div>' for i, (k, a, b) in enumerate(steps))
-    PD = [('pool-garden-view', 'The pool court from the guest wing'), ('pool-lanes-2', 'Lanes in the afternoon sun'), ('pool-terrace-kids-pool', 'The terrace and the kids’ pool'), ('pool-lawn-view', 'Water, lawn and shade'), ('kids-pool-building', 'The kids’ pool by the building'), ('pool-fence-umbrellas', 'Umbrellas along the pool fence')]
+    PD = [('pool-garden-view', 'A moment by the water'), ('pool-lanes-2', 'Your place in the sun'), ('pool-terrace-kids-pool', 'Slow afternoons, beautiful views'), ('pool-lawn-view', 'Water, lawn and open sky'), ('kids-pool-building', 'Room for the little ones'), ('pool-fence-umbrellas', 'Shade by the pool')]
     return f'''<section class="hx-pools" aria-labelledby="pools-h1">
   {hx('pool-loungers', '', '100vw', eager=True)}
   <div class="hx-pools-in">{crumb('Pools')}<span class="hx-k hx-k--light hx-a1">03 · Water &amp; shade</span><h1 class="hx-title" id="pools-h1"><span data-split="chars" style="display:block">Pools</span><em class="italic hx-a3">in the palm court</em></h1><p class="hx-sub hx-a3">A main pool and a kids’ pool, with loungers, umbrellas and food from the bar.</p></div>
@@ -559,7 +561,7 @@ def pools():
   <div class="wrap">
     <div class="pd-wrap" data-pooldays tabindex="0" aria-roledescription="carousel" aria-label="Pool days photographs">
       <p class="pd-word" aria-hidden="true"><span>Pool</span><span>days</span></p>
-      <div class="pd-stage" data-lightbox>{''.join(f'<a class="pd-card{" pd-p" if IMAGES[k]["h"] > IMAGES[k]["w"] else ""}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT.get(k, c), quote=True)}" data-caption="{html.escape(c, quote=True)}" data-cap="{html.escape(c, quote=True)}"><span class="pd-mat">{img(k, "(max-width:760px) 72vw, 520px", eager=(i < 4))}</span></a>' for i, (k, c) in enumerate(PD))}</div>
+      <div class="pd-stage" data-lightbox>{''.join(f'<a class="pd-card{" pd-p" if IMAGES[k]["h"] > IMAGES[k]["w"] else ""}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT.get(k, c), quote=True)}" data-caption="{html.escape(ALT.get(k, c), quote=True)}" data-cap="{html.escape(c, quote=True)}"><span class="pd-mat">{img(k, "(max-width:760px) 74vw, 500px", eager=(i == 0))}</span></a>' for i, (k, c) in enumerate(PD))}</div>
       <div class="pd-meta"><span class="hx-k">Pool days</span><h2 id="col-h">Water, shade and a juice</h2><p class="pd-cap" aria-live="polite">{PD[0][1]}</p></div>
       <div class="pd-ctl" role="group" aria-label="Slideshow controls">
         <button type="button" data-prev aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
@@ -638,15 +640,16 @@ def event_form():
   <div><span class="label">Enquiry</span><h2>Tell us about your event</h2><p class="muted" style="margin-top:8px">Reception replies with availability, set-up options and a quote.</p></div>
   <form class="form-grid" data-form="event" novalidate>
     <label class="field" data-label="Event type">Event type<select name="event" required><option value="">Choose…</option><option>Conference / meeting</option><option>Training / workshop</option><option>Wedding</option><option>Ruracio</option><option>Birthday</option><option>Garden party</option><option>Other</option></select></label>
-    <label class="field" data-label="Date">Date<input type="date" name="date" required></label>
+    <label class="field" data-label="Preferred date">Preferred date<input type="date" name="date" required></label>
     <label class="field" data-label="Expected guests">Expected guests<input type="number" name="guests" min="1" inputmode="numeric" required></label>
-    <label class="field" data-label="Set-up">Set-up<select name="setup"><option value="">Not sure</option><option>Classroom</option><option>Theatre</option><option>Banquet</option><option>Marquee on the lawn</option></select></label>
+    <label class="field" data-label="Preferred arrangement">Preferred arrangement<select name="setup"><option value="">Not sure</option><option>Classroom</option><option>Theatre</option><option>Banquet</option><option>Marquee on the lawn</option></select></label>
     <label class="field" data-label="Name">Your name<input type="text" name="name" autocomplete="name" required></label>
     <label class="field" data-label="Phone">Phone<input type="tel" name="phone" autocomplete="tel" required></label>
     <label class="field full" data-label="Email">Email<input type="email" name="email" autocomplete="email"></label>
-    <label class="field full" data-label="Details">Details<textarea name="details" placeholder="Timings, food, equipment, accommodation…"></textarea></label>
+    <label class="field full" data-label="Additional requirements">Additional requirements<textarea name="details" placeholder="Timings, food, equipment, accommodation…"></textarea></label>
     <fieldset class="field full" style="border:0;padding:0;margin:0"><legend>Send by</legend><div class="btn-row" style="text-transform:none;letter-spacing:0;font-weight:400"><label><input type="radio" name="channel" value="whatsapp" checked> WhatsApp</label><label><input type="radio" name="channel" value="email"> Email</label></div></fieldset>
     <div class="full"><button class="btn btn--book" type="submit">Send enquiry</button></div>
+    <p class="note full">An enquiry is not a confirmed booking. Reception confirms availability, set-up and price by reply.</p>
   </form>
   {status_box()}
 </div>'''
@@ -655,50 +658,153 @@ def status_box():
     return f'''<div class="form-status" role="status" aria-live="polite"><b>Your request is ready to send</b><p>Reference <strong data-ref></strong>. We opened WhatsApp with your details. Press send there. If it did not open, use one of these:</p><div class="btn-row"><a class="btn btn--wa" data-wa href="{WA}" target="_blank" rel="noopener">{ICON['wa']} Send on WhatsApp</a><a class="btn" data-mail href="mailto:{EMAIL}">{ICON['mail']} Send by email</a></div><p class="small">Nothing is booked yet. Reception confirms availability and rate by reply.</p></div>'''
 
 def meetings():
-    layouts = [('hall-classroom-setup', 'Classroom', 'Tables in rows facing the front. For training and workshops.'),
-               ('hall-theatre-grey', 'Theatre', 'Rows of chairs facing the screen. For talks and launches.'),
-               ('hall-banquet-red', 'Banquet', 'Round tables dressed in your colours. For dinners and receptions.')]
-    lay = ''.join(f'<article class="layout rv">{ph(k, "", "(max-width:760px) 100vw, 33vw")}<div><span class="label">Set-up</span><h3>{a}</h3><p class="muted">{b}</p></div></article>' for k, a, b in layouts)
-    return f'''<section class="hx-meet" aria-labelledby="meet-h1">
-  <div class="wrap">
-    <div class="hx-meet-grid hx-draw">
-      <div class="hx-meet-photo">{hx('hall-classroom-setup', 'main', '(max-width:1100px) 100vw, 58vw', eager=True)}{hx('hall-banquet-gold', 'layer', '(max-width:760px) 46vw, 25vw', extra=' data-parallax="0.05"')}</div>
-      <div class="hx-meet-title">{crumb('Meetings &amp; events')}<span class="hx-k hx-a1">05 · The grand occasion</span><h1 id="meet-h1" data-split="lines">Meetings &amp; events</h1><p class="hx-sub hx-a3">Halls for conferences and training. Lawns and marquees for weddings, ruracio and garden parties.</p><div class="hx-actions hx-a4"><a class="btn btn--solid" href="#enquire">Send an enquiry</a><a class="btn" href="{TEL}">Call {PHONE_DISPLAY}</a></div></div>
-      <div class="hx-spec"><div><span>Equipment</span><b>Projector &amp; screen</b></div><div><span>Connection</span><b>Wi-Fi</b></div><div><span>Set-ups</span><b>Classroom, theatre, banquet</b></div><div><span>Catering</span><b>Flexible packages</b></div></div>
+    def pic(k, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, extra=''):
+        return f'<figure class="mt2-ph {cls}"{extra}>{img(k, sizes, eager)}</figure>'
+    SPACES = ['hall-red-skirting', 'hall-screen', 'hall-projector']
+    CONF = [('classroom', 'Classroom', 'hall-classroom-setup', 'Tables in rows facing the front, for training sessions and workshops where everyone takes notes.'),
+            ('theatre', 'Theatre', 'hall-theatre-grey', 'Rows of chairs facing the screen, for talks, presentations and launches.'),
+            ('banquet', 'Banquet', 'hall-banquet-red', 'Round tables dressed in your colours, for dinners, receptions and celebrations.')]
+    OUT = [('courtyard-fountain-gazebos', 'The courtyard fountain'), ('courtyard-lawn-fountain', 'An open lawn for your guests'), ('fountain-lawn-swing', 'Afternoons by the fountain'),
+           ('garden-gazebo-roof', 'Thatched gazebos in the garden'), ('gazebo-cypress', 'Gazebos framed by cypress'), ('walkway-cottages', 'Garden paths between the cottages')]
+    FAC = [('Meeting halls', 'Indoor halls dressed for your event', 'M4 20V9l8-5 8 5v11M9 20v-6h6v6'),
+           ('Projector & screen', 'Set up in the halls', 'M3 5h18v11H3zM12 16v4M8 20h8'),
+           ('Wi-Fi', 'For every delegate', 'M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01'),
+           ('Room set-ups', 'Classroom, theatre or banquet', 'M4 6h16M4 12h16M4 18h16'),
+           ('Food & drink', 'Tea breaks, lunch, buffets and the bar, in flexible packages', 'M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 2-3 5s1 4 3 4v9'),
+           ('Outdoor spaces', 'Lawns, gazebos, marquees and the courtyard fountain', 'M3 20h18M6 20V10l6-6 6 6v10'),
+           ('Rooms for delegates', 'Single, Double, Deluxe and King, subject to availability', 'M3 18V8M3 14h18v4M21 18v-6a3 3 0 0 0-3-3h-7v5'),
+           ('Capacity', 'Depends on the hall and set-up, confirmed on enquiry', 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 3')]
+    for k in SPACES + [c[2] for c in CONF] + [o[0] for o in OUT]: USED.add(k)
+    spaces = ''.join(f'<figure class="mt2-sp{" on" if i == 0 else ""}">{img(k, "(max-width:760px) 100vw, 60vw")}</figure>' for i, k in enumerate(SPACES))
+    conf_imgs = ''.join(f'<figure class="mt2-cf-img{" on" if i == 0 else ""}" data-conf="{key}">{img(k, "(max-width:760px) 100vw, 55vw")}</figure>' for i, (key, t, k, d) in enumerate(CONF))
+    conf_tabs = ''.join(f'<button type="button" role="tab" aria-selected="{"true" if i == 0 else "false"}" data-conf="{key}" data-title="{t}" data-desc="{html.escape(d, quote=True)}"><span>0{i+1}</span>{t}</button>' for i, (key, t, k, d) in enumerate(CONF))
+    out_slides = ''.join(f'<figure class="mt2-os{" on" if i == 0 else ""}" data-cap="{html.escape(c, quote=True)}">{img(k, "100vw")}</figure>' for i, (k, c) in enumerate(OUT))
+    fac = ''.join(f'<li><span class="mt2-fn">0{i+1}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="{ic}"/></svg><b>{t}</b><span class="mt2-fd">{d}</span></li>' for i, (t, d, ic) in enumerate(FAC))
+    return f'''<section class="mt2-hero" aria-labelledby="meet-h1" data-spotlight>
+  <div class="mt2-hero-in wrap">
+    <div class="mt2-hero-text">
+      {crumb('Meetings &amp; events')}
+      <span class="hx-k hx-a1">05 · Meetings &amp; events</span>
+      <h1 id="meet-h1" data-split="lines">Make room for something remarkable.</h1>
+      <p class="mt2-lead hx-a3">From important business gatherings to unforgettable celebrations, discover a setting for occasions worth remembering.</p>
+      <div class="hx-actions hx-a4"><a class="btn btn--solid" data-magnetic href="#enquire">Send an enquiry</a><a class="btn" data-magnetic href="{TEL}">Call {PHONE_DISPLAY}</a></div>
+    </div>
+    <div class="mt2-hero-art">
+      <svg class="mt2-ring" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="98"/></svg>
+      {pic('hall-banquet-gold', 'mt2-circle', '(max-width:760px) 90vw, 46vw', eager=True)}
+      {pic('tent-red-white', 'mt2-float', '(max-width:760px) 40vw, 18vw', extra=' data-parallax="0.06"')}
+      <div class="mt2-glass hx-a4"><span class="hx-k">Halls · Lawns · Marquees</span><p>Projector and screen, Wi-Fi, full set-up and catering packages.</p></div>
     </div>
   </div>
 </section>
-<section class="sec" aria-labelledby="spec-h">
-  <div class="wrap">
-    {head('Specification', '<span id="spec-h">What is included</span>')}
-    <div class="rv" style="overflow-x:auto"><table class="spec-table">
-      <thead><tr><th scope="col">Item</th><th scope="col">Detail</th><th scope="col">Status</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">Meeting halls</th><td>Indoor halls dressed for your event</td><td>Available</td></tr>
-        <tr><th scope="row">Equipment</th><td>Projector and screen, Wi-Fi</td><td>Included in set-up</td></tr>
-        <tr><th scope="row">Set-ups</th><td>Classroom, theatre, banquet</td><td>On request</td></tr>
-        <tr><th scope="row">Food &amp; drink</th><td>Tea breaks, lunch, buffets, bar</td><td>Flexible packages</td></tr>
-        <tr><th scope="row">Outdoor</th><td>Lawns, gazebos, marquees, courtyard fountain</td><td>For events</td></tr>
-        <tr><th scope="row">Capacity</th><td>Depends on hall and set-up</td><td>Confirmed on enquiry</td></tr>
-        <tr><th scope="row">Rooms for delegates</th><td>Single, Double, Deluxe, King</td><td>Subject to availability</td></tr>
-      </tbody></table></div>
+
+<div class="mq mt2-mq" data-marquee aria-label="Conferences, training, workshops, weddings, ruracio, birthdays and garden parties."><div class="mq-track"><span>Conferences</span><span>Weddings</span><span>Training</span><span>Ruracio</span><span>Workshops</span><span>Garden parties</span></div></div>
+
+<section class="sec mt2-intro" aria-labelledby="intro-h">
+  <div class="wrap mt2-intro-grid">
+    <span class="hx-v" aria-hidden="true">The setting</span>
+    <div class="mt2-intro-head"><span class="label">01 · The setting</span><h2 id="intro-h" data-split="words">Business by day. <em>Celebrations</em> by evening.</h2></div>
+    {pic('courtyard-fountain-tent', 'mt2-intro-img', '(max-width:760px) 100vw, 40vw', extra=' data-reveal="arch"')}
+    <p class="mt2-intro-p rv">The Breez Hotel hosts conferences, training and workshops in its meeting halls, and weddings, ruracio, birthdays and garden parties on its lawns and under marquees. Events come with a full set-up, Wi-Fi and food and drink packages arranged with the team.</p>
   </div>
 </section>
-<section class="sec sec--stone" aria-labelledby="lay-h">
-  <div class="wrap">{head('Halls', '<span id="lay-h">Choose your layout</span>')}<div class="layouts">{lay}</div></div>
+
+<section class="sec sec--stone mt2-spaces" aria-labelledby="spaces-h">
+  <div class="wrap mt2-spaces-grid">
+    <div class="mt2-sp-main" data-spaces tabindex="0" aria-roledescription="carousel" aria-label="Meeting hall photographs">{spaces}
+      <div class="mt2-sp-nav"><button type="button" data-prev aria-label="Previous photo">←</button><span data-count>01 / 0{len(SPACES)}</span><button type="button" data-next aria-label="Next photo">→</button></div>
+    </div>
+    {pic('hall-banquet-2', 'mt2-sp-a', '(max-width:760px) 50vw, 22vw', extra=' data-reveal="up" data-parallax="0.05"')}
+    {pic('hall-classroom-2', 'mt2-sp-b', '(max-width:760px) 50vw, 24vw', extra=' data-reveal="circle"')}
+    <div class="mt2-panel rv"><span class="label">02 · Meetings &amp; conferences</span><h2 id="spaces-h">A setting for</h2>
+      <ul><li>Conferences</li><li>Training</li><li>Workshops</li><li>Business gatherings</li></ul>
+      <p class="small">Projector and screen, Wi-Fi and a full set-up in every hall.</p></div>
+  </div>
 </section>
-<section class="sec" aria-labelledby="ev-h">
+
+<section class="sec mt2-conf" aria-labelledby="conf-h">
   <div class="wrap">
-    {head('Celebrations', '<span id="ev-h">Weddings, ruracio and garden parties</span>', '<p class="lead">The grounds take a marquee on the lawn, a buffet line under canvas, or a quiet ceremony by the fountain.</p>')}
-    <div class="events">
-      <article class="ev ev1 rv">{ph('tent-wedding-setup', '', '(max-width:760px) 100vw, 50vw')}<div><span class="label label--light">Weddings</span><h3>Under canvas</h3></div></article>
-      <article class="ev ev2 rv">{ph('marquee-lawn', '', '(max-width:760px) 100vw, 50vw')}<div><span class="label label--light">Ruracio &amp; ceremonies</span><h3>On the lawn</h3></div></article>
-      <article class="ev ev3 rv">{ph('garden-party-balloons', '', '(max-width:760px) 100vw, 25vw')}<div><span class="label label--light">Birthdays</span><h3>Garden parties</h3></div></article>
-      <article class="ev ev4 rv">{ph('tent-buffet-line', '', '(max-width:760px) 100vw, 25vw')}<div><span class="label label--light">Catering</span><h3>Buffets</h3></div></article>
+    <div class="mt2-conf-grid" data-config>
+      <div class="mt2-cf-media">{conf_imgs}</div>
+      <div class="mt2-cf-text">
+        <span class="label">03 · Room configurations</span>
+        <div class="mt2-cf-tabs" role="tablist" aria-label="Choose a layout">{conf_tabs}</div>
+        <h2 id="conf-h" class="mt2-cf-title" aria-live="polite">{CONF[0][1]}</h2>
+        <p class="mt2-cf-desc">{CONF[0][3]}</p>
+        <p class="small">Capacity depends on the hall and is confirmed on enquiry.</p>
+        <a class="btn btn--book" data-magnetic href="#enquire" data-setup="{CONF[0][1]}">Enquire about this layout</a>
+      </div>
     </div>
   </div>
 </section>
-<section class="sec sec--stone"><div class="wrap">{event_form()}</div></section>'''
+
+<section class="mt2-wed" aria-labelledby="wed-h">
+  <div class="wrap mt2-wed-grid">
+    {pic('tent-wedding-setup', 'mt2-wed-main', '(max-width:760px) 100vw, 46vw', extra=' data-reveal="up"')}
+    <div class="mt2-wed-text"><span class="label label--light">04 · Weddings</span><h2 id="wed-h" data-split="chars">Weddings</h2>
+      <p>Marquees on the lawn, tables dressed in your colours and a buffet line under canvas. Tell us your date and the team will help plan the day.</p>
+      <a class="btn btn--light" data-magnetic href="#enquire">Plan a wedding</a></div>
+    {pic('garden-party-setup', 'mt2-wed-side mask-arch', '(max-width:760px) 60vw, 24vw', extra=' data-reveal="arch" data-parallax="0.07"')}
+    <p class="mt2-wed-cap">Under canvas, on the lawn</p>
+  </div>
+</section>
+
+<section class="sec mt2-rur" aria-labelledby="rur-h">
+  <svg width="0" height="0" aria-hidden="true" focusable="false"><defs><clipPath id="mt2-blob" clipPathUnits="objectBoundingBox"><path d="M.09.32C.14.1.36.02.56.04c.22.02.4.16.42.38.02.2-.06.38-.22.48C.6 1 .38 1 .22.9.06.8.03.52.09.32Z"><animate attributeName="d" dur="14s" repeatCount="indefinite" values="M.09.32C.14.1.36.02.56.04c.22.02.4.16.42.38.02.2-.06.38-.22.48C.6 1 .38 1 .22.9.06.8.03.52.09.32Z;M.06.4C.1.16.32.0.54.03c.24.03.42.2.42.42 0 .22-.12.38-.28.46C.52.99.3.98.17.86.04.74.02.6.06.4Z;M.09.32C.14.1.36.02.56.04c.22.02.4.16.42.38.02.2-.06.38-.22.48C.6 1 .38 1 .22.9.06.8.03.52.09.32Z"/></path></clipPath></defs></svg>
+  <div class="wrap mt2-rur-grid">
+    <div class="mt2-rur-art">
+      <svg class="mt2-rur-line" viewBox="0 0 400 300" aria-hidden="true"><path d="M10 250C90 120 180 300 260 160S380 40 390 20"/></svg>
+      {pic('marquee-lawn', 'mt2-blob', '(max-width:760px) 100vw, 50vw')}
+      {pic('cottages-lawn', 'mt2-rur-c mask-circle', '(max-width:760px) 40vw, 16vw', extra=' data-reveal="circle"')}
+    </div>
+    <div class="mt2-rur-text"><span class="label">05 · Ruracio &amp; ceremonies</span><h2 id="rur-h" data-split="words">Ruracio and family ceremonies</h2>
+      <p>Family ceremonies on the open lawn, with marquees, seating and catering arranged around your guests.</p></div>
+  </div>
+</section>
+
+<section class="mt2-out" aria-labelledby="out-h">
+  <div class="mt2-os-stage" data-outdoor tabindex="0" aria-roledescription="carousel" aria-label="Garden and outdoor event photographs">{out_slides}
+    <div class="mt2-os-shade"></div>
+    <div class="wrap mt2-os-text"><span class="hx-k hx-k--light">06 · Outdoor events</span><h2 id="out-h">Birthdays and garden parties</h2><p class="mt2-os-cap" aria-live="polite">{OUT[0][1]}</p>
+      <div class="mt2-os-ctl"><button type="button" data-prev aria-label="Previous photo">←</button><span class="mt2-os-count"><b data-count>01</b> / 0{len(OUT)}<i class="mt2-os-prog"><i data-prog></i></i></span><button type="button" data-play aria-pressed="false" aria-label="Pause slideshow">❚❚</button><button type="button" data-next aria-label="Next photo">→</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec mt2-cat" aria-labelledby="cat-h">
+  <div class="wrap mt2-cat-grid">
+    {pic('tent-buffet-line', 'mt2-cat-a', '(max-width:760px) 100vw, 40vw', extra=' data-reveal="up"')}
+    {pic('buffet-samosa-chapati', 'mt2-cat-b', '(max-width:760px) 50vw, 24vw', extra=' data-reveal="left"')}
+    {pic('buffet-decor', 'mt2-cat-c', '(max-width:760px) 50vw, 24vw', extra=' data-reveal="up"')}
+    <div class="mt2-cat-text rv"><span class="label">07 · Catering</span><h2 id="cat-h">From tea break to buffet</h2><p>Tea breaks, lunch and buffets for meetings, and buffets and packages for weddings and parties. Menus are agreed with the kitchen.</p><p class="small">Photographed at The Breez.</p></div>
+  </div>
+</section>
+
+<section class="sec sec--stone mt2-fac" aria-labelledby="fac-h">
+  <div class="wrap mt2-fac-grid">
+    <div class="mt2-fac-head"><span class="label">08 · Facilities</span><h2 id="fac-h" data-split="words">What every event can use</h2></div>
+    <ol class="mt2-fac-list" data-stagger>{fac}</ol>
+  </div>
+</section>
+
+<section class="mt2-enq" aria-labelledby="enq-h">
+  <div class="mt2-enq-left">
+    {pic('garden-party-balloons', 'mt2-enq-bg', '(max-width:760px) 100vw, 45vw')}
+    <div class="mt2-enq-copy"><span class="hx-k hx-k--light">09 · Enquiry</span><h2 id="enq-h" data-split="lines">Plan your event with us.</h2>
+      <p>Share your date, guest numbers and layout. Reception replies with availability, set-up options and a quote.</p>
+      <ul class="mt2-enq-contact"><li><span>Call</span><a href="{TEL}">{PHONE_DISPLAY}</a></li><li><span>WhatsApp</span><a href="{WA}" target="_blank" rel="noopener">{PHONE_DISPLAY}</a></li><li><span>Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></li></ul></div>
+  </div>
+  <div class="mt2-enq-right">{event_form()}</div>
+</section>
+
+<section class="mt2-close" aria-labelledby="close-h">
+  {pic('hall-gold-cloths', 'mt2-close-bg', '100vw', extra=' data-reveal="circle"')}
+  <div class="mt2-close-frame" aria-hidden="true"></div>
+  <div class="wrap mt2-close-in"><span class="hx-k hx-k--light">10 · The Breez</span><h2 id="close-h" data-split="lines">Let’s make it memorable.</h2>
+    <p>Tell us what you are planning. We would love to help bring your occasion together.</p>
+    <div class="hx-actions"><a class="btn btn--book" data-magnetic href="#enquire">Send an enquiry</a><a class="btn btn--wa" data-magnetic href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a></div></div>
+</section>'''
+
 
 def gallery():
     cats = ['exterior', 'gardens', 'pools', 'rooms', 'interiors', 'dining', 'conference', 'events', 'people']
