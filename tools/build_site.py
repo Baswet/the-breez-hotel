@@ -288,7 +288,7 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 <meta property="og:locale" content="en_KE"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="assets/site.css?v={TODAY}">
 <link rel="stylesheet" href="assets/heroes.css?v={TODAY}">
 <link rel="stylesheet" href="assets/motion.css?v={TODAY}">
@@ -326,6 +326,55 @@ STORY = [
     ('courtyard-fountain-gazebos', 'Celebrate', 'Evenings on the lawn.', 'Gazebos, a fountain and marquees for weddings, ruracio and parties.', 'meetings.html', 'Plan an event', 'green'),
 ]
 STORY_IMGS = [x[0] for x in STORY]
+
+MOODS = [
+    ('01', 'The quiet of morning', 'Let the day begin <em>gently</em>.', 'gazebo-cypress',
+     'Early light on the lawns, the gazebos still in shade, and breakfast with your stay where the room rate includes it.',
+     'dining.html', 'Discover dining', 'wide'),
+    ('02', 'The brightness of afternoon', 'Where the afternoon <em>slows down</em>.', 'pool-terrace-kids-pool',
+     'Sun on the water, shade under the blue umbrellas, a lounger by the pool and a fresh juice brought to the table.',
+     'pools.html', 'Discover the pools', 'tall'),
+    ('03', 'The art of coming together', 'Good moments are <em>better shared</em>.', 'garden-party-setup',
+     'Round tables on the lawn, a marquee for the wedding, a hall set for the workshop. There is room for everyone who matters.',
+     'meetings.html', 'Discover meetings &amp; celebrations', 'cine'),
+    ('04', 'The beauty of evening', 'As the day settles, <em>stay a little longer</em>.', 'room-four-poster-window',
+     'The garden goes quiet, the lights come on along the veranda, and a four-poster bed with fresh linen is waiting.',
+     'rooms.html', 'Discover the rooms', 'side'),
+]
+
+def editorial():
+    karibu = f'''<section class="ed-karibu" aria-labelledby="kar-h">
+  <div class="ed-k-panel">
+    <span class="ed-kick rv">Karibu</span>
+    <h2 class="ed-k-title rv" id="kar-h">The art of <em>welcome</em></h2>
+    <p class="ed-k-essay rv">In Swahili, <em>karibu</em> is a welcome and an invitation to come closer. At The Breez it begins at the gate and carries on along the shaded veranda, past the fountain and the gazebos, to a cool drink by the pool and a quiet room at the end of the day.</p>
+    <a class="ed-discover rv" href="about.html" aria-label="Discover the hotel and its grounds">Discover</a>
+    <a class="ed-k-ph rv" href="about.html" tabindex="-1" aria-hidden="true">{ph('entrance-lobby', '', '(max-width:760px) 86vw, 36vw')}</a>
+  </div>
+  <div class="ed-k-side" aria-hidden="true">{ph('veranda-corridor', '', '(max-width:760px) 100vw, 50vw')}</div>
+</section>'''
+    place = f'''<section class="ed-place" aria-labelledby="place-h">
+  <div class="wrap">
+    <span class="ed-kick rv">A place for your own moment</span>
+    <h2 class="ed-place-st rv" id="place-h">Some places are remembered for the moments they make possible: a slow afternoon beside the pool, a long lunch under the umbrellas, a quiet room after a long road, a gathering on the lawn that brings everyone together. <em>At The Breez there is room for all of them.</em></h2>
+    <div class="ed-place-grid">
+      <a class="ed-place-big rv" href="about.html" aria-label="The hotel and its grounds">{ph('building-palms-pool-court', '', '(max-width:760px) 100vw, 62vw')}</a>
+      <figure class="ed-place-small rv">{ph('poolside-tables', '', '(max-width:760px) 60vw, 26vw')}<figcaption>A table in the shade, by the pool.</figcaption></figure>
+    </div>
+  </div>
+</section>'''
+    moods = ''.join(
+        f'''<article class="ed-mood ed-mood--{lay}">
+      <a class="ed-mood-ph rv" href="{u}" tabindex="-1" aria-hidden="true">{ph(k, '', '(max-width:760px) 100vw, 60vw')}</a>
+      <div class="ed-mood-text rv"><span class="ed-mood-no">{n}</span><span class="ed-kick">{lab}</span><h3>{h}</h3><p>{t}</p><a class="ed-mood-link" href="{u}">{lt}<span aria-hidden="true"> &rarr;</span></a></div>
+    </article>''' for n, lab, h, k, t, u, lt, lay in MOODS)
+    moods_sec = f'''<section class="ed-moods" aria-labelledby="moods-h">
+  <div class="wrap">
+    <header class="ed-moods-head"><span class="ed-kick rv">The many moods of The Breez</span><h2 class="rv" id="moods-h">The best time to visit? <em>Every hour of the day.</em></h2></header>
+    {moods}
+  </div>
+</section>'''
+    return karibu + '\n' + place + '\n' + moods_sec
 
 EXP_TILES = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
              'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'bed-detail']
@@ -368,14 +417,21 @@ def home():
     </div>
   </div>
 </section>'''
-    return f'''<section class="hx-home" aria-label="Welcome to The Breez Hotel">
-  {hx('building-palms-pool-court', '', '100vw', eager=True)}
-  <div class="hx-home-side" aria-hidden="true"><span class="hx-v">Kisumu–Busia Road · Busia · Kenya</span></div>
-  <div class="hx-home-in" data-parallax="-0.05">
-    <span class="hx-k hx-k--light hx-a1">Hotel · Pools · Gardens · Busia</span>
-    <h1 class="hx-title" data-split="chars">The Breez</h1>
-    <p class="hx-sub hx-a3">A garden hotel on the Kisumu–Busia Road, with two pools, a restaurant and bar, meeting halls and lawns for celebrations.</p>
+    return f'''<section class="hx-home hb" aria-label="Welcome to The Breez Hotel">
+  {hx('pool-loungers', 'hb-ph', '100vw', eager=True)}
+  <div class="hb-in">
+    <span class="hb-k hb-a1">Karibu &middot; Busia, Kenya</span>
+    <h1 class="hb-title hb-a2">The Breez</h1>
+    <p class="hb-line hb-a3">Where the garden meets <em>the pool</em>.</p>
+    <div class="hb-actions hb-a4"><a class="hb-btn hb-btn--gold" href="book.html">Book your stay</a><a class="hb-btn hb-btn--light" href="about.html">Explore the hotel</a></div>
   </div>
+  <dl class="hb-facts hb-a5">
+    <div><dt>2</dt><dd>swimming pools, one for children</dd></div>
+    <div><dt>4</dt><dd>room categories</dd></div>
+    <div><dt>Busia</dt><dd>on the Kisumu&ndash;Busia Road</dd></div>
+  </dl>
+</section>
+<div class="hb-book">
   <form class="hx-strip" data-form="quick" action="book.html" aria-label="Check dates">
     <label data-label="Check-in">Check-in<input type="date" name="checkin"></label>
     <label data-label="Check-out">Check-out<input type="date" name="checkout"></label>
@@ -383,7 +439,7 @@ def home():
     <div class="hx-info"><span>Reception</span><a href="{TEL}"><b>{PHONE_DISPLAY}</b></a></div>
     <button type="submit">Request dates</button>
   </form>
-</section>
+</div>
 <p class="hx-strip-note small">Requests go to reception on WhatsApp or email. Nothing is charged online.</p>
 <div class="mq" data-marquee aria-label="Karibu. Stay, swim, dine, meet and celebrate at The Breez."><div class="mq-track"><span>Karibu</span><span>Stay</span><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></div></div>
 
@@ -400,17 +456,7 @@ def home():
     </div>
   </div>
 </section>
-<section class="sec" aria-label="The Breez in one sentence"><div class="wrap stmt"><p data-tint>A garden hotel on the Kisumu–Busia Road, where guests come to stay the night, to swim, to meet and to celebrate.</p></div></section>
-
-<section class="sec story" data-story data-tone="stone" aria-labelledby="story-h">
-  <div class="wrap">
-    {head('The Breez experience', '<span id="story-h" data-split="words">One day, five moments</span>')}
-    <div class="story-in">
-      <div class="story-media" aria-hidden="true">{''.join(f'<figure data-scene>{img(k, "(max-width:1100px) 50vw, 55vw")}</figure>' for k in STORY_IMGS)}<span class="story-frame"></span></div>
-      <div class="story-steps">{''.join(f'<article class="story-step" data-step data-tone="{tone}"><figure class="story-ph">{img(k, "100vw")}</figure><span class="hx-k">0{i+1} · {lab}</span><h3>{h}</h3><p>{t}</p><a class="link" href="{lnk}">{lt}</a></article>' for i, (k, lab, h, t, lnk, lt, tone) in enumerate(STORY))}</div>
-    </div>
-  </div>
-</section>
+{editorial()}
 
 {experiences()}
 
