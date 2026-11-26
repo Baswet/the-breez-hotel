@@ -158,6 +158,22 @@
     document.addEventListener('keydown', (e) => { if (box.hidden) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
   }
 
+
+  /* rooms hero: image index swaps the main photograph on hover/focus */
+  document.querySelectorAll('[data-index]').forEach((list) => {
+    const main = document.querySelector('.hx-rooms-media .main img');
+    if (!main) return;
+    const links = list.querySelectorAll('a[data-swap]');
+    const show = (a) => {
+      links.forEach((x) => x.classList.toggle('on', x === a));
+      const base = a.dataset.swap;
+      if (main.dataset.base === base) return;
+      main.style.opacity = '0';
+      setTimeout(() => { main.srcset = `${base}-800.webp 800w, ${base}-1600.webp 1600w`; main.src = `${base}-1600.webp`; main.alt = a.dataset.alt || ''; main.dataset.base = base; main.onload = () => { main.style.opacity = '1'; }; }, 180);
+    };
+    links.forEach((a) => { a.addEventListener('mouseenter', () => show(a)); a.addEventListener('focus', () => show(a)); });
+  });
+
   /* year */
   document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
 })();
