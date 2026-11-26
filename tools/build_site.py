@@ -29,7 +29,7 @@ MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=The+Breez+Hotel+Busi
 
 # Photos not published: identifiable guests without recorded consent, and seasonal decor.
 EXCLUDE = {'guests-lunch-garden-terrace', 'wedding-party-courtyard', 'wedding-marquee-guests',
-           'reception-christmas', 'lobby-christmas', 'bed-towel-art', 'building-palms-umbrellas'}
+           'reception-christmas', 'lobby-christmas', 'bed-towel-art', 'building-palms-umbrellas', 'grilled-chicken'}
 
 STOCK = {  # key: (photographer, unsplash photo id or page)
     'woman-swimming-pool': ('Leilani Angel', 'Unsplash'),
@@ -51,6 +51,10 @@ STOCK = {  # key: (photographer, unsplash photo id or page)
     'food-table-evening': ('Jay Wennington', 'Unsplash'),
     'food-table-set': ('Kamilla Isalieva', 'Unsplash'),
     'food-overhead-plate': ('Jametlene Reskp', 'Unsplash'),
+    'food-fries-golden': ('Pixzolo Photography', 'Unsplash'),
+    'food-burger-fries': ('Mike', 'Unsplash'),
+    'drink-mocktails-sunlit': ('Anastase Maragos', 'Unsplash'),
+    'food-lunch-by-water': ('Hameen Reynolds', 'Unsplash'),
 }
 
 ALT = {
@@ -162,6 +166,10 @@ ALT = {
     'food-table-evening': 'Plates and glasses on an evening dinner table',
     'food-table-set': 'A dinner table set with plates and glasses',
     'food-overhead-plate': 'A plated dish seen from above',
+    'food-fries-golden': 'Golden fries with a dipping sauce',
+    'food-burger-fries': 'A burger with fries in a steel cup',
+    'drink-mocktails-sunlit': 'Fruit mocktails in afternoon sunlight',
+    'food-lunch-by-water': 'Lunch and a cold drink on a ledge by the water',
 }
 
 CAT_LABEL = {'exterior': 'Building', 'gardens': 'Gardens', 'pools': 'Pools', 'rooms': 'Rooms',
@@ -194,14 +202,14 @@ def ph(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, cap=True
     m = IMAGES[key]
     c = ''
     if m['stock'] and cap:
-        c = f'<figcaption class="cap cap--illus">Illustrative, not The Breez · {STOCK[key][0]} / Unsplash</figcaption>'
+        c = f'<figcaption class="cap cap--illus">Photo · {STOCK[key][0]} / Unsplash</figcaption>'
     return f'<figure class="ph {cls}"{extra}>{img(key, sizes, eager, alt)}{c}</figure>'
 
 
 def hx(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None, num=None, extra=''):
     n = f'<figcaption class="hx-no">{num}</figcaption>' if num else ''
     if IMAGES[key]['stock']:
-        n += f'<figcaption class="cap cap--illus">Illustrative, not The Breez · {STOCK[key][0]} / Unsplash</figcaption>'
+        n += f'<figcaption class="cap cap--illus">Photo · {STOCK[key][0]} / Unsplash</figcaption>'
     return f'<figure class="hx-ph {cls}"{extra}>{img(key, sizes, eager, alt)}{n}</figure>'
 
 def crumb(label):
@@ -396,7 +404,7 @@ def home():
   <div class="wrap">
     {head('05 · Gallery', '<span id="gal-h">Around the hotel</span>', '<a class="link" href="gallery.html">All photographs</a>')}
     <div class="mosaic" data-lightbox data-stagger data-drift>
-      {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, "(max-width:760px) 50vw, 33vw")}</a>' for c, k in [('m1', 'courtyard-fountain-gazebos'), ('m2', 'pool-aerial'), ('m3', 'gazebo-cypress'), ('m4', 'lounge-rattan-sofas'), ('m5', 'tower-and-terrace'), ('m6', 'grilled-chicken')])}
+      {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, "(max-width:760px) 50vw, 33vw")}</a>' for c, k in [('m1', 'courtyard-fountain-gazebos'), ('m2', 'pool-aerial'), ('m3', 'gazebo-cypress'), ('m4', 'lounge-rattan-sofas'), ('m5', 'tower-and-terrace'), ('m6', 'bar-counter-stools')])}
     </div>
   </div>
 </section>
@@ -495,12 +503,10 @@ def rooms():
   <div class="spread-img">{ph(main, 'main', '(max-width:1100px) 100vw, 66vw', extra=' data-reveal="left"')}{ph(det, 'detail', '25vw')}</div>
   <div class="spec rv"><span class="label">0{i+1} · Room</span><h2>{d['Room']}</h2><p>{blurbs[k]}</p><dl>{dl}</dl><a class="btn btn--solid" href="book.html?room={d['Room'].replace(' ', '+')}">Request this room</a></div>
 </article>'''
-    picks = ''.join(f'<li><label><input type="checkbox" value="{k}"{" checked" if k in ("double", "deluxe") else ""}> {v["Room"]}</label></li>' for k, v in ROOMS.items())
-    data = html.escape(json.dumps({k: {f: v for f, v in d.items()} for k, d in ROOMS.items()}), quote=True)
     return f'''<section class="hx-rooms" aria-labelledby="rooms-h1">
   <div class="hx-rooms-text">
     <div>{crumb('Stay')}<span class="hx-k hx-a1">02 · Rooms &amp; stays</span><h1 class="hx-title" id="rooms-h1" data-split="words">Rest in the garden.</h1><p class="hx-sub hx-a3" style="margin-top:18px">Four room categories, as listed on Booking.com. Reception confirms your room and rate.</p></div>
-    <div class="hx-a4"><ul class="hx-index" data-index>{''.join(f'<li><a href="#{k}" data-swap="{IMAGES[m]["rel"]}" data-alt="{html.escape(ALT[m], quote=True)}"{" class=on" if k == "double" else ""}><b>{ROOMS[k]["Room"]}</b><span>{ROOMS[k]["Bed"]} · {ROOMS[k]["Sleeps"]}</span></a></li>' for k, m in [('single', 'single-room'), ('double', 'room-four-poster-window'), ('deluxe', 'room-grey-bedding'), ('king', 'room-four-poster-2')])}</ul><div class="hx-actions" style="margin-top:22px"><a class="btn btn--solid" href="book.html">Request a booking</a><a class="btn" href="#cmp-h">Compare rooms</a></div></div>
+    <div class="hx-a4"><ul class="hx-index" data-index>{''.join(f'<li><a href="#{k}" data-swap="{IMAGES[m]["rel"]}" data-alt="{html.escape(ALT[m], quote=True)}"{" class=on" if k == "double" else ""}><b>{ROOMS[k]["Room"]}</b><span>{ROOMS[k]["Bed"]} · {ROOMS[k]["Sleeps"]}</span></a></li>' for k, m in [('single', 'single-room'), ('double', 'room-four-poster-window'), ('deluxe', 'room-grey-bedding'), ('king', 'room-four-poster-2')])}</ul><div class="hx-actions" style="margin-top:22px"><a class="btn btn--solid" href="book.html">Request a booking</a></div></div>
   </div>
   <div class="hx-rooms-media">
     {hx('room-four-poster-window', 'main mask-arch', '(max-width:760px) 100vw, 60vw', eager=True)}
@@ -525,13 +531,6 @@ def rooms():
   </div>
 </section>
 <section class="sec" style="padding-top:0"><div class="wrap">{sp}<p class="note">Photographs show rooms at The Breez Hotel; furniture and layout vary by room. Features are as listed on Booking.com in November 2026 and may change.</p></div></section>
-<section class="sec sec--stone" aria-labelledby="cmp-h">
-  <div class="wrap">
-    {head('Compare', '<span id="cmp-h">Side by side</span>', '<p>Choose rooms to compare their listed features.</p>')}
-    <fieldset data-compare-pick style="border:0;padding:0;margin:0 0 20px"><legend class="sr-only">Rooms to compare</legend><ul class="pill-list">{picks}</ul></fieldset>
-    <div class="compare-wrap"><table class="compare" data-compare="{data}" aria-live="polite"><caption class="sr-only">Room comparison</caption><thead><tr></tr></thead><tbody></tbody></table></div>
-  </div>
-</section>
 <section class="sec" aria-labelledby="every-h">
   <div class="wrap">
     {head('Every stay', '<span id="every-h">Included with every room</span>')}
@@ -547,7 +546,7 @@ def pools():
              ('pool-loungers', 'Afternoons on the deck', 'Loungers and shade for long afternoons in the sun.')]
     media = ''.join(f'{ph(k, "on" if i == 0 else "", "50vw", alt=ALT[k])}' for i, (k, a, b) in enumerate(steps))
     st = ''.join(f'<div class="ss-step" data-step="{i}">{ph(k, "ph-m", "100vw")}<span class="label label--light">0{i+1}</span><h2>{a}</h2><p class="lead" style="color:#DCEFF3">{b}</p></div>' for i, (k, a, b) in enumerate(steps))
-    col = [('cl1', 'pool-aerial'), ('cl2', 'woman-swimming-pool'), ('cl3', 'pool-lanes'), ('cl4', 'pool-terrace-kids-pool'), ('cl5', 'pool-reading-lifestyle'), ('cl6', 'kids-pool-building')]
+    PD = [('pool-garden-view', 'The pool court from the guest wing'), ('pool-lanes-2', 'Lanes in the afternoon sun'), ('pool-terrace-kids-pool', 'The terrace and the kids’ pool'), ('pool-lawn-view', 'Water, lawn and shade'), ('kids-pool-building', 'The kids’ pool by the building'), ('pool-fence-umbrellas', 'Umbrellas along the pool fence')]
     return f'''<section class="hx-pools" aria-labelledby="pools-h1">
   {hx('pool-loungers', '', '100vw', eager=True)}
   <div class="hx-pools-in">{crumb('Pools')}<span class="hx-k hx-k--light hx-a1">03 · Water &amp; shade</span><h1 class="hx-title" id="pools-h1"><span data-split="chars" style="display:block">Pools</span><em class="italic hx-a3">in the palm court</em></h1><p class="hx-sub hx-a3">A main pool and a kids’ pool, with loungers, umbrellas and food from the bar.</p></div>
@@ -556,10 +555,20 @@ def pools():
 <section class="sec sec--pool" aria-label="The pools">
   <div class="wrap sticky-story"><div class="ss-media">{media}</div><div class="ss-steps">{st}</div></div>
 </section>
-<section class="sec" aria-labelledby="col-h">
+<section class="sec pd" aria-labelledby="col-h">
   <div class="wrap">
-    {head('Pool days', '<span id="col-h">Water, shade and a juice</span>')}
-    <div class="collage" data-stagger>{''.join(ph(k, c, '(max-width:760px) 50vw, 33vw') for c, k in col)}</div>
+    <div class="pd-wrap" data-pooldays tabindex="0" aria-roledescription="carousel" aria-label="Pool days photographs">
+      <p class="pd-word" aria-hidden="true"><span>Pool</span><span>days</span></p>
+      <div class="pd-stage" data-lightbox>{''.join(f'<a class="pd-card{" pd-p" if IMAGES[k]["h"] > IMAGES[k]["w"] else ""}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT.get(k, c), quote=True)}" data-caption="{html.escape(c, quote=True)}" data-cap="{html.escape(c, quote=True)}"><span class="pd-mat">{img(k, "(max-width:760px) 72vw, 520px", eager=(i < 4))}</span></a>' for i, (k, c) in enumerate(PD))}</div>
+      <div class="pd-meta"><span class="hx-k">Pool days</span><h2 id="col-h">Water, shade and a juice</h2><p class="pd-cap" aria-live="polite">{PD[0][1]}</p></div>
+      <div class="pd-ctl" role="group" aria-label="Slideshow controls">
+        <button type="button" data-prev aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <span class="pd-count"><b data-count>01</b> / {len(PD):02d}<i class="pd-prog"><i data-prog></i></i></span>
+        <button type="button" data-pause aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12" stroke="currentColor" stroke-width="1.8"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg></button>
+        <button type="button" data-full aria-label="View photo full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <button type="button" data-next aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      </div>
+    </div>
   </div>
 </section>
 <section class="sec sec--pool" aria-labelledby="pi-h">
@@ -575,8 +584,8 @@ def pools():
 </section>'''
 
 def dining():
-    strip = [('food-sauce-pour', 'Finished with care'), ('food-salmon-plate', 'Colour on the plate'), ('drink-three-juices', 'Fresh juice'),
-             ('food-chicken-woodboard', 'From the grill'), ('food-breakfast-bowls', 'Morning'), ('food-table-set', 'Evening'), ('food-overhead-plate', 'Plated')]
+    strip = [('food-lunch-by-water', 'Lunch by the water'), ('food-salmon-plate', 'Colour on the plate'), ('drink-mocktails-sunlit', 'Mocktails'),
+             ('food-burger-fries', 'Light bites'), ('food-breakfast-bowls', 'Morning'), ('food-table-set', 'Evening'), ('food-overhead-plate', 'Plated')]
     sf = ''.join(f'<figure>{hx(k, "", "(max-width:760px) 80vw, 30vw")}<figcaption>{c}</figcaption></figure>' for k, c in strip)
     return f'''<section class="hx-dining" aria-labelledby="dine-h1">
   <div class="hx-dining-text">
@@ -584,7 +593,7 @@ def dining():
     <div class="hx-a4"><div class="hx-dining-meta"><div><b>Breakfast</b>With stays, as listed</div><div><b>Poolside</b>Meals and juice</div><div><b>Events</b>Catering</div></div><a class="btn btn--light" style="margin-top:24px" href="{WA}" target="_blank" rel="noopener">Reserve a table on WhatsApp</a></div>
   </div>
   <div class="hx-dining-media">
-    {hx('food-grilled-board', 'main', '(max-width:760px) 100vw, 58vw', eager=True)}
+    {hx('food-fries-golden', 'main', '(max-width:760px) 100vw, 58vw', eager=True)}
     <div class="detail glow-warm"><figure class="hx-ph mask-circle ring" style="margin:0">{img('drink-mango-juice', '250px')}</figure></div>
   </div>
 </section>
@@ -596,9 +605,9 @@ def dining():
 <section class="sec sec--stone" aria-labelledby="real-h">
   <div class="wrap real-food" data-layered>
     {hx('poolside-meal-juice', 'rf-a ly-a', '(max-width:760px) 100vw, 55vw')}
-    {hx('grilled-chicken', 'rf-b ly-b mask-arch', '(max-width:760px) 45vw, 22vw')}
+    {hx('buffet-decor', 'rf-b ly-b mask-arch', '(max-width:760px) 45vw, 22vw')}
     {hx('buffet-samosa-chapati', 'rf-c ly-c', '(max-width:760px) 45vw, 22vw')}
-    <div class="rf-t ly-t"><span class="hx-k">Photographed at The Breez</span><h2 class="ab-h" id="real-h">Poolside lunch, the grill and the event buffet.</h2><p class="hx-sub">The hotel’s own photographs of food served by the pool and at events.</p></div>
+    <div class="rf-t ly-t"><span class="hx-k">Photographed at The Breez</span><h2 class="ab-h" id="real-h">Poolside lunch and event dining.</h2><p class="hx-sub">The hotel’s own photographs of food served by the pool and at events.</p></div>
   </div>
 </section>
 <section class="sec sec--stone" aria-labelledby="menu-h">
@@ -744,7 +753,7 @@ def gallery():
   <div class="wrap">
     <div class="archive-head"><div><span class="hx-k">The archive</span><h2 id="arc-h">Every photograph</h2></div><div class="chips" data-filters="grid" role="group" aria-label="Filter photographs">{chips}</div></div>
     <div class="gl-grid" id="grid" data-lightbox data-drift>{out}</div>
-    <p class="note" style="margin-top:32px">All photographs on this page are of The Breez Hotel, shared by the hotel. Illustrative stock photos used elsewhere on the site are labelled and listed on the <a href="credits.html">credits page</a>.</p>
+    <p class="note" style="margin-top:32px">All photographs on this page are of The Breez Hotel, shared by the hotel. Stock photographs used elsewhere on the site are credited on the <a href="credits.html">credits page</a>.</p>
   </div>
 </section>'''
 
@@ -822,7 +831,7 @@ def book():
 def credits():
     rows = ''.join(f'<tr><td>{ALT[k]}</td><td>{STOCK[k][0]}</td><td><a href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash License</a></td></tr>' for k in sorted(USED) if IMAGES[k]['stock'])
     return f'''<section class="page-hero"><div class="wrap" style="max-width:960px"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Credits</span></nav><h1 class="h-xl">Photo credits</h1><p class="lead" style="margin-top:16px">Photographs of the hotel, its rooms, pools, gardens, food, halls, events and team are by The Breez Hotel and used with permission.</p></div></section>
-<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Illustrative stock photography</h2><p class="muted">These photos set a mood. They are not of The Breez Hotel and the people in them are not hotel guests. Each is labelled “Illustrative” where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond and Karla (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
+<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond and Karla (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
 
 def notfound():
     return f'''<section class="sec"><div class="wrap closing"><span class="label">404</span><h1 class="h-xl">This page has wandered off.</h1><p class="lead">The page you were looking for is not here. Try the home page or ask us on WhatsApp.</p><div class="btn-row" style="justify-content:center"><a class="btn btn--solid" href="index.html">Home</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>'''

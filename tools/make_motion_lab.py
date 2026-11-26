@@ -16,13 +16,13 @@ demos = [
  ('05', 'Organic (arch) reveal', f'<figure class="hx-ph lab-img mask-arch" data-reveal="arch">{im("exterior/tower-and-terrace-tall")}</figure>'),
  ('06', 'Cinematic entrance: blur to sharp', f'<figure class="hx-ph lab-img" data-reveal="blur">{im("pools/pool-lawn-view")}</figure>'),
  ('07', 'Layered parallax', f'<div class="lab-layer"><figure class="hx-ph a">{im("exterior/main-building-facade")}</figure><figure class="hx-ph b mask-arch" data-parallax="0.12">{im("exterior/sign-the-breeze-hotel-karibu")}</figure></div>'),
- ('08', 'Pinned image and text', '<p class="lab-note">Live on the homepage, “One day, five moments”: the photo holds while five statements change and the background tone shifts.</p><a class="link" href="../index.html#story-h">Open on the homepage</a>'),
- ('09', 'Expanding composition', '<p class="lab-note">Live on the Rooms page: an arched room photo grows to full width as you scroll.</p><a class="link" href="../rooms.html#xp-h">Open on Rooms</a>'),
+ ('08', 'Pinned image and text', '<p class="lab-note">On the homepage, “One day, five moments”: the photo holds while five statements change and the background tone shifts.</p><a class="link" href="../index.html#story-h">Open on the homepage</a>'),
+ ('09', 'Expanding composition', '<p class="lab-note">On the Rooms page: an arched room photo grows to full width as you scroll.</p><a class="link" href="../rooms.html#xp-h">Open on Rooms</a>'),
  ('10', 'Marquee typography', '<div class="mq" data-marquee><div class="mq-track"><span>Karibu</span><span>Stay</span><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></div></div>'),
  ('11', 'Scroll-tinted statement', '<p class="lab-tint" data-tint>A garden hotel on the Kisumu–Busia Road, where guests come to stay the night, to swim, to meet and to celebrate.</p>'),
  ('12', 'Staggered gallery reveal', f'<div class="lab-stag" data-stagger>{stag}</div>'),
  ('13', 'Image-to-image: directional slide mask', slideshow),
- ('14', 'Cinematic slideshow: liquid displacement', '<p class="lab-note">Live on the Gallery page, “Six moments at The Breez”: a WebGL displacement transition, with a crossfade fallback.</p><a class="link" href="../gallery.html#lq-h">Open the Gallery</a>'),
+ ('14', 'Cinematic slideshow: liquid displacement', '<p class="lab-note">On the Gallery page, “Six moments at The Breez”: a WebGL displacement transition, with a crossfade fallback.</p><a class="link" href="../gallery.html#lq-h">Open the Gallery</a>'),
  ('15', 'Animated geometric framing', f'<div class="lab-ring"><figure class="hx-ph mask-circle ring">{im("gardens/fountain-seating")}</figure></div>'),
 ]
 body = ''.join(f'<section class="lab-demo"><header><span class="hx-k">{n}</span><h3>{t}</h3></header><div class="lab-stage">{d}</div></section>' for n, t, d in demos)
@@ -35,7 +35,7 @@ css = """.lab{width:min(100% - 2*var(--pad),1200px);margin:0 auto;padding:48px 0
 html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Motion lab · The Breez Hotel</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,500&family=Karla:wght@400;700&display=swap">
 <link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="../assets/heroes.css"><link rel="stylesheet" href="../assets/motion.css"><style>{css}</style></head>
-<body><main class="lab"><span class="hx-k">The Breez Hotel · design review</span><h1>Motion lab</h1><p class="hx-sub">Fifteen working experiments built from the site’s own components and photographs. Scroll to trigger each one.</p>{body}</main>
+<body><main class="lab"><span class="hx-k">The Breez Hotel</span><h1>Motion lab</h1>{body}</main>
 <script>document.documentElement.classList.add('js')</script><script src="../assets/effects.js"></script></body></html>'''
 (ROOT / 'src/lab.html').write_text(html, encoding='utf-8')
 print('lab written')

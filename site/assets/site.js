@@ -93,23 +93,6 @@
     });
   });
 
-  /* room comparison (features as listed on Booking.com, Nov 2026) */
-  const cmp = document.querySelector('[data-compare]');
-  if (cmp) {
-    const DATA = JSON.parse(cmp.dataset.compare);
-    const boxes = [...document.querySelectorAll('[data-compare-pick] input')];
-    const thead = cmp.querySelector('thead tr'), tbody = cmp.querySelector('tbody');
-    const feats = Object.keys(DATA[Object.keys(DATA)[0]]).filter((f) => f !== 'Room');
-    const draw = () => {
-      const sel = boxes.filter((b) => b.checked).map((b) => b.value);
-      thead.innerHTML = '<th scope="col">As listed</th>'; tbody.innerHTML = '';
-      sel.forEach((k) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = DATA[k].Room; thead.appendChild(th); });
-      if (!sel.length) { const td = tbody.insertRow().insertCell(); td.colSpan = 2; td.textContent = 'Choose rooms above to compare.'; return; }
-      feats.forEach((f) => { const tr = tbody.insertRow(); const th = document.createElement('th'); th.scope = 'row'; th.textContent = f; tr.appendChild(th); sel.forEach((k) => { tr.insertCell().textContent = DATA[k][f]; }); });
-    };
-    boxes.forEach((b) => b.addEventListener('change', draw)); draw();
-  }
-
   /* horizontal strip controls */
   document.querySelectorAll('[data-strip]').forEach((ctl) => {
     const strip = document.getElementById(ctl.dataset.strip);

@@ -65,3 +65,23 @@ Ten food and drink photographs from Unsplash, all under the [Unsplash License](h
 **Still on the site:** the hotel's own food photographs (`poolside-meal-juice`, `grilled-chicken`, `buffet-samosa-chapati`). They appear in a new "Photographed at The Breez" section on the dining page, on the homepage, on About and in the gallery archive, because those places make specific claims about the hotel's food.
 
 **No longer on the site:** `rice-chicken-plate` and `waiter-serving`. The builder copies only images that are referenced, so the published site no longer contains them. Their source files remain in `assets/images/stock/` for the record.
+
+## Dining refinement (26 Nov 2026, afternoon)
+
+The grilled chicken photographs are gone from the site: the hotel's `grilled-chicken` photo, the Unsplash `food-grilled-board` and the Unsplash `food-chicken-woodboard`. The two dark stock shots (`food-sauce-pour`, `drink-three-juices`) were also replaced. All new photos are from Unsplash under the [Unsplash License](https://unsplash.com/license).
+
+| New file | Photographer | Unsplash photo | Replaces | Where |
+| --- | --- | --- | --- | --- |
+| food-fries-golden | Pixzolo Photography | photo-1518013431117-eb1465fa5752 | food-grilled-board | Dining hero, paired with the mango-juice circle |
+| food-lunch-by-water | Hameen Reynolds | photo-1790356091582-d795b2872793 | food-sauce-pour | Dining strip |
+| drink-mocktails-sunlit | Anastase Maragos | photo-1782849206170-dba15f39acb7 | drink-three-juices | Dining strip |
+| food-burger-fries | Mike | photo-1594212699903-ec8a3eca50f5 | food-chicken-woodboard | Dining strip |
+
+**Hotel photos swapped in:**
+- `buffet-decor` takes the hotel grilled-chicken photo's place in "Photographed at The Breez".
+- `bar-counter-stools` takes its place in the homepage mosaic.
+- The hotel photo is also excluded from the gallery archive.
+
+**Pool days (Pools page):** this section now shows six of the hotel's own pool photographs: pool-garden-view, pool-lanes-2, pool-terrace-kids-pool, pool-lawn-view, kids-pool-building and pool-fence-umbrellas. The two Unsplash pool photos (`woman-swimming-pool`, `pool-reading-lifestyle`) are no longer used.
+
+**Captions:** stock photos now carry a photo credit ("Photo · photographer / Unsplash") instead of the earlier "Illustrative" label. The credits page lists every one.
