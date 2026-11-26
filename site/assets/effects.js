@@ -607,3 +607,10 @@
     a.addEventListener('pointerleave', () => { a.style.removeProperty('--tx'); a.style.removeProperty('--ty'); });
   });
 })();
+
+/* Location map: the Breez marker label sits on the hotel's coordinates; once the
+   visitor starts moving the map (focus enters the iframe) the label steps aside. */
+(() => {
+  const maps = document.querySelectorAll('[data-map]'); if (!maps.length) return;
+  addEventListener('blur', () => setTimeout(() => { maps.forEach((m) => { if (m.contains(document.activeElement)) m.classList.add('moved'); }); }, 0));
+})();

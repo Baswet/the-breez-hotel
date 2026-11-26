@@ -24,7 +24,10 @@ EMAIL = 'thebreezhotel@gmail.com'
 FB = 'https://www.facebook.com/TheBreezhotelofficial'
 TT = 'https://www.tiktok.com/@thebreezhotelbusia'
 ADDRESS = 'Kisumu–Busia Road, Busia, Kenya'
-MAP_EMBED = 'https://maps.google.com/maps?q=The%20Breez%20Hotel%2C%20Busia%2C%20Kenya&z=15&output=embed'
+# Verified 26 Nov 2026 against the Google Maps place 'The Breez Hotel, Busia' (Kisumu–Busia Road)
+GEO = (0.4564723, 34.1215845)
+MAP_EMBED = 'https://maps.google.com/maps?q=0.4564723,34.1215845&z=16&output=embed'
+MAP_PLACE = 'https://www.google.com/maps/place/The+Breez+Hotel+,+Busia/@0.4564723,34.1215845,17z'
 MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=The+Breez+Hotel+Busia+Kenya'
 
 # Photos not published: identifiable guests without recorded consent, and seasonal decor.
@@ -53,9 +56,12 @@ STOCK = {  # key: (photographer, unsplash photo id or page)
     'food-overhead-plate': ('Jametlene Reskp', 'Unsplash'),
     'food-fries-golden': ('Pixzolo Photography', 'Unsplash'),
     'food-burger-fries': ('Mike', 'Unsplash'),
+    'linen-coffee-eucalyptus': ('Madison Inouye', 'Pexels'),
     'drink-mocktails-sunlit': ('Anastase Maragos', 'Unsplash'),
     'food-lunch-by-water': ('Hameen Reynolds', 'Unsplash'),
 }
+
+LICENSES = {'Unsplash': 'https://unsplash.com/license', 'Pexels': 'https://www.pexels.com/license/'}
 
 ALT = {
     'building-palms-pool-court': 'The Breez Hotel building rising behind palms and the pool court',
@@ -168,6 +174,7 @@ ALT = {
     'food-overhead-plate': 'A plated dish seen from above',
     'food-fries-golden': 'Golden fries with a dipping sauce',
     'food-burger-fries': 'A burger with fries in a steel cup',
+    'linen-coffee-eucalyptus': 'A cup of black coffee and a sprig of eucalyptus on white bed linen',
     'drink-mocktails-sunlit': 'Fruit mocktails in afternoon sunlight',
     'food-lunch-by-water': 'Lunch and a cold drink on a ledge by the water',
 }
@@ -244,17 +251,21 @@ def header(slug):
 </div>'''
 
 def footer():
-    links = ''.join(f'<li><a href="{href(s)}">{t}</a></li>' for s, t in NAV)
+    g1 = [('index', 'Home'), ('about', 'About'), ('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining')]
+    g2 = [('meetings', 'Meetings &amp; Events'), ('gallery', 'Gallery'), ('contact', 'Contact'), ('book', 'Book a stay')]
+    ul = lambda g: ''.join(f'<li><a href="{href(s)}">{t}</a></li>' for s, t in g)
     return f'''<footer class="ftr">
-  <div class="wrap">
+  <svg class="ftr-edge" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 120V78L330 104L640 40L800 82L1010 58L1440 96V120Z"/></svg>
+  <div class="wrap ftr-body">
+    <p class="ftr-word" aria-hidden="true">The Breez</p>
     <div class="ftr-grid">
-      <div><h2>Karibu. We look forward to welcoming you.</h2><p>{ADDRESS}</p><div class="btn-row"><a class="btn btn--book" href="book.html">Request a booking</a><a class="btn btn--light" href="{WA}" target="_blank" rel="noopener">WhatsApp us</a></div></div>
-      <div><span class="label">Reach us</span><ul><li><a href="{TEL}">Call {PHONE_DISPLAY}</a></li><li><a href="{WA}" target="_blank" rel="noopener">WhatsApp {PHONE_DISPLAY}</a></li><li><a href="mailto:{EMAIL}">{EMAIL}</a></li></ul></div>
-      <div><span class="label">Explore</span><ul>{links}</ul></div>
-      <div><span class="label">Follow</span><ul><li><a href="{FB}" target="_blank" rel="noopener">Facebook</a></li><li><a href="{TT}" target="_blank" rel="noopener">TikTok</a></li><li><a href="credits.html">Photo credits</a></li></ul></div>
+      <div class="ftr-brand"><a class="mark" href="index.html" aria-label="The Breez Hotel, home"><b>The Breez</b><span>Hotel · Busia</span></a><p>Karibu. We look forward to welcoming you.</p></div>
+      <nav class="ftr-nav" aria-label="Footer"><span class="label">Explore</span><ul>{ul(g1)}</ul></nav>
+      <nav class="ftr-nav" aria-label="Footer, more"><span class="label">&nbsp;</span><ul>{ul(g2)}</ul></nav>
+      <div class="ftr-contact"><span class="label">Contact</span><ul><li><a href="{TEL}">{PHONE_DISPLAY}</a></li><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ADDRESS}</li></ul>
+        <div class="ftr-social"><a href="{FB}" target="_blank" rel="noopener" aria-label="The Breez Hotel on Facebook">{SOCIAL_ICON['fb']}</a><a href="{TT}" target="_blank" rel="noopener" aria-label="The Breez Hotel on TikTok">{SOCIAL_ICON['tt']}</a><a href="{WA}" target="_blank" rel="noopener" aria-label="WhatsApp reception">{ICON['wa']}</a></div></div>
     </div>
-    <p class="ftr-word" aria-hidden="true">The Breez<small>Busia</small></p>
-    <div class="ftr-base"><span>© <span data-year>2026</span> The Breez Hotel, Busia, Kenya</span><span>Bookings are requests until confirmed by the hotel.</span></div>
+    <div class="ftr-base"><span>&copy; <span data-year>2026</span> The Breez Hotel, Busia, Kenya</span><span><a href="credits.html">Photo credits</a> &middot; Bookings are requests until confirmed by the hotel.</span><a class="ftr-top" href="#main">Back to top <span aria-hidden="true">&uarr;</span></a></div>
   </div>
 </footer>
 <nav class="dock" aria-label="Quick actions"><a href="{TEL}">{ICON['phone']} Call</a><a href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a><a href="book.html">{ICON['cal']} Book</a></nav>'''
@@ -359,6 +370,65 @@ MOODS = [
      'rooms.html', 'Discover the rooms', 'side'),
 ]
 
+HIGHLIGHTS = [
+    ('leaf', '01', 'A place to unwind', 'Palms, lawns, gazebos and a fountain in the courtyard: quiet corners to sit, read and let the afternoon pass.', 'about.html', 'The hotel and its grounds'),
+    ('wave', '02', 'Moments by the pool', 'A swimming pool and a children&rsquo;s pool, with loungers, blue umbrellas and a fresh juice brought to the table.', 'pools.html', 'See the pools'),
+    ('star', '03', 'Room to come together', 'Halls, lawns and marquees for conferences, weddings, ruracio and birthdays.', 'meetings.html', 'Plan an event'),
+    ('bed', '04', 'A stay to remember', 'Four room categories, with free Wi-Fi, daily housekeeping, secure parking and access to both pools.', 'rooms.html', 'See the rooms'),
+]
+LOWER_ICONS = {'leaf': '<path d="M20.5 3.5C11 3.6 4.6 8.4 4.2 15.6c-.1 1.2 0 2.4.4 3.5L2.8 21l1.4 1.4 1.9-1.9c1 .4 2.2.5 3.4.4 7.2-.5 11-6.9 11-17.4zM8.9 18.1l6.7-6.7-1.4-1.4-6.7 6.7c-.2-.7-.2-1.4-.1-2.1.3-4.9 4.3-8.4 10.8-8.9-.5 6.5-3.6 11-8.6 11.4-.3 0-.5 0-.7 0z"/>',
+    'bed': '<path d="M3 5h2.6v6.2H8V9.4C8 8.1 9 7 10.4 7h7.8C20.3 7 22 8.7 22 10.8V19h-2.6v-2.6H5.6V19H3zm2.6 8.8h13.8v-2.6H5.6z"/>'}
+SOCIAL_ICON = {
+    'fb': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21z"/></svg>',
+    'tt': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 3c.3 2.2 1.6 3.6 3.9 3.8v2.6c-1.4.1-2.6-.3-3.9-1.1v5.6c0 6.9-7.6 9.1-10.6 4.1-2-3.2-.8-8.9 5.6-9.1v2.7c-.5.1-1 .2-1.5.4-1.4.5-2.2 1.4-2 3 .4 3.1 6 4 5.6-2V3z"/></svg>',
+}
+
+def lower_home():
+    hl = ''.join(
+        f'<div class="bx-f rv"><svg class="bx-i" viewBox="0 0 24 24" aria-hidden="true">{({**EXP_ICONS, **LOWER_ICONS})[ic]}</svg>'
+        f'<div><span class="lw-no">{n}</span><h3>{h}</h3><p>{t} <a href="{u}">{lt}</a></p></div></div>' for ic, n, h, t, u, lt in HIGHLIGHTS)
+    return f'''<section class="lw-rev" aria-labelledby="rev-h">
+  <div class="lw-rev-ph">{img('linen-coffee-eucalyptus', '100vw')}</div>
+  <div class="lw-rev-in wrap">
+    <div class="lw-rev-panel rv">
+      <span class="ed-kick">Guest reviews</span>
+      <h2 id="rev-h">What our guests say</h2>
+      <p>The best way to know a place is to hear it from the people who stayed. Guests share their time at The Breez in their own words on Google and on Facebook.</p>
+      <div class="lw-rev-links"><a class="ed-mood-link" href="{MAP_PLACE}" target="_blank" rel="noopener">Read reviews on Google<span aria-hidden="true"> &rarr;</span></a><a class="ed-mood-link" href="{FB}" target="_blank" rel="noopener">Visit us on Facebook<span aria-hidden="true"> &rarr;</span></a></div>
+    </div>
+    <div class="lw-book rv">
+      <p class="lw-book-line">Karibu. <em>Your room is waiting.</em></p>
+      <div class="lw-book-act"><a class="hb-btn hb-btn--gold" href="book.html">Book your stay</a><a class="lw-wa" href="{WA}" target="_blank" rel="noopener">or ask us on WhatsApp</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="lw-hl" aria-labelledby="hl-h">
+  <div class="bx-wrap"><h2 class="sr-only" id="hl-h">Why guests choose The Breez</h2><div class="bx-fgrid">{hl}</div></div>
+</section>
+
+<section class="lw-loc" aria-labelledby="loc-h">
+  <div class="wrap lw-loc-grid">
+    <div class="lw-loc-text">
+      <span class="ed-kick rv">Find us</span>
+      <h2 class="lw-loc-title rv" id="loc-h">We are <em>here.</em></h2>
+      <p class="lw-loc-line rv">A little place to find your own moment.</p>
+      <p class="lw-loc-intro rv">On the Kisumu&ndash;Busia Road in Busia, western Kenya, close to the Uganda border, with secure parking on site.</p>
+      <dl class="lw-loc-dl rv">
+        <div><dt>Address</dt><dd>{ADDRESS}</dd></div>
+        <div><dt>Call</dt><dd><a href="{TEL}">{PHONE_DISPLAY}</a></dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:{EMAIL}">{EMAIL}</a></dd></div>
+      </dl>
+      <div class="lw-loc-links rv"><a class="ed-mood-link" href="{MAP_PLACE}" target="_blank" rel="noopener">Open in Google Maps<span aria-hidden="true"> &rarr;</span></a><a class="ed-mood-link" href="contact.html">Directions and contact<span aria-hidden="true"> &rarr;</span></a></div>
+    </div>
+    <div class="lw-map rv" data-map>
+      <iframe src="{MAP_EMBED}" title="Map showing The Breez Hotel on the Kisumu&ndash;Busia Road, Busia" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="lw-pin" aria-hidden="true"><span class="lw-pin-label">The Breez Hotel</span><svg viewBox="0 0 24 32"><path d="M12 0C5.4 0 0 5.2 0 11.7 0 20.4 12 32 12 32s12-11.6 12-20.3C24 5.2 18.6 0 12 0z"/><circle cx="12" cy="11.5" r="4.3"/></svg></div>
+      <span class="lw-map-coord" aria-hidden="true">0.4565&deg; N &middot; 34.1216&deg; E</span>
+    </div>
+  </div>
+</section>'''
+
 def editorial():
     karibu = f'''<section class="ed-karibu" aria-labelledby="kar-h">
   <div class="ed-k-panel">
@@ -424,7 +494,6 @@ def experiences():
     return f'''<section class="bx" aria-labelledby="bx-h">
   <h2 class="sr-only" id="bx-h">Your stay at The Breez</h2>
   <div class="bx-band"><div class="bx-wrap bx-grid" data-lightbox>{tiles}</div></div>
-  <div class="bx-feats"><div class="bx-wrap bx-fgrid">{feats}</div></div>
 </section>'''
 
 def home():
@@ -481,18 +550,7 @@ def home():
   </div>
 </section>
 
-<section class="sec sec--stone" aria-labelledby="find-h">
-  <div class="wrap find">
-    <div class="rv"><span class="label">06 · Find us</span><h2 class="h-xl" id="find-h" style="margin:.3em 0 .4em">On the Kisumu–Busia Road.</h2><p class="lead">In Busia, near the Uganda border. Secure parking on site.</p>
-      <ul class="ruled" style="margin:24px 0"><li><span>Call</span><a href="{TEL}"><b>{PHONE_DISPLAY}</b></a></li><li><span>WhatsApp</span><a href="{WA}" target="_blank" rel="noopener"><b>{PHONE_DISPLAY}</b></a></li><li><span>Email</span><a href="mailto:{EMAIL}"><b>{EMAIL}</b></a></li></ul>
-      <a class="link" href="contact.html">Directions and contact</a></div>
-    <div class="map rv"><iframe src="{MAP_EMBED}" title="Map showing The Breez Hotel in Busia" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
-  </div>
-</section>
-
-<section class="sec" aria-labelledby="close-h">
-  <div class="wrap closing"><span class="label">Plan your stay</span><h2 class="h-xl" id="close-h" data-split="lines">See you at the gate.</h2><div class="btn-row" style="justify-content:center"><a class="btn btn--book btn--framed" href="book.html">Request a booking</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a></div></div>
-</section>'''
+{lower_home()}'''
 
 def about():
     exp = f"""<section class="ab-sec" aria-labelledby="exp-h">
@@ -1011,7 +1069,7 @@ def book():
 </section>'''
 
 def credits():
-    rows = ''.join(f'<tr><td>{ALT[k]}</td><td>{STOCK[k][0]}</td><td><a href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash License</a></td></tr>' for k in sorted(USED) if IMAGES[k]['stock'])
+    rows = ''.join(f'<tr><td>{ALT[k]}</td><td>{STOCK[k][0]}</td><td><a href="{LICENSES[STOCK[k][1]]}" target="_blank" rel="noopener">{STOCK[k][1]} License</a></td></tr>' for k in sorted(USED) if IMAGES[k]['stock'])
     return f'''<section class="page-hero"><div class="wrap" style="max-width:960px"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Credits</span></nav><h1 class="h-xl">Photo credits</h1><p class="lead" style="margin-top:16px">Photographs of the hotel, its rooms, pools, gardens, food, halls, events and team are by The Breez Hotel and used with permission.</p></div></section>
 <section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond and Karla (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
 
