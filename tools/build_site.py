@@ -229,7 +229,7 @@ def header(slug):
     right = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[4:])
     ov = ''.join(f'<li><a href="{href(s)}"{cur(slug, s)}>{t}</a></li>' for s, t in [('index', 'Home')] + NAV + [('book', 'Book a stay')])
     return f'''<a class="skip" href="#main">Skip to content</a>
-<header class="hdr">
+<header class="hdr{' hdr--over' if slug == 'index' else ''}">
   <div class="hdr-in">
     <nav class="nav" aria-label="Primary">{left}</nav>
     <a class="mark" href="index.html" aria-label="The Breez Hotel, home"><b>The Breez</b><span>Hotel · Busia</span></a>
@@ -327,6 +327,23 @@ STORY = [
 ]
 STORY_IMGS = [x[0] for x in STORY]
 
+def intro_sec():
+    return f'''<section class="sec" aria-labelledby="intro-h">
+  <div class="wrap intro">
+    <div class="rv"><span class="label">Karibu</span>
+      <h2 class="h-xl" id="intro-h" style="margin:.3em 0 .4em" data-split="words">A welcome carved <em class="italic">in stone</em> at the gate.</h2>
+      <p class="lead">Behind the gate are palms, a pool court, gazebos on the lawn and a fountain in the courtyard. Guests come to stay the night, to swim, to meet or to celebrate.</p>
+      <div class="btn-row" style="margin-top:24px"><a class="link" href="about.html">The hotel and its grounds</a></div>
+    </div>
+    <div class="intro-media" data-layered>
+      {ph('main-building-facade', 'a ly-a', '(max-width:760px) 90vw, 40vw')}
+      {ph('sign-the-breeze-hotel-karibu', 'b ly-b mask-arch', '(max-width:760px) 45vw, 20vw')}
+    </div>
+  </div>
+</section>'''
+
+MOOD_POS = {'gazebo-cypress': '45% 50%', 'pool-terrace-kids-pool': '58% 60%', 'garden-party-setup': '50% 60%', 'room-four-poster-window': '55% 50%'}
+
 MOODS = [
     ('01', 'The quiet of morning', 'Let the day begin <em>gently</em>.', 'gazebo-cypress',
      'Early light on the lawns, the gazebos still in shade, and breakfast with your stay where the room rate includes it.',
@@ -363,18 +380,23 @@ def editorial():
     </div>
   </div>
 </section>'''
-    moods = ''.join(
-        f'''<article class="ed-mood ed-mood--{lay}">
-      <a class="ed-mood-ph rv" href="{u}" tabindex="-1" aria-hidden="true">{ph(k, '', '(max-width:760px) 100vw, 60vw')}</a>
-      <div class="ed-mood-text rv"><span class="ed-mood-no">{n}</span><span class="ed-kick">{lab}</span><h3>{h}</h3><p>{t}</p><a class="ed-mood-link" href="{u}">{lt}<span aria-hidden="true"> &rarr;</span></a></div>
-    </article>''' for n, lab, h, k, t, u, lt, lay in MOODS)
-    moods_sec = f'''<section class="ed-moods" aria-labelledby="moods-h">
+    steps = ''.join(
+        f'''<article class="ed-st-step" data-step data-tone="stone">
+        <a class="ed-st-ph" href="{u}" tabindex="-1" aria-hidden="true">{ph(k, '', '100vw')}</a>
+        <span class="ed-st-no">{n}</span><span class="ed-kick">{lab}</span><h3>{h}</h3><p>{t}</p>
+        <a class="ed-mood-link" href="{u}">{lt}<span aria-hidden="true"> &rarr;</span></a>
+      </article>''' for n, lab, h, k, t, u, lt, lay in MOODS)
+    scenes = ''.join(f'<figure data-scene style="--op:{MOOD_POS.get(k, "50% 50%")}">{img(k, "(max-width:1100px) 55vw, 58vw")}</figure>' for n, lab, h, k, t, u, lt, lay in MOODS)
+    story_sec = f'''<section class="ed-story" data-story data-tone="stone" aria-labelledby="moods-h">
   <div class="wrap">
     <header class="ed-moods-head"><span class="ed-kick rv">The many moods of The Breez</span><h2 class="rv" id="moods-h">The best time to visit? <em>Every hour of the day.</em></h2></header>
-    {moods}
+    <div class="ed-st-in">
+      <div class="ed-st-steps">{steps}</div>
+      <div class="ed-st-media" aria-hidden="true">{scenes}</div>
+    </div>
   </div>
 </section>'''
-    return karibu + '\n' + place + '\n' + moods_sec
+    return karibu + '\n' + intro_sec() + '\n' + story_sec + '\n' + place
 
 EXP_TILES = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
              'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'bed-detail']
@@ -431,31 +453,8 @@ def home():
     <div><dt>Busia</dt><dd>on the Kisumu&ndash;Busia Road</dd></div>
   </dl>
 </section>
-<div class="hb-book">
-  <form class="hx-strip" data-form="quick" action="book.html" aria-label="Check dates">
-    <label data-label="Check-in">Check-in<input type="date" name="checkin"></label>
-    <label data-label="Check-out">Check-out<input type="date" name="checkout"></label>
-    <label class="hx-guests" data-label="Guests">Guests<select name="guests"><option>1 adult</option><option selected>2 adults</option><option>3 adults</option><option>4+ adults</option></select></label>
-    <div class="hx-info"><span>Reception</span><a href="{TEL}"><b>{PHONE_DISPLAY}</b></a></div>
-    <button type="submit">Request dates</button>
-  </form>
-</div>
-<p class="hx-strip-note small">Requests go to reception on WhatsApp or email. Nothing is charged online.</p>
 <div class="mq" data-marquee aria-label="Karibu. Stay, swim, dine, meet and celebrate at The Breez."><div class="mq-track"><span>Karibu</span><span>Stay</span><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></div></div>
 
-<section class="sec" aria-labelledby="intro-h">
-  <div class="wrap intro">
-    <div class="rv"><span class="label">Karibu</span>
-      <h2 class="h-xl" id="intro-h" style="margin:.3em 0 .4em" data-split="words">A welcome carved <em class="italic">in stone</em> at the gate.</h2>
-      <p class="lead">Behind the gate are palms, a pool court, gazebos on the lawn and a fountain in the courtyard. Guests come to stay the night, to swim, to meet or to celebrate.</p>
-      <div class="btn-row" style="margin-top:24px"><a class="link" href="about.html">The hotel and its grounds</a></div>
-    </div>
-    <div class="intro-media" data-layered>
-      {ph('main-building-facade', 'a ly-a', '(max-width:760px) 90vw, 40vw')}
-      {ph('sign-the-breeze-hotel-karibu', 'b ly-b mask-arch', '(max-width:760px) 45vw, 20vw')}
-    </div>
-  </div>
-</section>
 {editorial()}
 
 {experiences()}
