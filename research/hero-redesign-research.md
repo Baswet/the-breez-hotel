@@ -48,3 +48,21 @@ Not inspected this round: Belmond and Rosewood loaded only their intro screens i
 5. **A different composition per page:** full-bleed (Home), editorial split (About), photo + index (Rooms), immersive with rails (Pools), warm split (Dining), ruled grid (Meetings), mosaic (Gallery), location split (Contact).
 6. **Motion has a personality per page and stops:** slow settle on Home, mask reveals on About, staggered mosaic on Gallery, drift on Pools. Everything is off under `prefers-reduced-motion`.
 7. **Image resolution decides the frame.** Most hotel photos are 720–1600 px wide. The 1224 px exterior photos are shown inset or behind a scrim rather than stretched across a 1920 px screen.
+
+## 4. Enhancement pass: image effects research (26 Nov 2026, second round)
+
+| Reference | Observed | Used for Breez |
+| --- | --- | --- |
+| **Codrops** (articles and the WebGL hub) | The site lists 309 articles on "image reveal". Its WebGL demos centre on shader-driven image transitions. The classic hover-effect technique mixes two textures through a greyscale displacement map. (The old demo URL now returns 404.) | A ~90-line vanilla WebGL displacement transition, used only in the gallery's cinematic sequence, with a crossfade fallback. No library. |
+| **Pinterest**, "arch image mask editorial web design" | Architecture and hotel heroes with oversized type behind buildings, arched and rounded image frames, and one floating info card. | Arched frames on Rooms and About, and one oversized ring on Dining. Each is used once per page, never stacked. |
+| **Awwwards**, Hotel / Restaurant category (1,984 sites) | Thumbnails did not render in the browser; only the site names loaded. | Not used. |
+| **Lumière** (Dribbble, first round) | A floating framed photo over a full-bleed scene; the brief explicitly says the hero should convey "atmosphere". | Floating detail photos with a shaped mask. |
+
+Rules for the effects:
+- **Liquid displacement:** only the gallery's cinematic slider.
+- **Water ripple:** pool images only (the Pools rail and the About pools panel). It runs on hover with a fine pointer and stays static on touch.
+- **Parallax:** at most one layer per hero, translate only.
+- **Mask reveals on scroll:** arches and wipes on chosen images.
+- **Cursor-responsive drift:** gallery tiles on desktop only.
+- **Ambient light:** a warm radial glow behind the Dining ring and a cool glow on Pools.
+- **Fallbacks:** everything is off under `prefers-reduced-motion`. Without WebGL the slider crossfades. On touch, hover effects become static.

@@ -41,6 +41,16 @@ STOCK = {  # key: (photographer, unsplash photo id or page)
     'waiter-serving': ('Kate Townsend', 'Unsplash'),
     'long-table-gathering': ('Lisa Marie Theck', 'Unsplash'),
     'friends-lunch': ('Sweet Life', 'Unsplash'),
+    'food-salmon-plate': ('Casey Lee', 'Unsplash'),
+    'food-sauce-pour': ('Urban Gyllström', 'Unsplash'),
+    'food-grilled-board': ('Mark DeYoung', 'Unsplash'),
+    'food-chicken-woodboard': ('Bayu Syaits', 'Unsplash'),
+    'drink-mango-juice': ('Sam Hojati', 'Unsplash'),
+    'drink-three-juices': ('Dhiren Maru', 'Unsplash'),
+    'food-breakfast-bowls': ('Monaz Hastam', 'Unsplash'),
+    'food-table-evening': ('Jay Wennington', 'Unsplash'),
+    'food-table-set': ('Kamilla Isalieva', 'Unsplash'),
+    'food-overhead-plate': ('Jametlene Reskp', 'Unsplash'),
 }
 
 ALT = {
@@ -142,6 +152,16 @@ ALT = {
     'waiter-serving': 'A waiter carrying drinks',
     'long-table-gathering': 'A long table gathering',
     'friends-lunch': 'Friends sharing lunch',
+    'food-salmon-plate': 'A plated fish dish with fresh vegetables',
+    'food-sauce-pour': 'A chef finishing a plated dish with sauce',
+    'food-grilled-board': 'Grilled chicken and vegetables on a wooden board',
+    'food-chicken-woodboard': 'Grilled chicken served on a wooden platter',
+    'drink-mango-juice': 'Fresh mango juice with lime',
+    'drink-three-juices': 'Three fresh fruit juices',
+    'food-breakfast-bowls': 'A breakfast table seen from above',
+    'food-table-evening': 'Plates and glasses on an evening dinner table',
+    'food-table-set': 'A dinner table set with plates and glasses',
+    'food-overhead-plate': 'A plated dish seen from above',
 }
 
 CAT_LABEL = {'exterior': 'Building', 'gardens': 'Gardens', 'pools': 'Pools', 'rooms': 'Rooms',
@@ -178,9 +198,11 @@ def ph(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, cap=True
     return f'<figure class="ph {cls}"{extra}>{img(key, sizes, eager, alt)}{c}</figure>'
 
 
-def hx(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None, num=None):
+def hx(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None, num=None, extra=''):
     n = f'<figcaption class="hx-no">{num}</figcaption>' if num else ''
-    return f'<figure class="hx-ph {cls}">{img(key, sizes, eager, alt)}{n}</figure>'
+    if IMAGES[key]['stock']:
+        n += f'<figcaption class="cap cap--illus">Illustrative, not The Breez · {STOCK[key][0]} / Unsplash</figcaption>'
+    return f'<figure class="hx-ph {cls}"{extra}>{img(key, sizes, eager, alt)}{n}</figure>'
 
 def crumb(label):
     return f'<nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>{label}</span></nav>'
@@ -264,6 +286,7 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="assets/site.css?v={TODAY}">
 <link rel="stylesheet" href="assets/heroes.css?v={TODAY}">
+<link rel="stylesheet" href="assets/motion.css?v={TODAY}">
 {ld}
 </head>
 <body class="p-{slug}">
@@ -273,6 +296,7 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 </main>
 {footer()}
 <script src="assets/site.js?v={TODAY}" defer></script>
+<script src="assets/effects.js?v={TODAY}" defer></script>
 </body>
 </html>
 '''
@@ -289,6 +313,15 @@ ROOMS = {
     'king':   {'Room': 'King Room', 'Bed': '1 large double bed', 'Sleeps': '2 guests', 'Balcony': 'Listed', 'Air conditioning': 'Listed', 'View': 'Pool view', 'Breakfast': 'Included as listed', 'Rate': 'On request'},
 }
 
+STORY = [
+    ('entrance-gate', 'Arrive', 'Through the gate.', 'The stone sign says Karibu. Secure parking waits inside.', 'contact.html', 'Find us', 'stone'),
+    ('room-four-poster-window', 'Stay', 'A room by the garden.', 'Single, Double, Deluxe and King rooms, with Wi-Fi and housekeeping.', 'rooms.html', 'See the rooms', 'warm'),
+    ('pool-umbrellas-above', 'Swim', 'Two pools in the palm court.', 'A main pool, a kids’ pool, loungers and shade.', 'pools.html', 'Visit the pools', 'pool'),
+    ('poolside-meal-juice', 'Dine', 'Lunch at the water’s edge.', 'Restaurant, bar and poolside service. Breakfast with stays, as listed.', 'dining.html', 'Restaurant &amp; bar', 'warm'),
+    ('courtyard-fountain-gazebos', 'Celebrate', 'Evenings on the lawn.', 'Gazebos, a fountain and marquees for weddings, ruracio and parties.', 'meetings.html', 'Plan an event', 'green'),
+]
+STORY_IMGS = [x[0] for x in STORY]
+
 def home():
     stay = f'''<section class="sec" aria-labelledby="stay-h">
   <div class="wrap">
@@ -304,9 +337,9 @@ def home():
     return f'''<section class="hx-home" aria-label="Welcome to The Breez Hotel">
   {hx('building-palms-pool-court', '', '100vw', eager=True)}
   <div class="hx-home-side" aria-hidden="true"><span class="hx-v">Kisumu–Busia Road · Busia · Kenya</span></div>
-  <div class="hx-home-in">
+  <div class="hx-home-in" data-parallax="-0.05">
     <span class="hx-k hx-k--light hx-a1">Hotel · Pools · Gardens · Busia</span>
-    <h1 class="hx-title hx-a2">The Breez</h1>
+    <h1 class="hx-title" data-split="chars">The Breez</h1>
     <p class="hx-sub hx-a3">A garden hotel on the Kisumu–Busia Road, with two pools, a restaurant and bar, meeting halls and lawns for celebrations.</p>
   </div>
   <form class="hx-strip" data-form="quick" action="book.html" aria-label="Check dates">
@@ -318,38 +351,30 @@ def home():
   </form>
 </section>
 <p class="hx-strip-note small">Requests go to reception on WhatsApp or email. Nothing is charged online.</p>
+<div class="mq" data-marquee aria-label="Karibu. Stay, swim, dine, meet and celebrate at The Breez."><div class="mq-track"><span>Karibu</span><span>Stay</span><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></div></div>
 
 <section class="sec" aria-labelledby="intro-h">
   <div class="wrap intro">
     <div class="rv"><span class="label">Karibu</span>
-      <h2 class="h-xl" id="intro-h" style="margin:.3em 0 .4em">A welcome carved <em class="italic">in stone</em> at the gate.</h2>
+      <h2 class="h-xl" id="intro-h" style="margin:.3em 0 .4em" data-split="words">A welcome carved <em class="italic">in stone</em> at the gate.</h2>
       <p class="lead">Behind the gate are palms, a pool court, gazebos on the lawn and a fountain in the courtyard. Guests come to stay the night, to swim, to meet or to celebrate.</p>
       <div class="btn-row" style="margin-top:24px"><a class="link" href="about.html">The hotel and its grounds</a></div>
     </div>
-    <div class="intro-media rv">
-      {ph('main-building-facade', 'a', '(max-width:760px) 90vw, 40vw')}
-      {ph('sign-the-breeze-hotel-karibu', 'b', '(max-width:760px) 45vw, 20vw')}
+    <div class="intro-media" data-layered>
+      {ph('main-building-facade', 'a ly-a', '(max-width:760px) 90vw, 40vw')}
+      {ph('sign-the-breeze-hotel-karibu', 'b ly-b mask-arch', '(max-width:760px) 45vw, 20vw')}
     </div>
   </div>
 </section>
-{stay}
-<section class="sec sec--pool" aria-labelledby="pool-h">
-  <div class="wrap">
-    {head('02 · Pools', '<span id="pool-h">Two pools, one for the little ones</span>', '', light=True)}
-    <div class="pool-band">
-      {ph('pool-umbrellas-above', 'pb-a rv', '(max-width:760px) 100vw, 58vw')}
-      {ph('kids-pool-umbrellas', 'pb-b rv', '30vw')}
-      <div class="pb-text rv"><p>The main pool sits in a court of palms and umbrellas, with a shallow kids’ pool beside it. Order lunch and a fresh juice to your lounger.</p><a class="btn btn--light btn--framed" href="pools.html">Visit the pools</a></div>
-    </div>
-  </div>
-</section>
+<section class="sec" aria-label="The Breez in one sentence"><div class="wrap stmt"><p data-tint>A garden hotel on the Kisumu–Busia Road, where guests come to stay the night, to swim, to meet and to celebrate.</p></div></section>
 
-<section class="sec" aria-labelledby="dine-h">
-  <div class="wrap dine-split">
-    <div class="ds-text rv"><span class="label">03 · Dining</span><h2 class="h-l" id="dine-h">Restaurant, bar and the poolside table</h2><p class="lead">Kenyan and international plates, grills from the kitchen and drinks from the bar. Breakfast is included with stays, as listed online.</p><a class="link" href="dining.html">Restaurant &amp; bar</a></div>
-    {ph('poolside-meal-juice', 'ds-a rv ph--zoom', '(max-width:760px) 100vw, 55vw')}
-    {ph('bar-counter-stools', 'ds-b rv', '(max-width:760px) 50vw, 25vw')}
-    {ph('restaurant-interior-blue', 'ds-c rv', '(max-width:760px) 50vw, 30vw')}
+<section class="sec story" data-story data-tone="stone" aria-labelledby="story-h">
+  <div class="wrap">
+    {head('The Breez experience', '<span id="story-h" data-split="words">One day, five moments</span>')}
+    <div class="story-in">
+      <div class="story-media" aria-hidden="true">{''.join(f'<figure data-scene>{img(k, "(max-width:1100px) 50vw, 55vw")}</figure>' for k in STORY_IMGS)}<span class="story-frame"></span></div>
+      <div class="story-steps">{''.join(f'<article class="story-step" data-step data-tone="{tone}"><figure class="story-ph">{img(k, "100vw")}</figure><span class="hx-k">0{i+1} · {lab}</span><h3>{h}</h3><p>{t}</p><a class="link" href="{lnk}">{lt}</a></article>' for i, (k, lab, h, t, lnk, lt, tone) in enumerate(STORY))}</div>
+    </div>
   </div>
 </section>
 
@@ -369,7 +394,7 @@ def home():
 <section class="sec" aria-labelledby="gal-h">
   <div class="wrap">
     {head('05 · Gallery', '<span id="gal-h">Around the hotel</span>', '<a class="link" href="gallery.html">All photographs</a>')}
-    <div class="mosaic rv" data-lightbox>
+    <div class="mosaic" data-lightbox data-stagger data-drift>
       {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, "(max-width:760px) 50vw, 33vw")}</a>' for c, k in [('m1', 'courtyard-fountain-gazebos'), ('m2', 'pool-aerial'), ('m3', 'gazebo-cypress'), ('m4', 'lounge-rattan-sofas'), ('m5', 'tower-and-terrace'), ('m6', 'grilled-chicken')])}
     </div>
   </div>
@@ -385,17 +410,17 @@ def home():
 </section>
 
 <section class="sec" aria-labelledby="close-h">
-  <div class="wrap closing rv"><span class="label">Plan your stay</span><h2 class="h-xl" id="close-h">See you at the gate.</h2><div class="btn-row" style="justify-content:center"><a class="btn btn--book btn--framed" href="book.html">Request a booking</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a></div></div>
+  <div class="wrap closing"><span class="label">Plan your stay</span><h2 class="h-xl" id="close-h" data-split="lines">See you at the gate.</h2><div class="btn-row" style="justify-content:center"><a class="btn btn--book btn--framed" href="book.html">Request a booking</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a></div></div>
 </section>'''
 
 def about():
     exp = f"""<section class="ab-sec" aria-labelledby="exp-h">
   <div class="wrap">
-    <div class="ab-exp-head rv"><div><span class="ab-n">03</span><h2 class="ab-h" id="exp-h" style="margin-top:12px">The Breez experience</h2></div><p class="hx-sub">Four reasons guests come through the gate.</p></div>
+    <div class="ab-exp-head rv"><div><span class="ab-n">03</span><h2 class="ab-h" id="exp-h" style="margin-top:12px" data-split="words">The Breez experience</h2></div><p class="hx-sub">Four reasons guests come through the gate.</p></div>
     <div class="ab-exp">
       <a class="ab-x ab-x1 rv" href="rooms.html">{hx('room-four-poster-window', '', '(max-width:760px) 100vw, 58vw')}<div class="ab-x-cap"><div><h3>Accommodation</h3><p>Single, Double, Deluxe and King rooms.</p></div><span class="go">Rooms</span></div></a>
-      <a class="ab-x ab-x2 rv" href="pools.html">{hx('pool-umbrellas-above', '', '(max-width:760px) 50vw, 40vw')}<div class="ab-x-cap"><div><h3>Swimming pools</h3><p>A main pool and a kids’ pool.</p></div><span class="go">Pools</span></div></a>
-      <a class="ab-x ab-x3 rv" href="dining.html">{hx('poolside-meal-juice', '', '(max-width:760px) 50vw, 33vw')}<div class="ab-x-cap"><div><h3>Dining</h3><p>Restaurant, bar and poolside.</p></div><span class="go">Dining</span></div></a>
+      <a class="ab-x ab-x2 rv" href="pools.html">{hx('pool-umbrellas-above', 'fx-ripple', '(max-width:760px) 50vw, 40vw')}<div class="ab-x-cap"><div><h3>Swimming pools</h3><p>A main pool and a kids’ pool.</p></div><span class="go">Pools</span></div></a>
+      <a class="ab-x ab-x3 rv" href="dining.html">{hx('poolside-meal-juice', 'mask-circle', '(max-width:760px) 50vw, 33vw')}<div class="ab-x-cap"><div><h3>Dining</h3><p>Restaurant, bar and poolside.</p></div><span class="go">Dining</span></div></a>
       <a class="ab-x ab-x4 rv" href="meetings.html">{hx('hall-classroom-setup', '', '100vw')}<div class="ab-x4-over"><span class="ab-n">Meetings &amp; events</span><h3>Halls, lawns and marquees</h3><p>Projector, Wi-Fi and catering packages.</p><span class="link" style="justify-self:start">Plan an event</span></div></a>
     </div>
   </div>
@@ -404,17 +429,17 @@ def about():
              ('ab-p2', 'fountain-lawn-swing', 'The fountain lawn', '(max-width:760px) 50vw, 40vw'),
              ('ab-p3', 'garden-gazebo-roof', 'A garden gazebo', '(max-width:760px) 50vw, 40vw'),
              ('ab-p4', 'pool-garden-view', 'Pool, garden and the guest wing', '100vw')]
-    pr = ''.join(f'<a class="{c} rv" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{t}"><figure style="margin:0;height:100%">{img(k, sz)}<figcaption><b>0{i+1}</b>{t}</figcaption></figure></a>' for i, (c, k, t, sz) in enumerate(props))
+    pr = ''.join(f'<a class="{c}{" mask-arch" if c == "ab-p1" else ""}" data-reveal="{"arch" if c == "ab-p1" else ("circle" if c == "ab-p3" else "up")}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{t}"><figure style="margin:0;height:100%">{img(k, sz)}<figcaption><b>0{i+1}</b>{t}</figcaption></figure></a>' for i, (c, k, t, sz) in enumerate(props))
     return f"""<section class="ab-hero" aria-labelledby="ab-h1">
   <div class="ab-hero-rail" aria-hidden="true"><span class="hx-v">01 · About The Breez</span></div>
   <div class="ab-hero-text">
     <div>{crumb('About')}<span class="hx-k hx-a1">Busia, Kenya</span>
-      <h1 id="ab-h1" class="hx-a2">More than <em>a place</em> to stay.</h1></div>
+      <h1 id="ab-h1" data-split="words">More than <em>a place</em> to stay.</h1></div>
     <div class="ab-hero-foot hx-a3"><p class="hx-sub">Discover a welcoming hotel in Busia, where relaxation, hospitality and memorable moments come together.</p><a class="hx-scroll" href="#story"><i></i>Scroll</a></div>
   </div>
   <div class="ab-hero-media">
     {hx('tower-and-terrace-tall', 'main', '(max-width:760px) 100vw, 50vw', eager=True)}
-    {hx('gate-sign-crop', 'tag', '230px')}
+    {hx('gate-sign-crop', 'tag mask-arch', '230px')}
     <span class="loc">Kisumu–Busia Road</span>
   </div>
 </section>
@@ -422,9 +447,9 @@ def about():
 <section class="ab-sec" id="story" aria-labelledby="story-h">
   <div class="wrap ab-story">
     <span class="hx-v" aria-hidden="true">Our story</span>
-    {hx('main-building-facade', 'ab-story-main rv-mask', '(max-width:760px) 100vw, 55vw')}
-    {hx('sign-the-breeze-hotel-karibu', 'ab-story-sign rv', '(max-width:760px) 60vw, 25vw')}
-    <div class="ab-story-text rv"><span class="ab-n">02 · Our story</span><h2 class="ab-h" id="story-h">Karibu, carved at the gate.</h2>
+    {hx('main-building-facade', 'ab-story-main', '(max-width:760px) 100vw, 55vw', extra=' data-reveal="left"')}
+    {hx('sign-the-breeze-hotel-karibu', 'ab-story-sign', '(max-width:760px) 60vw, 25vw', extra=' data-reveal="scale" data-parallax="0.05"')}
+    <div class="ab-story-text rv"><span class="ab-n">02 · Our story</span><h2 class="ab-h" id="story-h" data-split="words">Karibu, carved at the gate.</h2>
       <p>The Breez Hotel stands on the Kisumu–Busia Road, close to the Kenya–Uganda border. Behind the carved Karibu sign are guest rooms, a main pool and a kids’ pool, a restaurant and bar, meeting halls, and gardens with gazebos and a fountain. Guests come to stay the night, to swim, to meet and to celebrate.</p></div>
   </div>
 </section>
@@ -434,21 +459,21 @@ def about():
 <section class="ab-sec sec--stone" aria-labelledby="prop-h">
   <div class="wrap">
     <div class="ab-prop-head rv"><div><span class="ab-n">04</span><h2 class="ab-h" id="prop-h" style="margin-top:12px">The property in pictures</h2></div><a class="link" href="gallery.html">All photographs</a></div>
-    <div class="ab-prop" data-lightbox>{pr}</div>
+    <div class="ab-prop" data-lightbox data-drift>{pr}</div>
   </div>
 </section>
 
 <section class="ab-sec" aria-labelledby="people-h">
   <div class="wrap ab-people">
-    {hx('staff-team-welcome', 'rv', '(max-width:760px) 100vw, 640px')}
-    <div class="ab-people-text rv"><span class="ab-n">05 · The people behind the welcome</span><h2 class="ab-h ab-caps" id="people-h" style="font-size:clamp(2rem,1.2rem + 2.6vw,3.6rem)">Hospitality with a personal touch.</h2><p>The Breez team welcomes guests at reception, looks after the rooms, serves the restaurant and bar, and sets up meetings and celebrations.</p><a class="link" href="contact.html">Talk to reception</a></div>
+    {hx('staff-team-welcome', '', '(max-width:760px) 100vw, 640px', extra=' data-reveal="blur"')}
+    <div class="ab-people-text rv"><span class="ab-n">05 · The people behind the welcome</span><h2 class="ab-h ab-caps" id="people-h" style="font-size:clamp(2rem,1.2rem + 2.6vw,3.6rem)" data-split="lines">Hospitality with a personal touch.</h2><p>The Breez team welcomes guests at reception, looks after the rooms, serves the restaurant and bar, and sets up meetings and celebrations.</p><a class="link" href="contact.html">Talk to reception</a></div>
   </div>
 </section>
 
 <section class="ab-close" aria-labelledby="close-h">
   {hx('building-palms-pool-court', '', '100vw')}
   <div class="ab-close-in">
-    <div class="rv"><span class="hx-k hx-k--light">06 · Busia, Kenya</span><h2 id="close-h">Your next stay starts here.</h2></div>
+    <div><span class="hx-k hx-k--light">06 · Busia, Kenya</span><h2 id="close-h" data-split="lines">Your next stay starts here.</h2></div>
     <div class="rv"><ul><li><span>Call</span><a href="{TEL}">{PHONE_DISPLAY}</a></li><li><span>Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><span>Find us</span><span style="color:#fff">Kisumu–Busia Road</span></li></ul>
       <div class="hx-actions"><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp us</a><a class="btn btn--book" href="book.html">Booking enquiry</a></div></div>
   </div>
@@ -466,20 +491,36 @@ def rooms():
         d = ROOMS[k]
         dl = ''.join(f'<div><dt>{f}</dt><dd>{v}</dd></div>' for f, v in d.items() if f not in ('Room',))
         sp += f'''<article class="spread{' flip' if flip else ''}" id="{k}">
-  <div class="spread-img rv">{ph(main, 'main', '(max-width:1100px) 100vw, 66vw')}{ph(det, 'detail', '25vw')}</div>
+  <div class="spread-img">{ph(main, 'main', '(max-width:1100px) 100vw, 66vw', extra=' data-reveal="left"')}{ph(det, 'detail', '25vw')}</div>
   <div class="spec rv"><span class="label">0{i+1} · Room</span><h2>{d['Room']}</h2><p>{blurbs[k]}</p><dl>{dl}</dl><a class="btn btn--solid" href="book.html?room={d['Room'].replace(' ', '+')}">Request this room</a></div>
 </article>'''
     picks = ''.join(f'<li><label><input type="checkbox" value="{k}"{" checked" if k in ("double", "deluxe") else ""}> {v["Room"]}</label></li>' for k, v in ROOMS.items())
     data = html.escape(json.dumps({k: {f: v for f, v in d.items()} for k, d in ROOMS.items()}), quote=True)
     return f'''<section class="hx-rooms" aria-labelledby="rooms-h1">
   <div class="hx-rooms-text">
-    <div>{crumb('Stay')}<span class="hx-k hx-a1">02 · Rooms &amp; stays</span><h1 class="hx-title hx-a2" id="rooms-h1">Rest in the garden.</h1><p class="hx-sub hx-a3" style="margin-top:18px">Four room categories, as listed on Booking.com. Reception confirms your room and rate.</p></div>
+    <div>{crumb('Stay')}<span class="hx-k hx-a1">02 · Rooms &amp; stays</span><h1 class="hx-title" id="rooms-h1" data-split="words">Rest in the garden.</h1><p class="hx-sub hx-a3" style="margin-top:18px">Four room categories, as listed on Booking.com. Reception confirms your room and rate.</p></div>
     <div class="hx-a4"><ul class="hx-index" data-index>{''.join(f'<li><a href="#{k}" data-swap="{IMAGES[m]["rel"]}" data-alt="{html.escape(ALT[m], quote=True)}"{" class=on" if k == "double" else ""}><b>{ROOMS[k]["Room"]}</b><span>{ROOMS[k]["Bed"]} · {ROOMS[k]["Sleeps"]}</span></a></li>' for k, m in [('single', 'single-room'), ('double', 'room-four-poster-window'), ('deluxe', 'room-grey-bedding'), ('king', 'room-four-poster-2')])}</ul><div class="hx-actions" style="margin-top:22px"><a class="btn btn--solid" href="book.html">Request a booking</a><a class="btn" href="#cmp-h">Compare rooms</a></div></div>
   </div>
   <div class="hx-rooms-media">
-    {hx('room-four-poster-window', 'main', '(max-width:760px) 100vw, 60vw', eager=True)}
-    {hx('bed-detail', 'detail', '280px')}
+    {hx('room-four-poster-window', 'main mask-arch', '(max-width:760px) 100vw, 60vw', eager=True)}
+    {hx('bed-detail', 'detail', '280px', extra=' data-parallax="0.06"')}
     <span class="note">Photographs of rooms at The Breez</span>
+  </div>
+</section>
+<section class="xp" data-expand aria-labelledby="xp-h">
+  <div class="xp-sticky"><span class="xp-word" aria-hidden="true">Rest.</span>
+    <div class="xp-frame">{img('room-four-poster-2', '100vw')}</div>
+    <div class="xp-title"><span class="hx-k hx-k--light">Rooms at The Breez</span><h2 id="xp-h">Unwind, by the garden.</h2></div>
+  </div>
+</section>
+<section class="sec" aria-labelledby="sl-h">
+  <div class="wrap">
+    {head('Inside the rooms', '<span id="sl-h" data-split="words">A closer look</span>', '<p>Photographs of rooms at The Breez. Furniture and layout vary by category.</p>')}
+    <div class="sl" data-slides tabindex="0" aria-roledescription="carousel" aria-label="Room photographs">
+      <div class="sl-stage">{''.join(f'<figure class="sl-slide{" on" if i == 0 else ""}" aria-roledescription="slide">{img(k, "(max-width:760px) 100vw, 80vw")}<figcaption>{c}</figcaption></figure>' for i, (k, c) in enumerate([('room-grey-bedding','Deluxe-style room'),('room-desk-armchair','Desk and armchair'),('bathroom-shower','En-suite shower'),('room-fridge-tv','Fridge and TV'),('bed-detail','Made for the night'),('room-four-poster-2','Four-poster bed')]))}</div>
+      <div class="sl-bar"><div class="sl-dots">{''.join(f'<button type="button" data-dot aria-label="Photo {i+1}"{" aria-current=true" if i == 0 else ""}></button>' for i in range(6))}</div>
+        <div class="sl-ctl"><span class="sl-count" data-count>01 / 06</span><button type="button" data-prev aria-label="Previous photo">←</button><button type="button" data-next aria-label="Next photo">→</button></div></div>
+    </div>
   </div>
 </section>
 <section class="sec" style="padding-top:0"><div class="wrap">{sp}<p class="note">Photographs show rooms at The Breez Hotel; furniture and layout vary by room. Features are as listed on Booking.com in November 2026 and may change.</p></div></section>
@@ -508,8 +549,8 @@ def pools():
     col = [('cl1', 'pool-aerial'), ('cl2', 'woman-swimming-pool'), ('cl3', 'pool-lanes'), ('cl4', 'pool-terrace-kids-pool'), ('cl5', 'pool-reading-lifestyle'), ('cl6', 'kids-pool-building')]
     return f'''<section class="hx-pools" aria-labelledby="pools-h1">
   {hx('pool-loungers', '', '100vw', eager=True)}
-  <div class="hx-pools-in">{crumb('Pools')}<span class="hx-k hx-k--light hx-a1">03 · Water &amp; shade</span><h1 class="hx-title hx-a2" id="pools-h1">Pools<em class="italic">in the palm court</em></h1><p class="hx-sub hx-a3">A main pool and a kids’ pool, with loungers, umbrellas and food from the bar.</p></div>
-  <div class="hx-rail" aria-label="More pool photographs">{hx('pool-lanes', '', '(max-width:760px) 33vw, 220px', num='01')}{hx('kids-pool-umbrellas', '', '(max-width:760px) 33vw, 220px', num='02')}{hx('pool-top-down', '', '(max-width:760px) 33vw, 220px', num='03')}</div>
+  <div class="hx-pools-in">{crumb('Pools')}<span class="hx-k hx-k--light hx-a1">03 · Water &amp; shade</span><h1 class="hx-title" id="pools-h1"><span data-split="chars" style="display:block">Pools</span><em class="italic hx-a3">in the palm court</em></h1><p class="hx-sub hx-a3">A main pool and a kids’ pool, with loungers, umbrellas and food from the bar.</p></div>
+  <div class="hx-rail glow-cool" aria-label="More pool photographs">{hx('pool-lanes', 'mask-pill fx-ripple', '(max-width:760px) 33vw, 220px')}{hx('kids-pool-umbrellas', 'mask-pill fx-ripple', '(max-width:760px) 33vw, 220px')}{hx('pool-top-down', 'mask-pill fx-ripple', '(max-width:760px) 33vw, 220px')}</div>
 </section>
 <section class="sec sec--pool" aria-label="The pools">
   <div class="wrap sticky-story"><div class="ss-media">{media}</div><div class="ss-steps">{st}</div></div>
@@ -517,7 +558,7 @@ def pools():
 <section class="sec" aria-labelledby="col-h">
   <div class="wrap">
     {head('Pool days', '<span id="col-h">Water, shade and a juice</span>')}
-    <div class="collage rv">{''.join(ph(k, c, '(max-width:760px) 50vw, 33vw') for c, k in col)}</div>
+    <div class="collage" data-stagger>{''.join(ph(k, c, '(max-width:760px) 50vw, 33vw') for c, k in col)}</div>
   </div>
 </section>
 <section class="sec sec--pool" aria-labelledby="pi-h">
@@ -533,23 +574,31 @@ def pools():
 </section>'''
 
 def dining():
-    strip = [('poolside-meal-juice', 'By the pool'), ('grilled-chicken', 'From the grill'), ('roast-meat', 'Roasts from the kitchen'),
-             ('waiter-serving', 'Service at the table'), ('stew-plate', 'A plate from the kitchen'), ('buffet-samosa-chapati', 'Event buffets'), ('buffet-decor', 'Dressed for occasions'),
-             ('rice-chicken-plate', 'Rice and chicken')]
-    sf = ''.join(f'<figure>{ph(k, "", "(max-width:760px) 80vw, 30vw")}<figcaption>{c}</figcaption></figure>' for k, c in strip)
+    strip = [('food-sauce-pour', 'Finished with care'), ('food-salmon-plate', 'Colour on the plate'), ('drink-three-juices', 'Fresh juice'),
+             ('food-chicken-woodboard', 'From the grill'), ('food-breakfast-bowls', 'Morning'), ('food-table-set', 'Evening'), ('food-overhead-plate', 'Plated')]
+    sf = ''.join(f'<figure>{hx(k, "", "(max-width:760px) 80vw, 30vw")}<figcaption>{c}</figcaption></figure>' for k, c in strip)
     return f'''<section class="hx-dining" aria-labelledby="dine-h1">
   <div class="hx-dining-text">
-    <div>{crumb('Dining')}<span class="hx-k hx-a1">04 · Taste &amp; atmosphere</span><h1 class="hx-title hx-a2" id="dine-h1">Restaurant <em class="italic">&amp;</em> bar</h1><p class="hx-sub hx-a3" style="margin-top:20px">Kenyan and international food, drinks from the bar and tables by the pool.</p></div>
+    <div>{crumb('Dining')}<span class="hx-k hx-a1">04 · Taste &amp; atmosphere</span><h1 class="hx-title" id="dine-h1" data-split="words">Restaurant <em class="italic">&amp;</em> bar</h1><p class="hx-sub hx-a3" style="margin-top:20px">Kenyan and international food, drinks from the bar and tables by the pool.</p></div>
     <div class="hx-a4"><div class="hx-dining-meta"><div><b>Breakfast</b>With stays, as listed</div><div><b>Poolside</b>Meals and juice</div><div><b>Events</b>Catering</div></div><a class="btn btn--light" style="margin-top:24px" href="{WA}" target="_blank" rel="noopener">Reserve a table on WhatsApp</a></div>
   </div>
   <div class="hx-dining-media">
-    {hx('poolside-meal-juice', 'main', '(max-width:760px) 100vw, 58vw', eager=True)}
-    {hx('grilled-chicken', 'detail', '250px')}
+    {hx('food-grilled-board', 'main', '(max-width:760px) 100vw, 58vw', eager=True)}
+    <div class="detail glow-warm"><figure class="hx-ph mask-circle ring" style="margin:0">{img('drink-mango-juice', '250px')}</figure></div>
   </div>
 </section>
 <section class="sec" aria-labelledby="plates-h">
-  <div class="wrap">{head('From the kitchen', '<span id="plates-h">At the table</span>', '<div class="strip-ctl" data-strip="plates"><button type="button" data-dir="prev" aria-label="Previous photos">←</button><button type="button" data-dir="next" aria-label="Next photos">→</button></div>')}</div>
-  <div class="strip" id="plates" tabindex="0" aria-label="Food photographs, scroll sideways">{sf}</div>
+  <div class="wrap">{head('Dining mood', '<span id="plates-h" data-split="words">At the table</span>', '<div class="strip-ctl" data-strip="plates"><button type="button" data-dir="prev" aria-label="Previous photos">←</button><button type="button" data-dir="next" aria-label="Next photos">→</button></div>')}</div>
+  <div class="strip" id="plates" tabindex="0" aria-label="Food photographs, scroll sideways" data-stagger>{sf}</div>
+  <div class="wrap"><p class="note" style="margin-top:18px">These photographs set the mood and are not dishes from the Breez menu. Ask reception for today’s menu.</p></div>
+</section>
+<section class="sec sec--stone" aria-labelledby="real-h">
+  <div class="wrap real-food" data-layered>
+    {hx('poolside-meal-juice', 'rf-a ly-a', '(max-width:760px) 100vw, 55vw')}
+    {hx('grilled-chicken', 'rf-b ly-b mask-arch', '(max-width:760px) 45vw, 22vw')}
+    {hx('buffet-samosa-chapati', 'rf-c ly-c', '(max-width:760px) 45vw, 22vw')}
+    <div class="rf-t ly-t"><span class="hx-k">Photographed at The Breez</span><h2 class="ab-h" id="real-h">Poolside lunch, the grill and the event buffet.</h2><p class="hx-sub">The hotel’s own photographs of food served by the pool and at events.</p></div>
+  </div>
 </section>
 <section class="sec sec--stone" aria-labelledby="menu-h">
   <div class="wrap">
@@ -602,9 +651,9 @@ def meetings():
     lay = ''.join(f'<article class="layout rv">{ph(k, "", "(max-width:760px) 100vw, 33vw")}<div><span class="label">Set-up</span><h3>{a}</h3><p class="muted">{b}</p></div></article>' for k, a, b in layouts)
     return f'''<section class="hx-meet" aria-labelledby="meet-h1">
   <div class="wrap">
-    <div class="hx-meet-grid">
-      <div class="hx-meet-photo">{hx('hall-classroom-setup', 'main', '(max-width:1100px) 100vw, 58vw', eager=True)}{hx('hall-banquet-gold', 'layer', '(max-width:760px) 46vw, 25vw')}</div>
-      <div class="hx-meet-title">{crumb('Meetings &amp; events')}<span class="hx-k hx-a1">05 · The grand occasion</span><h1 id="meet-h1" class="hx-a2">Meetings &amp; events</h1><p class="hx-sub hx-a3">Halls for conferences and training. Lawns and marquees for weddings, ruracio and garden parties.</p><div class="hx-actions hx-a4"><a class="btn btn--solid" href="#enquire">Send an enquiry</a><a class="btn" href="{TEL}">Call {PHONE_DISPLAY}</a></div></div>
+    <div class="hx-meet-grid hx-draw">
+      <div class="hx-meet-photo">{hx('hall-classroom-setup', 'main', '(max-width:1100px) 100vw, 58vw', eager=True)}{hx('hall-banquet-gold', 'layer', '(max-width:760px) 46vw, 25vw', extra=' data-parallax="0.05"')}</div>
+      <div class="hx-meet-title">{crumb('Meetings &amp; events')}<span class="hx-k hx-a1">05 · The grand occasion</span><h1 id="meet-h1" data-split="lines">Meetings &amp; events</h1><p class="hx-sub hx-a3">Halls for conferences and training. Lawns and marquees for weddings, ruracio and garden parties.</p><div class="hx-actions hx-a4"><a class="btn btn--solid" href="#enquire">Send an enquiry</a><a class="btn" href="{TEL}">Call {PHONE_DISPLAY}</a></div></div>
       <div class="hx-spec"><div><span>Equipment</span><b>Projector &amp; screen</b></div><div><span>Connection</span><b>Wi-Fi</b></div><div><span>Set-ups</span><b>Classroom, theatre, banquet</b></div><div><span>Catering</span><b>Flexible packages</b></div></div>
     </div>
   </div>
@@ -652,16 +701,48 @@ def gallery():
         a = html.escape(ALT.get(k, ''), quote=True)
         out += f'<a{(" class=" + chr(34) + cls + chr(34)) if cls else ""} href="{m["rel"]}-1600.webp" data-cat="{m["cat"]}" data-alt="{a}" data-caption="{a}"><img src="{m["rel"]}-800.webp" width="{m["w"]}" height="{m["h"]}" alt="{a}" loading="lazy" decoding="async"><figcaption>{a}</figcaption></a>'
     chips = '<button type="button" data-filter="all" aria-pressed="true">All</button>' + ''.join(f'<button type="button" data-filter="{c}" aria-pressed="false">{CAT_LABEL[c]}</button>' for c in cats if any(IMAGES[k]['cat'] == c for k in items))
+    LQ = [('pool-garden-view', 'The pool court and the guest wing'), ('hall-banquet-gold', 'A banquet hall dressed in gold'), ('room-grey-bedding', 'A room made up for the night'),
+          ('marquee-lawn', 'A marquee on the lawn'), ('pool-lawn-view', 'Water, lawn and shade'), ('main-building-facade', 'The main building')]
+    FILM = [('entrance-gate', 'Arrive at the gate', '1/1'), ('entrance-lobby', 'Step inside', '3/4'), ('room-four-poster-2', 'Settle in', '4/3'),
+            ('pool-lanes-2', 'Swim', '4/5'), ('poolside-tables', 'Lunch by the pool', '4/3'), ('gazebo-steps', 'The garden', '3/2'), ('courtyard-fountain-tent', 'Evening on the lawn', '3/2')]
+    for k, *_ in LQ + FILM: USED.add(k)
+    lq_imgs = ''.join(f'<img src="{IMAGES[k]["rel"]}-1600.webp" alt="{html.escape(ALT[k], quote=True)}" width="{IMAGES[k]["w"]}" height="{IMAGES[k]["h"]}" decoding="async"{"" if i == 0 else " loading=lazy"}>' for i, (k, c) in enumerate(LQ))
+    lq_caps = ''.join(f'<p data-cap{" class=on" if i == 0 else ""}>{c}</p>' for i, (k, c) in enumerate(LQ))
+    film = ''.join(f'<figure>{hx(k, "", "(max-width:760px) 70vw, 30vw", extra=f" style=--ar:{ar}")}<figcaption><b>0{i+1}</b>{c}</figcaption></figure>' for i, (k, c, ar) in enumerate(FILM))
     return f'''<section class="hx-gal" aria-labelledby="gal-h1">
-  <div class="wrap hx-gal-grid" data-lightbox>
-    <div class="hx-gal-title">{crumb('Gallery')}<span class="hx-k hx-a1">06 · A visual journey</span><h1 class="hx-title hx-a2" id="gal-h1">Gallery</h1><p class="hx-sub hx-a3">{len(items)} photographs of the hotel, its grounds, rooms, food and events.</p></div>
-    {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, sz, eager=True)}<b>{n}</b></a>' for c, k, n, sz in [('g1', 'tower-and-terrace-tall', '01', '(max-width:760px) 66vw, 33vw'), ('g2', 'garden-gazebo-roof', '02', '25vw'), ('g3', 'kids-pool-building', '03', '25vw'), ('g4', 'fountain-seating', '04', '(max-width:760px) 33vw, 25vw'), ('g5', 'pool-umbrellas-above', '05', '(max-width:760px) 33vw, 50vw')])}
+  <div class="wrap hx-gal-grid" data-lightbox data-drift>
+    <div class="hx-gal-title">{crumb('Gallery')}<span class="hx-k hx-a1">06 · A visual journey</span><h1 class="hx-title" id="gal-h1" data-split="chars">Gallery</h1><p class="hx-sub hx-a3">{len(items)} photographs of the hotel, its grounds, rooms, food and events.</p></div>
+    {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, sz, eager=True)}<b>{n}</b></a>' for c, k, n, sz in [('g1 mask-arch', 'tower-and-terrace-tall', '01', '(max-width:760px) 66vw, 33vw'), ('g2', 'garden-gazebo-roof', '02', '25vw'), ('g3', 'kids-pool-building', '03', '25vw'), ('g4 mask-circle', 'fountain-seating', '04', '(max-width:760px) 33vw, 25vw'), ('g5', 'pool-umbrellas-above', '05', '(max-width:760px) 33vw, 50vw')])}
   </div>
 </section>
-<section class="sec">
+
+<section class="lq" data-liquid tabindex="0" aria-roledescription="carousel" aria-labelledby="lq-h">
   <div class="wrap">
-    <div class="chips" data-filters="grid" role="group" aria-label="Filter photographs" style="margin-bottom:28px">{chips}</div>
-    <div class="gl-grid" id="grid" data-lightbox>{out}</div>
+    <div class="lq-head"><div><span class="hx-k hx-k--light">Cinematic sequence</span><h2 id="lq-h" data-split="words">Six moments at The Breez</h2></div><p style="max-width:34ch;color:#CFC6B6;margin:0">Use the arrows, swipe, or the arrow keys.</p></div>
+    <div class="lq-stage">{lq_imgs}</div>
+    <div class="lq-foot"><div class="lq-caps" aria-live="polite">{lq_caps}</div><div class="sl-ctl"><span class="sl-count" data-count>01 / 06</span><button type="button" data-prev aria-label="Previous moment">←</button><button type="button" data-next aria-label="Next moment">→</button></div></div>
+    <div class="lq-prog"><i data-bar></i></div>
+  </div>
+</section>
+
+<section class="film" aria-labelledby="film-h">
+  <div class="wrap">{head('Film strip', '<span id="film-h" data-split="words">A day, frame by frame</span>', '<p>Drag or scroll sideways.</p>')}</div>
+  <div class="film-strip" data-filmstrip tabindex="0" aria-label="A day at The Breez, scroll sideways">{film}</div>
+</section>
+
+<section class="gcol" aria-labelledby="col-h">
+  <div class="wrap gcol-in">
+    {hx('cottage-courtyard-swing', 'cg-a mask-arch', '(max-width:760px) 80vw, 50vw', extra=' data-reveal="arch"')}
+    {hx('fountain-lawn-swing', 'cg-b mask-circle', '(max-width:760px) 50vw, 25vw', extra=' data-reveal="circle" data-parallax="0.06"')}
+    {hx('walkway-cottages', 'cg-c', '(max-width:760px) 50vw, 33vw', extra=' data-reveal="up"')}
+    <div class="cg-t"><span class="hx-k">The garden</span><h2 data-split="lines">Gazebos, cypress and a fountain.</h2><p class="hx-sub">Between the guest wings, a lawn for slow afternoons and garden parties.</p></div>
+  </div>
+</section>
+
+<section class="sec" aria-labelledby="arc-h">
+  <div class="wrap">
+    <div class="archive-head"><div><span class="hx-k">The archive</span><h2 id="arc-h">Every photograph</h2></div><div class="chips" data-filters="grid" role="group" aria-label="Filter photographs">{chips}</div></div>
+    <div class="gl-grid" id="grid" data-lightbox data-drift>{out}</div>
     <p class="note" style="margin-top:32px">All photographs on this page are of The Breez Hotel, shared by the hotel. Illustrative stock photos used elsewhere on the site are labelled and listed on the <a href="credits.html">credits page</a>.</p>
   </div>
 </section>'''
@@ -669,8 +750,8 @@ def gallery():
 def contact():
     return f'''<section class="hx-contact" aria-labelledby="ct-h1">
   <div class="hx-contact-text">
-    <div>{crumb('Contact')}<span class="hx-k hx-a1">07 · Your way to The Breez</span><h1 class="hx-title hx-a2" id="ct-h1">Find us in Busia.</h1></div>
-    <ul class="hx-loc hx-a3">
+    <div>{crumb('Contact')}<span class="hx-k hx-a1">07 · Your way to The Breez</span><h1 class="hx-title" id="ct-h1" data-split="words">Find us in Busia.</h1></div>
+    <ul class="hx-loc" data-stagger>
       <li><span>Address</span><b>Kisumu–Busia Road, Busia, Kenya</b></li>
       <li><span>Call</span><b><a href="{TEL}">{PHONE_DISPLAY}</a></b></li>
       <li><span>WhatsApp</span><b><a href="{WA}" target="_blank" rel="noopener">{PHONE_DISPLAY}</a></b></li>
@@ -680,7 +761,7 @@ def contact():
   </div>
   <div class="hx-contact-media">
     {hx('entrance-gate', 'main', '(max-width:760px) 100vw, 50vw', eager=True)}
-    {hx('sign-the-breeze-hotel-karibu', 'detail', '230px')}
+    <div class="detail"><figure class="hx-ph mask-circle ring" style="margin:0;height:100%">{img('sign-the-breeze-hotel-karibu', '230px')}</figure></div>
     <span class="cap">The gate on the Kisumu–Busia Road</span>
   </div>
 </section>
@@ -778,6 +859,9 @@ def main():
     shutil.copy(ROOT / 'src/css/site.css', OUT / 'assets/site.css')
     shutil.copy(ROOT / 'src/js/site.js', OUT / 'assets/site.js')
     shutil.copy(ROOT / 'src/css/heroes.css', OUT / 'assets/heroes.css')
+    shutil.copy(ROOT / 'src/css/motion.css', OUT / 'assets/motion.css')
+    shutil.copy(ROOT / 'src/js/effects.js', OUT / 'assets/effects.js')
+    (OUT / 'lab').mkdir(exist_ok=True); shutil.copy(ROOT / 'src/lab.html', OUT / 'lab/index.html')
     pages = [
         ('index', 'The Breez Hotel · Pools, gardens and rooms in Busia, Kenya', 'A garden hotel on the Kisumu–Busia Road in Busia, Kenya, with rooms, two pools, a restaurant and bar, meeting halls and lawns for weddings and events.', home),
         ('about', 'About the hotel', 'The Breez Hotel in Busia: the stone gate sign, the tower above the palms, gazebo gardens, a pool court and the team who run it.', about),
@@ -801,7 +885,7 @@ def main():
     og_image()
     (OUT / 'favicon.svg').write_text(FAVICON)
     (OUT / '.nojekyll').write_text('')
-    (OUT / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {BASE_URL}sitemap.xml\n')
+    (OUT / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nDisallow: /lab/\nSitemap: {BASE_URL}sitemap.xml\n')
     urls = ''.join(f'<url><loc>{BASE_URL}{"" if s == "index" else s + ".html"}</loc><lastmod>{TODAY}</lastmod></url>' for s, *_ in pages + [('credits',)])
     (OUT / 'sitemap.xml').write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')
     hotel = sum(1 for k in USED if not IMAGES[k]['stock']); stock = sum(1 for k in USED if IMAGES[k]['stock'])
