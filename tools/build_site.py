@@ -327,6 +327,35 @@ STORY = [
 ]
 STORY_IMGS = [x[0] for x in STORY]
 
+EXP_TILES = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
+             'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'bed-detail']
+EXP_SPANS = [5, 3, 4, 3, 4, 5, 4, 5, 3, 5, 3, 4]          # 12-column rhythm of the reference mosaic
+EXP_ICONS = {
+    'pin': '<path d="M12 2a7 7 0 0 0-7 7c0 5.3 7 13 7 13s7-7.7 7-13a7 7 0 0 0-7-7zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2z"/>',
+    'wave': '<path d="M1 7.6c2 0 3-1.6 5.5-1.6S9.8 7.6 12 7.6 15 6 17.5 6 21 7.6 23 7.6v3c-2 0-3-1.6-5.5-1.6S14.2 10.6 12 10.6 9 9 6.5 9 3 10.6 1 10.6zm0 6.4c2 0 3-1.6 5.5-1.6s3.3 1.6 5.5 1.6 3-1.6 5.5-1.6S21 14 23 14v3c-2 0-3-1.6-5.5-1.6S14.2 17 12 17s-3-1.6-5.5-1.6S3 17 1 17z"/>',
+    'cup': '<path d="M3 8h14v5a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zm14 1.5h1.5a3 3 0 0 1 0 6H17v-2.4h1.5a.6.6 0 0 0 0-1.2H17zM2 20.5h17V23H2zM7 1.5c1 1 1 2.2 0 3.3s-1 2 0 2.7H5c-1-1-1-2 0-3s1-2 0-3zm4.5 0c1 1 1 2.2 0 3.3s-1 2 0 2.7h-2c-1-1-1-2 0-3s1-2 0-3z"/>',
+    'star': '<path d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5L7 14.3l-5.3-5 7.2-.9z"/>',
+}
+EXP_FEATS = [
+    ('pin', 'On the Kisumu–Busia Road', 'A garden hotel in Busia, easy to reach by road and with secure parking for your stay.', 'contact.html', 'Find us'),
+    ('wave', 'Pools and gardens', 'A swimming pool and a children&rsquo;s pool, with umbrellas, loungers and green lawns all around.', 'pools.html', 'See the pools'),
+    ('cup', 'Food and drink', 'Kenyan and international dishes, a full bar, and meals with fresh juice served at the pool.', 'dining.html', 'Eat and drink'),
+    ('star', 'Meetings and celebrations', 'Halls, lawns and marquees for conferences, weddings, ruracio and birthdays.', 'meetings.html', 'Plan an event'),
+]
+
+def experiences():
+    tiles = ''.join(
+        f'<a class="bx-t" style="--s:{EXP_SPANS[i]}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">'
+        f'{img(k, "(max-width:760px) 50vw, 40vw")}</a>' for i, k in enumerate(EXP_TILES))
+    feats = ''.join(
+        f'<div class="bx-f rv"><svg class="bx-i" viewBox="0 0 24 24" aria-hidden="true">{EXP_ICONS[ic]}</svg>'
+        f'<div><h3>{h}</h3><p>{t} <a href="{u}">{lt}</a></p></div></div>' for ic, h, t, u, lt in EXP_FEATS)
+    return f'''<section class="bx" aria-labelledby="bx-h">
+  <h2 class="sr-only" id="bx-h">Your stay at The Breez</h2>
+  <div class="bx-band"><div class="bx-wrap bx-grid" data-lightbox>{tiles}</div></div>
+  <div class="bx-feats"><div class="bx-wrap bx-fgrid">{feats}</div></div>
+</section>'''
+
 def home():
     stay = f'''<section class="sec" aria-labelledby="stay-h">
   <div class="wrap">
@@ -382,6 +411,8 @@ def home():
     </div>
   </div>
 </section>
+
+{experiences()}
 
 <section class="sec sec--stone" aria-labelledby="meet-h">
   <div class="wrap">
