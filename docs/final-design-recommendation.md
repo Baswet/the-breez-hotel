@@ -22,6 +22,10 @@
 - Choose **B** if the hotel wants to win more conference, government and NGO business.
 - Choose **C** if the priority is families, pool day-passes and events, and a brighter, more casual brand.
 
+## Identity, experience, warmth
+
+Every concept now opens with the hotel's name in the hero and navigation, gives the building its own section (carved sign, gate, wall sign, stone tower, bay windows), and repeats the name large in the footer. A small set of people photos — the hotel team, guests at lunch, a courtyard wedding — adds warmth without taking over. A prototype ribbon on each page flags the Breez/Breeze spelling.
+
 ## Before the build
 
 1. Confirm the name spelling (sign says "Breeze"; social media says "Breez").

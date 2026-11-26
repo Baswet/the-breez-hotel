@@ -4,9 +4,33 @@ Source: The Breez Hotel's official Facebook page ([facebook.com/TheBreezhoteloff
 
 - **160 photos reviewed**, in feed order (newest first). Facebook scrambles post dates in the viewer, so exact dates could not be read; feed position is used as an age signal.
 - **86 selected** and converted to WebP at 1600 px and 800 px wide (never upscaled), stored in `assets/images/breez/<category>/`.
-- **Excluded (74):** promotional graphics and greeting cards (vouchers, Mashujaa Day, Eid, Father's Day, football, October), screenshots, duplicates, petrol-station advert, and **photos showing identifiable people** (guests, staff, officials, a wedding couple) — these need the people's consent before any website use.
+- **Excluded:** promotional graphics and greeting cards (vouchers, Mashujaa Day, Eid, Father's Day, football, October), screenshots, duplicates and a petrol-station advert. Close-up and posed portraits of individual guests are excluded.
+- **People (added 26 Nov 2026, approved by the project owner):** four photos with people, chosen for distance and context rather than close-ups — see *People* below.
 - **Permission:** you confirmed you work with the hotel. Keep written permission on file; until then these files stay out of the public repository (`.gitignore`).
 - **Naming note:** the hotel's own building sign reads **"The Breeze Hotel — Karibu"**; Facebook/TikTok use "The Breez". Management to confirm the official spelling.
+
+## Building identity and signage
+
+The property shows **two spellings**: the gate sign and the carved building sign read **"The Breeze Hotel — Karibu"**; the wall sign reads **"I ♥ The Breez Hotel"** (orange script), as do Facebook and TikTok. Flag for management before launch.
+
+| File | Source photo | Use |
+| --- | --- | --- |
+| `exterior/sign-the-breeze-hotel-karibu` | fb-051 | Identity section, primary sign |
+| `exterior/gate-sign-crop` | crop of fb-015 | "The gate" — first thing guests see |
+| `exterior/wall-sign-i-love-the-breez` | crop of fb-025 | Wall sign (alternate spelling) |
+| `exterior/vip-lounge-tower-kids-pool` | fb-142 | Ochre stone tower, VIP Lounge, children's pool |
+| `exterior/main-building-facade` | fb-030 | Curved bay windows and columns |
+
+## People
+
+| File | Source photo | What it shows | Consent note |
+| --- | --- | --- | --- |
+| `people/staff-team-welcome` | fb-107 | Kitchen, service and reception staff gathered on the terrace | Hotel staff — confirm staff are happy to appear |
+| `people/guests-lunch-garden-terrace` | fb-133 | Guests at lunch under parasols, side-on | Guests identifiable — confirm consent or replace |
+| `people/wedding-party-courtyard` | fb-124 | Wedding party and guests in the courtyard, mid-distance | Confirm the couple's consent |
+| `people/wedding-marquee-guests` | fb-043 | Guests in a wedding marquee, at a distance | Low risk |
+
+Not used: close-up portraits (fb-146–149, fb-152, fb-159/160), officials at a county event (fb-054, fb-061–069), night-time guest selfies (fb-001/002). No testimonials or quotes are attached to anyone pictured.
 
 ## Best picks
 
