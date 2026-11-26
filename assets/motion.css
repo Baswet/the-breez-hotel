@@ -379,3 +379,34 @@
   .gl-grid a img{transition:filter .5s,transform .8s cubic-bezier(.22,1,.36,1)}
   .gl-grid a:hover img{filter:drop-shadow(3px 0 0 rgba(200,40,40,.28)) drop-shadow(-3px 0 0 rgba(30,120,220,.28));transform:scale(1.04)}
 }
+
+/* ==========================================================================
+   LINE CLEAN-UP (26 Nov 2026)
+   Decorative borders, dividers, outlines and drawn strokes removed. Layouts,
+   masks, shapes, image mats (page-coloured), progress bars, form fields,
+   buttons and focus rings are untouched. Revert by deleting this block.
+   ========================================================================== */
+/* section & list dividers */
+.head,.ruled,.el,.facts,.spread,.every,.dirs div,.mc,.story-step,.mt2-intro-head,.mt2-cat-text,
+.mt2-fac-list,.mt2-enq-contact,.mt2-wed-cap,.hx-dining-meta,.ss-step,.ftr-base,.dock{border-top:0}
+.ruled li,.facts div,.spec dl div,.every div,.ov-nav a,.ab-close li,.mt2-panel li,.mt2-fac-list li,
+.mt2-enq-contact li,.credits-none,.mt2-cf-tabs,.summary div,.ct-actions a{border-bottom:0}
+.summary div,.ct-actions a,.dock a,.hx-strip>*{border-right:0}
+.hx-strip>*{border-bottom:0}
+.note,.mt2-intro-p,.rx-head p,.rx-cap{border-left:0}
+.meet-grid,.meet-grid>*{border:0}
+/* framing boxes and nested outlines */
+.qbook,.qbook::before,.map,.spec,.menu-card,.form-panel,.mt2-enq-right .form-panel,.ct-actions,.summary,
+.pl-info,.mt2-glass,.mt2-panel,.mt2-os-ctl,.pd-ctl,.hx-rail .hx-ph{border:0}
+.frame-d,.spec,.menu-card,.hx-frame,.ab-x4-over,.hx-contact-media .main,.hx-rooms-media .main.mask-arch,.mt2-panel{outline:0}
+.btn--framed::before,.btn--framed::after,.ticks::before,.ticks::after,.mt2-cf-media::after,
+.story-media .story-frame,.mt2-close-frame,.ring::before{display:none}
+/* image mats: keep the gap, in the page colour, never as a visible white frame */
+.mt2-float{border-color:var(--ivory)}
+/* drawn lines and strokes */
+.hx-k::before,.mt2-hero-art::before{display:none}
+.mt2-ring,.mt2-rur-line,.rx-trace{display:none}
+/* rooms slideshow: shapes kept, outlines removed */
+.rx-offset,.rx-corner,.rx-circle::after{display:none}
+.rx-circle{box-shadow:none}
+.hdr.scrolled{border-color:transparent}
