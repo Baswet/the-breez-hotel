@@ -1,0 +1,13 @@
+/* Creative booking panel */
+.bp{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.bp > figure{min-height:50vh}
+.panel{padding:clamp(24px,5vw,72px);display:grid;gap:18px;align-content:center;background:var(--paper)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.panel label{display:grid;gap:6px;font:600 13px var(--font-body);color:var(--ink-soft)}
+.panel input[type=date],.panel select{min-height:48px;font:16px var(--font-body);padding:0 12px;border:0;border-bottom:1px solid var(--ink);background:transparent;color:var(--ink)}
+fieldset{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}legend{font:600 13px var(--font-body);color:var(--ink-soft);margin-bottom:8px}
+fieldset label{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--sand-deep);border-radius:var(--pill);color:var(--ink);cursor:pointer}
+fieldset label:has(input:checked){background:var(--palm);color:var(--sand);border-color:var(--palm)}
+fieldset input{accent-color:var(--ochre)}
+.nights{margin:0;font-size:14px;color:var(--ink-soft)}.actions{display:flex;flex-wrap:wrap;gap:10px}
+@media(max-width:800px){.bp{grid-template-columns:1fr}}

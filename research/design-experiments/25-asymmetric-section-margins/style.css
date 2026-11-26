@@ -1,0 +1,6 @@
+/* Asymmetric section margins */
+.as{display:grid;gap:var(--gutter);align-items:end;margin-bottom:var(--section-gap)}
+.as--left{grid-template-columns:2fr 1fr;padding-right:var(--gutter)}
+.as--right{grid-template-columns:1fr 1fr;padding-left:22vw;padding-right:var(--gutter)}
+.as--center{padding:0 12vw}
+@media(max-width:760px){.as--left,.as--right{grid-template-columns:1fr;padding:0 20px}.as--center{padding:0}}

@@ -1,0 +1,10 @@
+/* Animated section dividers */
+.s{padding:18vh var(--gutter)}
+.divider{display:flex;align-items:center;gap:20px;padding:0 var(--gutter)}
+.divider .line{flex:1;height:1px;background:var(--ink);transform:scaleX(0);transition:transform 1.2s var(--ease-out)}
+.divider .line:first-child{transform-origin:right}.divider .line:last-child{transform-origin:left}
+.divider.is-in .line{transform:scaleX(1)}
+.divider .mark{font:italic 20px var(--font-display);color:var(--ochre-deep);white-space:nowrap}
+.divider--wave svg{width:100%;height:40px}.divider--wave path{fill:none;stroke:var(--pool);stroke-width:2;stroke-dasharray:1400;stroke-dashoffset:1400;transition:stroke-dashoffset 2s var(--ease-out)}.divider--wave.is-in path{stroke-dashoffset:0}
+.divider--travel{height:1px;margin:0 var(--gutter);background:linear-gradient(90deg,var(--sand-deep),var(--ochre),var(--sand-deep));background-size:200% 100%;animation:trav 4s linear infinite}
+@keyframes trav{to{background-position:-200% 0}}

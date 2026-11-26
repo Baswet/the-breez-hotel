@@ -1,0 +1,7 @@
+/* Overlapping photo composition */
+.ov{display:grid;grid-template-columns:1.3fr 1fr;gap:var(--gutter);align-items:center;max-width:var(--content-width);margin:0 auto;padding:var(--section-gap) var(--gutter)}
+.stack{position:relative;padding-bottom:18%}
+.back{width:88%}
+.front{position:absolute;width:42%;right:0;bottom:0;box-shadow:var(--shadow-lift);border:8px solid var(--sand)}
+.tag{position:absolute;left:0;bottom:-8px}
+@media(max-width:760px){.ov{grid-template-columns:1fr}}

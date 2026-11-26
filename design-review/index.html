@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design review — The Breez Hotel</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="review.css">
+</head>
+<body>
+<header class="rv-top">
+  <div class="rv-brand"><span class="label">The Breez Hotel · Busia</span><strong>Design review</strong></div>
+  <nav class="rv-nav" aria-label="Review sections"><a href="#viewer">Concepts</a><a href="#mobile">Mobile</a><a href="#compare">Compare</a><a href="#colour">Colour</a><a href="#why">Inspiration</a><a href="#photos">Photography</a><a href="../design-laboratory/index.html">Design lab ↗</a></nav>
+</header>
+
+<section id="viewer" class="viewer">
+  <div class="v-controls">
+    <div class="seg" role="tablist" aria-label="Concept">
+      <button role="tab" aria-selected="true" data-src="../concepts/editorial-escape/index.html" data-key="a">A · Editorial Escape</button>
+      <button role="tab" aria-selected="false" data-src="../concepts/architectural-luxury/index.html" data-key="b">B · Architectural Luxury</button>
+      <button role="tab" aria-selected="false" data-src="../concepts/contemporary-hospitality/index.html" data-key="c">C · Contemporary Hospitality</button>
+    </div>
+    <div class="seg seg--small" role="group" aria-label="Device width">
+      <button data-w="1440" aria-pressed="true">Desktop</button><button data-w="1024" aria-pressed="false">Laptop</button><button data-w="768" aria-pressed="false">Tablet</button><button data-w="390" aria-pressed="false">Phone</button><button data-w="360" aria-pressed="false">Small phone</button>
+    </div>
+    <a id="openfull" class="btn" href="../concepts/editorial-escape/index.html">Open full page</a>
+  </div>
+  <div class="v-summary" id="summary"></div>
+  <div class="stage" id="stage"><div class="device" id="device"><iframe id="frame" title="Homepage concept" src="../concepts/editorial-escape/index.html"></iframe></div></div>
+  <p class="stage-note">The frame is scaled to fit your screen; the page inside renders at the chosen width. Scroll inside the frame.</p>
+</section>
+
+<section id="mobile" class="mobile">
+  <header class="rv-head"><span class="label">Mobile</span><h2 class="h2">All three at 390 px</h2><p class="lead">Large desktop margins collapse into a thin frame (A), ruled cells stack into two columns (B), and the bento turns into a two-up grid (C). Each keeps a one-tap booking bar.</p></header>
+  <div class="phones">
+    <figure><div class="phone"><iframe title="Concept A on a phone" src="../concepts/editorial-escape/index.html" loading="lazy"></iframe></div><figcaption>A · Editorial Escape</figcaption></figure>
+    <figure><div class="phone"><iframe title="Concept B on a phone" src="../concepts/architectural-luxury/index.html" loading="lazy"></iframe></div><figcaption>B · Architectural Luxury</figcaption></figure>
+    <figure><div class="phone"><iframe title="Concept C on a phone" src="../concepts/contemporary-hospitality/index.html" loading="lazy"></iframe></div><figcaption>C · Contemporary Hospitality</figcaption></figure>
+  </div>
+</section>
+
+<section id="compare" class="compare">
+  <header class="rv-head"><span class="label">Side by side</span><h2 class="h2">How the concepts differ</h2></header>
+  <div class="cmp-scroll">
+  <table class="cmp">
+    <thead><tr><th scope="col">Decision</th><th scope="col">A · Editorial Escape</th><th scope="col">B · Architectural Luxury</th><th scope="col">C · Contemporary Hospitality</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Spatial idea</th><td>A sheet on a palm-green mat; wide outer margins; asymmetric 12-col grid</td><td>Visible 4-column structure; every section is a ruled cell</td><td>Bento mosaic, floating cards, wave transitions</td></tr>
+      <tr><th scope="row">Margins</th><td>Inset double frame · <a href="../design-laboratory/index.html#margins">margin lab</a></td><td>Grid lines run the full page height</td><td>Generous padding, rounded edges, no frame</td></tr>
+      <tr><th scope="row">Borders</th><td>Ochre inner rule, corner ticks</td><td>Double rules, passe-partout mounts · <a href="../design-laboratory/index.html#borders">border lab</a></td><td>Soft shadows instead of lines</td></tr>
+      <tr><th scope="row">Type</th><td>Cormorant Garamond + Karla; italic accents</td><td>Marcellus capitals + Jost; roman numerals</td><td>Fraunces + Plus Jakarta Sans</td></tr>
+      <tr><th scope="row">Navigation</th><td>Masthead with centred wordmark; drawer on mobile</td><td>Ruled cell bar; full-screen numbered menu</td><td>Floating pill; bottom dock on phones</td></tr>
+      <tr><th scope="row">Images</th><td>Overlaps, offsets, mosaic gallery · <a href="../design-laboratory/index.html#images">image lab</a></td><td>Framed, panoramic, triptych</td><td>Rounded cards, layered pool stack, filtered masonry</td></tr>
+      <tr><th scope="row">Interaction</th><td>Reveal on scroll, lightbox, booking request</td><td>Room tabs with spec sheet, booking strip</td><td>Room comparison table, menu tabs, horizontal day story, gallery filters</td></tr>
+      <tr><th scope="row">Feels</th><td>Calm, literary, warm</td><td>Formal, confident, corporate-friendly</td><td>Friendly, bright, leisure and family</td></tr>
+      <tr><th scope="row">Best for</th><td>Couples, weekend stays, brand story</td><td>Conferences, government and NGO guests</td><td>Families, pool day-visitors, events, mobile-first</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="colour" class="colour">
+  <header class="rv-head"><span class="label">Colour systems</span><h2 class="h2">Taken from the building</h2><p class="lead">Ochre stone cladding, cream columns, dark-stained beds, cypress and palm greens, pool water.</p></header>
+  <div class="pal">
+    <div><h3 class="h3">A</h3><ul><li style="--c:#F5EEE1">Sand #F5EEE1</li><li style="--c:#23402F">Palm #23402F</li><li style="--c:#C98A2E">Ochre #C98A2E</li><li style="--c:#1C7F98">Pool #1C7F98</li><li style="--c:#231B14">Ink #231B14</li></ul></div>
+    <div><h3 class="h3">B</h3><ul><li style="--c:#F1ECE3">Stone #F1ECE3</li><li style="--c:#1C1A17">Ink #1C1A17</li><li style="--c:#4A3222">Cocoa #4A3222</li><li style="--c:#B8802B">Ochre #B8802B</li><li style="--c:#E6DDCF">Stone 2 #E6DDCF</li></ul></div>
+    <div><h3 class="h3">C</h3><ul><li style="--c:#FFFDF8">Cream #FFFDF8</li><li style="--c:#0E6F86">Teal #0E6F86</li><li style="--c:#E3A443">Ochre #E3A443</li><li style="--c:#1F3B2D">Palm #1F3B2D</li><li style="--c:#F2EBDD">Linen #F2EBDD</li></ul></div>
+  </div>
+</section>
+
+<section id="why" class="why">
+  <header class="rv-head"><span class="label">Inspiration</span><h2 class="h2">Where the major decisions came from</h2><p class="lead">Principles were studied and rebuilt; no layout, image or asset was copied.</p></header>
+  <ol class="why-list">
+    <li><strong>Inset page frame (A)</strong><span>Hotel du Tasso's white page on a coloured mat — <a href="https://www.hoteldutassosorrento.com/">hoteldutassosorrento.com</a> · rebuilt in <a href="../research/design-experiments/02-framed-page-layout/index.html">experiment 02</a></span></li>
+    <li><strong>Ruled navigation cells (B)</strong><span>Grand Hotel Vesuvio's divided top bar — <a href="https://www.awwwards.com/sites/grand-hotel-vesuvio">Awwwards</a> · <a href="../research/design-experiments/05-double-border-sections/index.html">experiment 05</a></span></li>
+    <li><strong>Visible architectural grid (B)</strong><span>Architecture-studio sites with hairline grids (Pinterest) · <a href="../research/design-experiments/12-architectural-grid/index.html">experiment 12</a></span></li>
+    <li><strong>Rotating booking stamp</strong><span>Terreno Barrio Hotel's circular "Book now" seal — <a href="https://www.terrenohotel.com/">terrenohotel.com</a> · <a href="../research/design-experiments/26-karibu-stamp-and-ticker/index.html">experiment 26</a></span></li>
+    <li><strong>"Karibu" as a brand word</strong><span>The hotel's own building sign, and The Social House's "Karibu Rafiki" greeting — <a href="https://www.thesocialhouse.ke/">thesocialhouse.ke</a></span></li>
+    <li><strong>Booking bar in the hero</strong><span>The Hoxton, Sarova, Ace Hotel · <a href="../research/design-experiments/07-floating-booking-bar/index.html">experiment 07</a></span></li>
+    <li><strong>Bento mosaic and floating cards (C)</strong><span>Dribbble and Behance hotel UI shots (Valora Heights, Luvora, Casa Veramora) · <a href="../research/design-experiments/17-floating-image-cards/index.html">experiment 17</a></span></li>
+    <li><strong>Oversized wordmarks and numerals</strong><span>Tengile Malamala (Awwwards Site of the Day), Pinterest edge-numeral layouts · <a href="../research/design-experiments/20-editorial-numbered-sections/index.html">experiment 20</a></span></li>
+  </ol>
+  <p><a class="link-arrow" href="../research/visual-inspiration-library.md">Full inspiration library with all source links</a></p>
+</section>
+
+<section id="photos" class="photos">
+  <header class="rv-head"><span class="label">Photography</span><h2 class="h2">The real hotel, first</h2><p class="lead">90 photographs from The Breez Hotel's official Facebook page — the building and its signs first, then rooms, pools, food, halls, and a few moments with staff and guests. The single stock image is labelled "Illustrative · not The Breez".</p></header>
+  <div class="ph-stats"><div><b>90</b><span>Hotel photos selected (of 160 reviewed), incl. 4 with people</span></div><div><b>2</b><span>Spellings on the property: “Breeze” (gate, building sign) and “Breez” (wall sign, social media)</span></div><div><b>1</b><span>Stock image in use (pool swimmer), labelled illustrative; 4 more licensed in reserve</span></div></div>
+  <div class="ph-strip">
+    <img src="../assets/images/breez/exterior/sign-the-breeze-hotel-karibu-800.webp" alt="Hotel sign" loading="lazy"><img src="../assets/images/breez/exterior/wall-sign-i-love-the-breez-800.webp" alt="Wall sign" loading="lazy"><img src="../assets/images/breez/pools/pool-umbrellas-above-800.webp" alt="Pool" loading="lazy"><img src="../assets/images/breez/rooms/room-four-poster-window-800.webp" alt="Room" loading="lazy"><img src="../assets/images/breez/people/staff-team-welcome-800.webp" alt="Hotel team" loading="lazy"><img src="../assets/images/breez/dining/bar-counter-stools-800.webp" alt="Bar" loading="lazy">
+  </div>
+  <p class="small-print">Hotel photographs © The Breez Hotel, used with the hotel's permission for this prototype; kept out of the public repository until written permission is on file.</p>
+</section>
+
+<footer class="rv-foot"><span>Prototype — not deployed, not the live website.</span><a href="../design-laboratory/index.html">Design laboratory →</a></footer>
+
+<script src="../assets/js/site.js"></script>
+<script>
+{
+  const S = {
+    a: 'Magazine typography, large outer margins, asymmetric photography and fine borders in a natural palette.',
+    b: 'Structured grid made visible, ruled cells, double borders, framed photographs, capitals and numerals.',
+    c: 'Bento photo mosaic, floating cards, wave transitions, room comparison and a bottom action dock on phones.'
+  };
+  const frame = document.getElementById('frame'), dev = document.getElementById('device'), stage = document.getElementById('stage'), sum = document.getElementById('summary'), open = document.getElementById('openfull');
+  let w = 1440;
+  const fit = () => { const avail = stage.clientWidth - 32; const s = Math.min(1, avail / w); dev.style.width = w + 'px'; dev.style.transform = `scale(${s})`; stage.style.height = (Math.min(900, w * 1.3) * s + 32) + 'px'; dev.style.height = Math.min(900, w < 500 ? 780 : 900) + 'px'; };
+  document.querySelectorAll('.seg [role=tab]').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg [role=tab]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    frame.src = b.dataset.src; open.href = b.dataset.src; sum.textContent = S[b.dataset.key];
+  }));
+  document.querySelectorAll('.seg--small button').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg--small button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    w = +b.dataset.w; fit();
+  }));
+  const ph = () => document.querySelectorAll('.phone').forEach((p) => p.style.setProperty('--s', p.clientWidth / 390));
+  sum.textContent = S.a; window.addEventListener('resize', () => { fit(); ph(); }); fit(); ph();
+}
+</script>
+</body>
+</html>

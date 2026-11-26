@@ -1,0 +1,8 @@
+/* Floating image cards */
+.wrap{max-width:var(--content-width);margin:0 auto;padding:var(--section-gap) var(--gutter)}
+.float{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:clamp(16px,3vw,40px);margin-top:40px;align-items:start}
+.fc{background:var(--paper);padding:14px 14px 22px;box-shadow:var(--shadow-soft);border-radius:var(--image-radius-soft);transition:transform var(--transition-standard),box-shadow var(--transition-standard)}
+.fc .ph{border-radius:14px}.fc h2{margin:16px 6px 4px}.fc p{margin:0 6px;color:var(--ink-soft);font-size:14px}
+.fc:hover{transform:translateY(-10px) rotate(-.6deg);box-shadow:var(--shadow-lift)}
+.up{margin-top:-30px}
+@media(max-width:800px){.up{margin-top:0}}

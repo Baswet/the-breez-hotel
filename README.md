@@ -2,7 +2,21 @@
 
 A hospitality website for **The Breez Hotel, Busia, Kenya**: rooms, dining, the pool, conferences and events, and reservation enquiries, designed mobile-first for guests travelling through Busia and the Kenya–Uganda border.
 
-> **Status: research and design stage.** There is no website code in this repository yet. What is here is the project documentation, the design direction and original concept illustrations. Nothing in this repository has been approved by the hotel for publication.
+> **Status: live.** The production website is published at **https://baswet.github.io/the-breez-hotel/** (GitHub Pages, branch `gh-pages`).
+> It is built from `src/` and `tools/build_site.py` into `site/`. Design research, the 26 experiments, the design laboratory and the three concepts remain in the repo as the record of how the final design was chosen.
+>
+> Booking, event and contact forms send a prepared message (with a reference number) to the hotel's WhatsApp **0707 461 665**, with email to **thebreezhotel@gmail.com** as the alternative. They are requests: the site does not show live availability or take payment.
+
+## Build and deploy
+
+```bash
+python3 tools/build_site.py              # writes ./site (pages, images, sitemap, OG image)
+cd site && python3 ../tools/check_pages.py *.html   # overflow + tap-target QA at 6 widths
+```
+
+Deploy by publishing the contents of `site/` to the `gh-pages` branch (see `docs/DEPLOYMENT_GUIDE.md`).
+
+Source photographs (`assets/images/breez/`) stay out of Git; the web-sized copies the site needs are in `site/images/`, published with the hotel's permission.
 
 ![Concept illustrations: hotel exterior by day and at dusk, a guest room, a dining plate, a conference room and the pool](docs/images/concept-illustrations.webp)
 
@@ -65,6 +79,18 @@ the-breez-hotel/
 │   └── images/
 └── tools/
     └── make_illustrations.py   Regenerates the SVG illustrations
+```
+
+On the `design-lab` branch you will also find:
+
+```text
+assets/css/tokens.css, base.css   Design system (CSS variables + components)
+assets/js/site.js                 Reveal, lightbox, filters, menus, booking-request logic
+research/design-experiments/      26 standalone HTML/CSS experiments
+design-laboratory/index.html      All techniques side by side
+concepts/                         Three homepage concepts (A, B, C)
+design-review/index.html          Review environment: devices, mobile, compare, colour, inspiration
+tools/check_pages.py              Responsive QA at 1920/1440/1024/768/390/360 px
 ```
 
 `site/` (the website itself) will be added in the build stage.

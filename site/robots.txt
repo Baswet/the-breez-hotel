@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://baswet.github.io/the-breez-hotel/sitemap.xml

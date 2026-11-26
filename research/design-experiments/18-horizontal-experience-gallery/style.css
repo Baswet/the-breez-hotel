@@ -1,0 +1,6 @@
+/* Horizontal experience gallery */
+.hd{display:flex;justify-content:space-between;align-items:end;padding:var(--section-gap) var(--gutter) 24px;gap:16px;flex-wrap:wrap}
+.ctl{display:flex;gap:8px}.ctl button{width:52px;height:52px;border:1px solid var(--ink);background:none;font-size:20px;cursor:pointer;border-radius:50%}
+.hscroll{list-style:none;margin:0;padding:0 var(--gutter) 60px;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.hs{flex:0 0 clamp(240px,32vw,420px);scroll-snap-align:start}.hs:nth-child(even){margin-top:60px}
+.hs .ph{aspect-ratio:3/4}.hs .label{margin:14px 0 4px;color:var(--ochre-deep)}

@@ -1,0 +1,158 @@
+[
+ {
+  "n": "01",
+  "slug": "01-editorial-margin-layout",
+  "title": "Editorial margin layout",
+  "inspired": "Broadsheet-style sites on Pinterest (\"The Wordsmith\") and Aman's generous white space"
+ },
+ {
+  "n": "02",
+  "slug": "02-framed-page-layout",
+  "title": "Framed page layout (inset double frame)",
+  "inspired": "Hotel du Tasso's white page floating inside a coloured mat"
+ },
+ {
+  "n": "03",
+  "slug": "03-asymmetric-hotel-gallery",
+  "title": "Asymmetric hotel gallery",
+  "inspired": "Travel-magazine spreads on Pinterest; Behance resort case studies"
+ },
+ {
+  "n": "04",
+  "slug": "04-overlapping-photo-composition",
+  "title": "Overlapping photo composition",
+  "inspired": "Terreno Barrio Hotel's tilted, layered images; architecture portfolios on Pinterest"
+ },
+ {
+  "n": "05",
+  "slug": "05-double-border-sections",
+  "title": "Double-border sections",
+  "inspired": "Hotel du Tasso's double-framed buttons; Grand Hotel Vesuvio's ruled navigation"
+ },
+ {
+  "n": "06",
+  "slug": "06-vertical-side-navigation",
+  "title": "Vertical side navigation",
+  "inspired": "Fashion and architecture portfolios with edge navigation (Pinterest: \"vertical typography website side labels\")"
+ },
+ {
+  "n": "07",
+  "slug": "07-floating-booking-bar",
+  "title": "Floating booking bar",
+  "inspired": "The Hoxton's in-hero booking bar; Sarova's docked widget; Ace Hotel's header booking strip"
+ },
+ {
+  "n": "08",
+  "slug": "08-oversized-editorial-headings",
+  "title": "Oversized editorial headings",
+  "inspired": "Tengile Malamala and the Terreno wordmark: type that fills the screen"
+ },
+ {
+  "n": "09",
+  "slug": "09-cinematic-image-hero",
+  "title": "Cinematic image hero (crossfade slideshow)",
+  "inspired": "Hemingways' aerial video hero; Serena's three-word line"
+ },
+ {
+  "n": "10",
+  "slug": "10-masonry-gallery",
+  "title": "Masonry gallery with filters and lightbox",
+  "inspired": "Dribbble hotel galleries; CSS columns masonry from photography portfolios"
+ },
+ {
+  "n": "11",
+  "slug": "11-split-screen-introduction",
+  "title": "Split-screen introduction",
+  "inspired": "Tribe's \"Tribe is a philosophy\" split; Aman's calm halves"
+ },
+ {
+  "n": "12",
+  "slug": "12-architectural-grid",
+  "title": "Architectural grid (visible hairline grid)",
+  "inspired": "Architecture studio sites on Pinterest; Awwwards' ruled grids"
+ },
+ {
+  "n": "13",
+  "slug": "13-image-mask-transitions",
+  "title": "Image mask transitions (clip-path reveal)",
+  "inspired": "Awwwards nominees' wipe reveals on scroll"
+ },
+ {
+  "n": "14",
+  "slug": "14-animated-section-dividers",
+  "title": "Animated section dividers",
+  "inspired": "Fine-rule separators on editorial sites; travelling borders on Awwwards"
+ },
+ {
+  "n": "15",
+  "slug": "15-creative-footer-layout",
+  "title": "Creative footer layout",
+  "inspired": "Hotel footers with oversized wordmarks (Terreno, Casa Momo)"
+ },
+ {
+  "n": "16",
+  "slug": "16-fullscreen-navigation",
+  "title": "Fullscreen navigation",
+  "inspired": "Grand Hotel Vesuvio and Hemingways' full-screen MENU overlays"
+ },
+ {
+  "n": "17",
+  "slug": "17-floating-image-cards",
+  "title": "Floating image cards",
+  "inspired": "Dribbble resort UI cards with lift-on-hover; Behance Luvora Hotels"
+ },
+ {
+  "n": "18",
+  "slug": "18-horizontal-experience-gallery",
+  "title": "Horizontal experience gallery",
+  "inspired": "Horizontal storytelling sections on Awwwards; native scroll-snap"
+ },
+ {
+  "n": "19",
+  "slug": "19-offset-accommodation-cards",
+  "title": "Offset accommodation cards",
+  "inspired": "Staggered room lists on boutique hotel sites (Hotel du Tasso, Casa Momo)"
+ },
+ {
+  "n": "20",
+  "slug": "20-editorial-numbered-sections",
+  "title": "Editorial numbered sections",
+  "inspired": "Pinterest: website with oversized numeral on the left edge; architectural brochures"
+ },
+ {
+  "n": "21",
+  "slug": "21-image-and-typography-overlap",
+  "title": "Image and typography overlap",
+  "inspired": "The Terreno \"Terra cotta\" wordmark crossing its photograph (Pinterest)"
+ },
+ {
+  "n": "22",
+  "slug": "22-vertical-labels-and-side-notes",
+  "title": "Vertical labels and side notes",
+  "inspired": "Fashion editorial sites with rotated captions; Hotel du Tasso's side cues"
+ },
+ {
+  "n": "23",
+  "slug": "23-layered-image-frames",
+  "title": "Layered image frames",
+  "inspired": "Gallery and museum sites: passe-partout mats and offset outlines"
+ },
+ {
+  "n": "24",
+  "slug": "24-creative-booking-panel",
+  "title": "Creative booking panel",
+  "inspired": "Terreno's circular BOOK NOW stamp; Hoxton's friendly booking copy"
+ },
+ {
+  "n": "25",
+  "slug": "25-asymmetric-section-margins",
+  "title": "Asymmetric section margins",
+  "inspired": "Alternating narrow and wide sections on Aman and editorial portfolios"
+ },
+ {
+  "n": "26",
+  "slug": "26-karibu-stamp-and-ticker",
+  "title": "Karibu stamp and welcome ticker (discovered)",
+  "inspired": "Terreno's rotating stamp + the hotel's own sign word 'Karibu' and its English/Swahili captions on TikTok"
+ }
+]

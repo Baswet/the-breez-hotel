@@ -1,0 +1,6 @@
+/* Vertical labels and side notes */
+.wrap{max-width:var(--content-width);margin:0 auto;padding:var(--section-gap) var(--gutter);display:grid;gap:80px}
+.vl{display:grid;grid-template-columns:40px 1fr 220px;gap:24px;align-items:end}
+.side{writing-mode:vertical-rl;transform:rotate(180deg);font:600 12px var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:var(--ochre-deep);align-self:start}
+.note{font:italic 17px/1.4 var(--font-display);color:var(--ink-soft);border-left:1px solid var(--ochre);padding-left:14px;margin:0}
+@media(max-width:760px){.vl{grid-template-columns:28px 1fr}.note{grid-column:2}}

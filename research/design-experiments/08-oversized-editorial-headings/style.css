@@ -1,0 +1,5 @@
+/* Oversized editorial headings */
+.big{padding:var(--section-gap) var(--gutter);display:grid;gap:32px}
+.giant{margin:0;font:500 clamp(4rem,17vw,17rem)/.82 var(--font-display);letter-spacing:-.03em;color:var(--palm);display:grid}
+.giant .it{font-style:italic;color:var(--ochre-deep);padding-left:12vw}
+.strip{margin-top:-4vw}
