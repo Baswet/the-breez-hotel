@@ -918,3 +918,25 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
   .ftr-nav:nth-of-type(2) .label{display:none}
   .ftr-base{flex-direction:column;align-items:flex-start;padding-bottom:72px}
 }
+
+/* ==========================================================================
+   THE ART OF WELCOME: the side photograph sits in an architectural arch, a
+   semicircular head, straight jambs and a flat sill, with a thick cream frame
+   and the photo inset like a window. The existing arch reveal (data-reveal=
+   "arch") makes the picture rise into the opening; the arch stays sticky.
+   ========================================================================== */
+.ed-k-side{display:block;padding:clamp(56px,7vw,120px) clamp(28px,5vw,88px)}
+.ed-arch{position:sticky;top:calc(var(--hx-head) + 5vh);margin:0 auto;height:min(calc(100svh - var(--hx-head) - 10vh),780px);aspect-ratio:.66;max-width:100%;
+  background:#EADFC8;padding:clamp(16px,1.7vw,28px);border-radius:9999px 9999px 0 0;box-shadow:0 34px 60px -48px rgba(31,27,23,.5)}
+.ed-arch-in{position:relative;height:100%;border-radius:9999px 9999px 0 0;overflow:hidden;background:var(--stone-2)}
+.ed-k-side .ed-arch .ph{position:relative;top:auto;height:100%;max-height:none;aspect-ratio:auto;margin:0}
+.ed-arch .ph img{width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+@media (max-width:1100px){
+  .ed-k-side{padding:56px 28px}
+  .ed-arch{height:min(calc(100svh - var(--hx-head) - 12vh),640px)}
+}
+@media (max-width:760px){
+  .ed-k-side{order:0;padding:8px 0 64px;background:var(--stone)}
+  .ed-arch{position:relative;top:auto;height:auto;width:84%;aspect-ratio:.7;padding:14px}
+  .ed-k-side .ed-arch .ph{aspect-ratio:auto}
+}

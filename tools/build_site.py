@@ -338,20 +338,6 @@ STORY = [
 ]
 STORY_IMGS = [x[0] for x in STORY]
 
-def intro_sec():
-    return f'''<section class="sec" aria-labelledby="intro-h">
-  <div class="wrap intro">
-    <div class="rv"><span class="label">Karibu</span>
-      <h2 class="h-xl" id="intro-h" style="margin:.3em 0 .4em" data-split="words">A welcome carved <em class="italic">in stone</em> at the gate.</h2>
-      <p class="lead">Behind the gate are palms, a pool court, gazebos on the lawn and a fountain in the courtyard. Guests come to stay the night, to swim, to meet or to celebrate.</p>
-      <div class="btn-row" style="margin-top:24px"><a class="link" href="about.html">The hotel and its grounds</a></div>
-    </div>
-    <div class="intro-media" data-layered>
-      {ph('main-building-facade', 'a ly-a', '(max-width:760px) 90vw, 40vw')}
-      {ph('sign-the-breeze-hotel-karibu', 'b ly-b mask-arch', '(max-width:760px) 45vw, 20vw')}
-    </div>
-  </div>
-</section>'''
 
 MOOD_POS = {'gazebo-cypress': '45% 50%', 'pool-terrace-kids-pool': '58% 60%', 'garden-party-setup': '50% 60%', 'room-four-poster-window': '55% 50%'}
 
@@ -438,7 +424,7 @@ def editorial():
     <a class="ed-discover rv" href="about.html" aria-label="Discover the hotel and its grounds">Discover</a>
     <a class="ed-k-ph rv" href="about.html" tabindex="-1" aria-hidden="true">{ph('entrance-lobby', '', '(max-width:760px) 86vw, 36vw')}</a>
   </div>
-  <div class="ed-k-side" aria-hidden="true">{ph('veranda-corridor', '', '(max-width:760px) 100vw, 50vw')}</div>
+  <div class="ed-k-side" aria-hidden="true"><div class="ed-arch"><div class="ed-arch-in" data-reveal="arch">{ph('veranda-corridor', '', '(max-width:760px) 86vw, 520px')}</div></div></div>
 </section>'''
     place = f'''<section class="ed-place" aria-labelledby="place-h">
   <div class="wrap">
@@ -466,7 +452,7 @@ def editorial():
     </div>
   </div>
 </section>'''
-    return karibu + '\n' + intro_sec() + '\n' + story_sec + '\n' + place
+    return karibu + '\n' + story_sec + '\n' + place
 
 EXP_TILES = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
              'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'bed-detail']
