@@ -817,3 +817,104 @@
   .ed-karibu{padding-top:0}
 }
 @media (prefers-reduced-motion:reduce){ .hdr--over,.hdr--over::before,.hdr--over .hdr-in,.hdr--over .nav a,.hdr--over .mark,.hdr--over .mark b,.hdr--over .mark span,.hdr--over .menu-btn{transition:none} }
+
+/* ==========================================================================
+   LOWER HOMEPAGE (Bergen Harbour structure): reviews + booking invitation over
+   one photograph, four highlights, "We are here." location with map, then a
+   roofline edge into the footer.
+   ========================================================================== */
+/* reviews band */
+.lw-rev{position:relative;overflow:hidden;min-height:min(88svh,820px);display:grid;align-items:center}
+.lw-rev-ph{position:absolute;inset:0}
+.lw-rev-ph img{width:100%;height:100%;object-fit:cover;object-position:22% 50%;display:block}
+.lw-rev-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(246,241,231,0) 30%,rgba(246,241,231,.55) 62%,rgba(246,241,231,.82))}
+.lw-rev-in{position:relative;z-index:1;display:grid;justify-items:end;gap:clamp(28px,4vw,48px);padding-block:clamp(72px,9vw,120px)}
+.lw-rev-panel,.lw-book{width:min(100%,520px)}
+.lw-rev-panel{display:grid;gap:16px}
+.lw-rev-panel h2{font:300 clamp(2.8rem,1.6rem + 3vw,4.8rem)/.98 var(--f-display);letter-spacing:-.025em;margin:0;color:var(--ink)}
+.lw-rev-panel p{margin:0;font:400 clamp(1.12rem,1rem + .35vw,1.32rem)/1.55 var(--f-display);color:var(--ink-2);max-width:36ch}
+.lw-rev-links{display:flex;flex-wrap:wrap;gap:6px 28px}
+.lw-book{display:grid;gap:16px;padding-top:clamp(20px,3vw,32px)}
+.lw-book-line{margin:0;font:300 clamp(1.8rem,1.2rem + 1.6vw,2.7rem)/1.1 var(--f-display);color:var(--ink)}
+.lw-book-line em{font-style:italic;color:var(--green-2)}
+.lw-book-act{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px}
+.lw-wa{font-size:.95rem;color:var(--ink-2);text-decoration:underline;text-underline-offset:4px;padding:12px 0}
+/* highlights */
+.lw-hl{padding:clamp(88px,10vw,140px) 45px}
+.lw-no{display:block;font:400 1.1rem/1 var(--f-display);color:var(--sand-ink);margin-bottom:10px;letter-spacing:.04em}
+/* location */
+.lw-loc{background:var(--stone);padding:clamp(88px,10vw,150px) 0 clamp(96px,11vw,170px)}
+.lw-loc-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(32px,6vw,96px);align-items:center}
+.lw-loc-text{display:grid;gap:14px;align-content:center}
+.lw-loc-title{font:300 clamp(4rem,1.6rem + 6.6vw,8.6rem)/.86 var(--f-display);letter-spacing:-.045em;margin:4px 0 0;color:var(--green)}
+.lw-loc-title em{font-style:italic;color:var(--green-2)}
+.lw-loc-line{margin:0;font:italic 400 clamp(1.3rem,1rem + .9vw,1.85rem)/1.2 var(--f-display);color:var(--ink-2)}
+.lw-loc-intro{margin:8px 0 0;color:var(--ink-2);max-width:40ch}
+.lw-loc-dl{display:grid;gap:10px;margin:14px 0 0}
+.lw-loc-dl div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;align-items:baseline}
+.lw-loc-dl dt{font:700 .68rem var(--f-text);letter-spacing:.2em;text-transform:uppercase;color:var(--sand-ink)}
+.lw-loc-dl dd{margin:0;font-size:1rem}
+.lw-loc-dl a{color:var(--ink);text-decoration:none}
+.lw-loc-links{display:flex;flex-wrap:wrap;gap:4px 28px;margin-top:6px}
+.lw-map{position:relative;aspect-ratio:5/4;background:var(--stone-2);box-shadow:0 40px 70px -50px rgba(31,27,23,.45)}
+.lw-map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:saturate(.72) sepia(.12) contrast(.98)}
+.lw-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);display:grid;justify-items:center;gap:6px;pointer-events:none;transition:opacity .4s}
+.lw-pin svg{width:30px;height:40px;fill:var(--green);filter:drop-shadow(0 6px 8px rgba(0,0,0,.25))}
+.lw-pin svg circle{fill:var(--sand-soft)}
+.lw-pin-label{background:var(--green);color:#fff;font:700 .66rem/1 var(--f-text);letter-spacing:.22em;text-transform:uppercase;padding:9px 12px;white-space:nowrap}
+.lw-map.moved .lw-pin{opacity:0}
+.lw-map-coord{position:absolute;left:14px;bottom:-30px;font:700 .64rem var(--f-text);letter-spacing:.2em;color:var(--ink-3)}
+@media (max-width:900px){
+  .lw-rev{min-height:0}
+  .lw-rev-ph{position:relative;inset:auto;aspect-ratio:3/2}
+  .lw-rev-ph::after{display:none}
+  .lw-rev{display:block;background:var(--ivory)}
+  .lw-rev-in{justify-items:start;padding-block:48px 72px}
+  .lw-loc-grid{grid-template-columns:1fr}
+  .lw-map{aspect-ratio:4/5;margin-top:12px}
+  .lw-hl{padding:72px 27px}
+}
+@media (max-width:760px){
+  .lw-loc{padding:72px 0 96px}
+  .lw-loc-title{font-size:clamp(3.8rem,1.6rem + 10vw,5.2rem)}
+  .lw-book-act{flex-direction:column;align-items:stretch}
+  .lw-book-act .hb-btn{width:100%}
+}
+@media (prefers-reduced-motion:reduce){ .lw-pin{transition:none} }
+
+/* ==========================================================================
+   FOOTER: roofline edge (an asymmetric ridge, like the gazebo roofs) rising out
+   of the stone location section; minimal grid; the wordmark softly behind.
+   ========================================================================== */
+.ftr{position:relative;padding:0 0 28px;overflow:hidden;margin-top:0;background:none}
+body:has(.lw-loc) .ftr-edge{background:var(--stone)}
+.ftr-edge{display:block;width:100%;height:clamp(60px,8vw,120px);fill:var(--green)}
+.ftr-body{position:relative;background:none}
+.ftr::after{content:"";position:absolute;left:0;right:0;top:calc(clamp(60px,8vw,120px) - 1px);bottom:0;background:var(--green);z-index:-1}
+.ftr{z-index:1;isolation:isolate}
+.ftr-word{position:absolute;left:50%;top:clamp(8px,2vw,24px);transform:translateX(-50%);margin:0;font:300 clamp(6rem,2rem + 17vw,21rem)/.8 var(--f-display);letter-spacing:-.05em;color:rgba(233,239,231,.06);white-space:nowrap;pointer-events:none;user-select:none;z-index:0}
+.ftr-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.5fr) repeat(2,minmax(0,.8fr)) minmax(0,1.3fr);gap:36px var(--gap);padding-top:clamp(56px,8vw,110px)}
+.ftr-brand{display:grid;gap:18px;align-content:start}
+.ftr-brand .mark{justify-items:start;color:#fff}
+.ftr-brand .mark b{font-size:clamp(2.4rem,1.8rem + 1.6vw,3.4rem)}
+.ftr-brand .mark span{color:var(--sand-soft)}
+.ftr-brand p{margin:0;font:italic 400 1.3rem/1.35 var(--f-display);color:#E7EDE7;max-width:22ch}
+.ftr ul{gap:10px}
+.ftr ul a{text-decoration:none;color:#F3EFE6;transition:color .3s}
+.ftr ul a:hover{color:var(--sand-soft);text-decoration:none}
+.ftr-contact li{color:#C9D6CC}
+.ftr-social{display:flex;gap:10px;margin-top:20px}
+.ftr-social a{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:rgba(233,239,231,.08);color:#fff;transition:background .3s,color .3s}
+.ftr-social a:hover{background:var(--sand);color:#1B1209}
+.ftr-social svg{width:18px;height:18px;fill:currentColor}
+.ftr-base{position:relative;z-index:1;margin-top:clamp(56px,7vw,96px);align-items:center;font-size:.82rem;color:#AFC0B4}
+.ftr-base a{color:#E7EDE7;text-decoration:none}
+.ftr-top{display:inline-flex;align-items:center;gap:6px;min-height:44px;font:700 .7rem var(--f-text);letter-spacing:.18em;text-transform:uppercase}
+.ftr-top:hover{color:var(--sand-soft)}
+@media (max-width:1100px){ .ftr-grid{grid-template-columns:1fr 1fr} }
+@media (max-width:760px){
+  .ftr-grid{grid-template-columns:1fr 1fr;gap:32px 20px}
+  .ftr-brand,.ftr-contact{grid-column:1/-1}
+  .ftr-nav:nth-of-type(2) .label{display:none}
+  .ftr-base{flex-direction:column;align-items:flex-start;padding-bottom:72px}
+}
