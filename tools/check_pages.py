@@ -4,7 +4,7 @@ Usage: python3 tools/check_pages.py page1.html [page2.html ...] [--shots DIR] [-
 """
 import asyncio, sys, os, json
 from playwright.async_api import async_playwright
-WIDTHS = [1920, 1440, 1024, 768, 390, 360]
+WIDTHS = [1920, 1440, 1024, 768, 430, 390, 375, 360]
 JS = """() => {
   const W = document.documentElement.clientWidth;
   const over = [];
@@ -31,11 +31,11 @@ async def main():
         for page_path in args:
             for w in WIDTHS:
                 pg = await b.new_page(viewport={'width': w, 'height': 900})
-                await pg.goto('file://' + os.path.abspath(page_path))
+                await pg.goto('http://localhost:8765/' + page_path)
                 h = await pg.evaluate('document.body.scrollHeight')
                 for y in range(0, h, 700):
                     await pg.evaluate(f'window.scrollTo(0,{y})'); await pg.wait_for_timeout(60)
-                await pg.evaluate('document.querySelectorAll(".reveal,.reveal-mask,.rv,.rv-mask").forEach(e=>e.classList.add("is-in","in"))')
+                await pg.evaluate('document.querySelectorAll(".reveal,.reveal-mask,.rv,.rv-mask,.sp,[data-reveal],[data-stagger],[data-layered]").forEach(e=>e.classList.add("is-in","in"))')
                 await pg.evaluate('window.scrollTo(0,0)'); await pg.wait_for_timeout(700)
                 r = await pg.evaluate(JS)
                 res[f'{page_path}@{w}'] = r

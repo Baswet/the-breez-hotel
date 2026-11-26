@@ -43,3 +43,25 @@ Each stock photo carries the on-image label "Illustrative, not The Breez · phot
 | friends-lunch, long-table-gathering | Sweet Life; Lisa Marie Theck | Unsplash License | Downloaded and converted; held in reserve |
 
 **Withheld from the public site:** `guests-lunch-garden-terrace`, `wedding-party-courtyard` and `wedding-marquee-guests` (identifiable guests, no recorded consent); `reception-christmas`, `lobby-christmas` and `bed-towel-art` (seasonal decoration); `building-palms-umbrellas` (near-duplicate). The staff photo `staff-team-welcome` is used on the About page.
+
+
+## Enhancement round: dining photography (26 Nov 2026)
+
+Ten food and drink photographs from Unsplash, all under the [Unsplash License](https://unsplash.com/license): free commercial use, no attribution required (credited anyway). The selection is limited to plated dishes, ingredients, drinks and table close-ups, with no restaurant interiors, so nothing can be mistaken for The Breez's own dining room. Each photo is labelled "Illustrative, not The Breez · photographer / Unsplash" and is listed on `credits.html`. The dining page also states that these photos are not dishes from the Breez menu.
+
+| File | Photographer | Unsplash photo | Where used |
+| --- | --- | --- | --- |
+| food-grilled-board | Mark DeYoung | photo-1532550907401-a500c9a57435 | Dining hero |
+| drink-mango-juice | Sam Hojati | photo-1546173159-315724a31696 | Dining hero, circular detail |
+| food-sauce-pour | Urban Gyllström | photo-1663530761401-15eefb544889 | Dining mood strip |
+| food-salmon-plate | Casey Lee | photo-1467003909585-2f8a72700288 | Dining mood strip |
+| drink-three-juices | Dhiren Maru | photo-1583577612013-4fecf7bf8f13 | Dining mood strip |
+| food-chicken-woodboard | Bayu Syaits | photo-1788227372897-49ec292a9406 | Dining mood strip |
+| food-breakfast-bowls | Monaz Hastam | photo-1767277672167-18105701959b | Dining mood strip |
+| food-table-set | Kamilla Isalieva | photo-1731941465921-eb4285693713 | Dining mood strip |
+| food-overhead-plate | Jametlene Reskp | photo-1723200295608-fa8efcee6781 | Dining mood strip |
+| food-table-evening | Jay Wennington | photo-1414235077428-338989a2e8c0 | Held in reserve |
+
+**Still on the site:** the hotel's own food photographs (`poolside-meal-juice`, `grilled-chicken`, `buffet-samosa-chapati`). They appear in a new "Photographed at The Breez" section on the dining page, on the homepage, on About and in the gallery archive, because those places make specific claims about the hotel's food.
+
+**No longer on the site:** `rice-chicken-plate` and `waiter-serving`. The builder copies only images that are referenced, so the published site no longer contains them. Their source files remain in `assets/images/stock/` for the record.
