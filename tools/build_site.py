@@ -267,11 +267,12 @@ def jsonld():
 def page(slug, title, desc, body, og_img='images/og-image.jpg'):
     url = BASE_URL + ('' if slug == 'index' else f'{slug}.html')
     full = title if slug == 'index' else f'{title} · The Breez Hotel, Busia'
+    BASE_TAG = '\n<base href="/the-breez-hotel/">' if slug == '404' else ''
     ld = jsonld() if slug in ('index', 'contact') else ''
     doc = f'''<!DOCTYPE html>
 <html lang="en-KE">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8">{BASE_TAG}
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{html.escape(full)}</title>
 <meta name="description" content="{html.escape(desc, quote=True)}">
@@ -706,7 +707,7 @@ def gallery():
     FILM = [('entrance-gate', 'Arrive at the gate', '1/1'), ('entrance-lobby', 'Step inside', '3/4'), ('room-four-poster-2', 'Settle in', '4/3'),
             ('pool-lanes-2', 'Swim', '4/5'), ('poolside-tables', 'Lunch by the pool', '4/3'), ('gazebo-steps', 'The garden', '3/2'), ('courtyard-fountain-tent', 'Evening on the lawn', '3/2')]
     for k, *_ in LQ + FILM: USED.add(k)
-    lq_imgs = ''.join(f'<img src="{IMAGES[k]["rel"]}-1600.webp" alt="{html.escape(ALT[k], quote=True)}" width="{IMAGES[k]["w"]}" height="{IMAGES[k]["h"]}" decoding="async"{"" if i == 0 else " loading=lazy"}>' for i, (k, c) in enumerate(LQ))
+    lq_imgs = ''.join(f'<img src="{IMAGES[k]["rel"]}-1600.webp" srcset="{IMAGES[k]["rel"]}-800.webp 800w, {IMAGES[k]["rel"]}-1600.webp 1600w" sizes="(max-width:760px) 100vw, 1320px" alt="{html.escape(ALT[k], quote=True)}" width="{IMAGES[k]["w"]}" height="{IMAGES[k]["h"]}" decoding="async"{"" if i == 0 else " loading=lazy"}>' for i, (k, c) in enumerate(LQ))
     lq_caps = ''.join(f'<p data-cap{" class=on" if i == 0 else ""}>{c}</p>' for i, (k, c) in enumerate(LQ))
     film = ''.join(f'<figure>{hx(k, "", "(max-width:760px) 70vw, 30vw", extra=f" style=--ar:{ar}")}<figcaption><b>0{i+1}</b>{c}</figcaption></figure>' for i, (k, c, ar) in enumerate(FILM))
     return f'''<section class="hx-gal" aria-labelledby="gal-h1">
