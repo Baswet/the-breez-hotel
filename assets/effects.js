@@ -289,3 +289,112 @@
     if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => m.classList.toggle('run', e.isIntersecting)).observe(m);
   });
 })();
+
+/* ==========================================================================
+   Pool days: layered stack slideshow (entry choreography, depth transitions,
+   autoplay with pause, swipe, keyboard, full-screen via the shared lightbox)
+   ========================================================================== */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-pooldays]').forEach((root) => {
+    const stage = root.querySelector('.pd-stage');
+    const cards = [...stage.querySelectorAll('.pd-card')];
+    const n = cards.length; if (!n) return;
+    const count = root.querySelector('[data-count]'), cap = root.querySelector('.pd-cap'), prog = root.querySelector('[data-prog]');
+    const pauseBtn = root.querySelector('[data-pause]');
+    const small = () => matchMedia('(max-width:760px)').matches;
+    /* stack slots: x/y in % of card size, rotation (deg), scale, z, opacity, brightness */
+    const SLOTS = [
+      { x: 0, y: 0, r: -3, s: 1, z: 40, o: 1, b: 1 },
+      { x: -50, y: -10, r: -11, s: 0.8, z: 30, o: 1, b: 0.9 },
+      { x: 47, y: 12, r: 9, s: 0.72, z: 20, o: 1, b: 0.86 },
+      { x: 10, y: -30, r: 5, s: 0.62, z: 10, o: 0.92, b: 0.82 },
+    ];
+    const OUT = { x: 0, y: 0, r: 0, s: 0.5, z: 0, o: 0, b: 0.8 };
+    let idx = 0, timer = 0, progAnim = null, hovering = false, userPaused = reduce, visible = false, entered = false;
+    const K = () => (small() ? { x: 0.32, y: 0.75, r: 0.55 } : { x: 1, y: 1, r: 1 });
+    const tf = (p) => { const k = K(); return `translate(-50%,-50%) translate(${p.x * k.x}%, ${p.y * k.y}%) rotate(${p.r * k.r}deg) scale(${p.s})`; };
+    const slotFor = (i) => { const r = (i - idx + n) % n; return r === 0 ? 0 : r === 1 ? 1 : r === 2 ? 2 : r === n - 1 ? 3 : -1; };
+    const place = (c, i, skip) => {
+      const s = slotFor(i); const p = s < 0 ? OUT : SLOTS[s];
+      if (skip === c) return;
+      c.dataset.pos = s; c.style.zIndex = p.z; c.style.opacity = p.o; c.style.transform = tf(p); c.style.filter = `brightness(${p.b})`;
+      c.tabIndex = s === 0 ? 0 : -1; c.setAttribute('aria-hidden', String(s !== 0));
+    };
+    const ui = () => {
+      if (count) count.textContent = String(idx + 1).padStart(2, '0');
+      if (cap) { cap.style.opacity = 0; setTimeout(() => { cap.textContent = cards[idx].dataset.cap || ''; cap.style.opacity = 1; }, reduce ? 0 : 250); }
+    };
+    const layout = (skip) => cards.forEach((c, i) => place(c, i, skip));
+
+    /* one continuous move: the card that crosses the stack slides out to the side, then tucks behind / comes forward */
+    const go = (dir) => {
+      const leaving = cards[idx];
+      idx = (idx + dir + n) % n;
+      const mover = dir > 0 ? leaving : cards[idx];           /* next: old front goes back; prev: back card comes forward */
+      if (reduce || !mover.animate) { layout(); ui(); return; }
+      const from = getComputedStyle(mover).transform;
+      const target = dir > 0 ? SLOTS[3] : SLOTS[0];
+      const side = { x: dir > 0 ? 78 : -78, y: -4, r: dir > 0 ? 14 : -14, s: 0.84 };
+      layout(mover);
+      mover.style.transition = 'none';
+      const dur = small() ? 900 : 1150;
+      const a = mover.animate([
+        { transform: from, zIndex: dir > 0 ? 45 : 8, filter: getComputedStyle(mover).filter },
+        { transform: tf(side), zIndex: dir > 0 ? 45 : 8, offset: 0.42 },
+        { transform: tf(side), zIndex: dir > 0 ? 5 : 46, offset: 0.5 },
+        { transform: tf(target), zIndex: target.z, filter: `brightness(${target.b})` },
+      ], { duration: dur, easing: 'cubic-bezier(.6,0,.25,1)' });
+      a.onfinish = () => { mover.style.transition = ''; place(mover, cards.indexOf(mover)); };
+      ui();
+    };
+
+    /* autoplay with a visible progress line */
+    const stop = () => { clearTimeout(timer); timer = 0; if (progAnim) { progAnim.cancel(); progAnim = null; } };
+    const canPlay = () => entered && visible && !hovering && !userPaused && !document.hidden;
+    const start = () => {
+      stop(); if (!canPlay()) return;
+      if (prog && prog.animate) progAnim = prog.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 6000, easing: 'linear', fill: 'forwards' });
+      timer = setTimeout(() => { go(1); start(); }, 6000);
+    };
+    const manual = (dir) => { go(dir); start(); };
+
+    root.querySelector('[data-next]').addEventListener('click', () => manual(1));
+    root.querySelector('[data-prev]').addEventListener('click', () => manual(-1));
+    root.querySelector('[data-full]').addEventListener('click', () => cards[idx].click());
+    pauseBtn.addEventListener('click', () => { userPaused = !userPaused; pauseBtn.setAttribute('aria-pressed', String(userPaused)); pauseBtn.setAttribute('aria-label', userPaused ? 'Play slideshow' : 'Pause slideshow'); userPaused ? stop() : start(); });
+    if (reduce) { pauseBtn.setAttribute('aria-pressed', 'true'); pauseBtn.setAttribute('aria-label', 'Play slideshow'); }
+    root.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hovering = true; stop(); } });
+    root.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hovering = false; start(); } });
+    root.addEventListener('focusin', () => { hovering = true; stop(); });
+    root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) { hovering = false; start(); } });
+    root.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') manual(1); if (e.key === 'ArrowLeft') manual(-1); });
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+    /* swipe; a swipe never opens the viewer, a tap on a back card brings it forward */
+    let sx = null, moved = false;
+    stage.addEventListener('pointerdown', (e) => { sx = e.clientX; moved = false; });
+    stage.addEventListener('pointerup', (e) => { if (sx === null) return; const d = e.clientX - sx; if (Math.abs(d) > 40) { moved = true; manual(d < 0 ? 1 : -1); } sx = null; });
+    stage.addEventListener('click', (e) => {
+      const c = e.target.closest('.pd-card'); if (!c) return;
+      if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; return; }
+      const s = +c.dataset.pos;
+      if (s > 0) { e.preventDefault(); e.stopPropagation(); manual(s === 3 ? -1 : 1); }
+    }, true);
+
+    /* entry choreography: back panels first, the main photograph last */
+    const enter = () => {
+      if (entered) return; entered = true; root.classList.add('pd-in');
+      const order = cards.map((c, i) => [c, slotFor(i)]);
+      order.forEach(([c, s]) => { c.style.transitionDelay = reduce ? '0s' : (s === 3 ? '0s' : s === 2 ? '.12s' : s === 1 ? '.24s' : s === 0 ? '.42s' : '0s'); });
+      layout(); ui();
+      setTimeout(() => cards.forEach((c) => { c.style.transitionDelay = ''; }), 1800);
+      setTimeout(start, 1600);
+    };
+    cards.forEach((c) => { c.style.transform = 'translate(-50%,-50%) scale(.6) rotate(0deg)'; c.style.opacity = 0; });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) { enter(); start(); } else stop(); }, { threshold: 0.3 }).observe(root);
+    } else { visible = true; enter(); }
+    addEventListener('resize', () => { if (entered) layout(); });
+  });
+})();
