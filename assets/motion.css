@@ -232,3 +232,4 @@
 .gcol .cg-b{aspect-ratio:auto}
 .gcol .cg-t{grid-column:10/13;position:relative;z-index:3}
 @media (max-width:760px){.gcol .cg-t{grid-column:1/-1}}
+.sl-count{white-space:nowrap}
