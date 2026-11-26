@@ -254,7 +254,13 @@
     addEventListener('resize', run); run();
   } else {
     tints.forEach((p) => p.querySelectorAll('.tw').forEach((w) => w.classList.add('lit')));
-    stories.forEach((s) => { s.querySelectorAll('[data-scene]').forEach((m, i) => m.classList.toggle('on', i === 0)); });
+    /* reduced motion: the photograph still follows the story, only without animated transitions */
+    const runS = () => stories.forEach((s) => {
+      const steps = s.querySelectorAll('[data-step]'); const media = s.querySelectorAll('[data-scene]');
+      let cur = 0; steps.forEach((st, i) => { if (st.getBoundingClientRect().top < innerHeight * 0.55) cur = i; });
+      steps.forEach((st, i) => st.classList.toggle('on', i === cur)); media.forEach((m, i) => m.classList.toggle('on', i === cur));
+    });
+    if (stories.length) { addEventListener('scroll', runS, { passive: true }); runS(); }
   }
 
   /* slide-mode slideshow (rooms): directional clip-path transitions, swipe, dots */

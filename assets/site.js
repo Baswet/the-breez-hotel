@@ -9,6 +9,22 @@
   const onScroll = () => hdr && hdr.classList.toggle('scrolled', window.scrollY > 24);
   window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
+  /* homepage: the header belongs to the hero until the hero has passed under it,
+     then turns into the light header (both directions, driven by the hero boundary) */
+  const heroEl = document.querySelector('.hb');
+  if (hdr && heroEl && hdr.classList.contains('hdr--over')) {
+    if ('IntersectionObserver' in window) {
+      let io;
+      const watch = () => {
+        if (io) io.disconnect();
+        io = new IntersectionObserver(([e]) => hdr.classList.toggle('is-solid', !e.isIntersecting),
+          { rootMargin: `-${Math.round(hdr.offsetHeight)}px 0px 0px 0px`, threshold: 0 });
+        io.observe(heroEl);
+      };
+      watch(); addEventListener('resize', watch);
+    } else { hdr.classList.add('is-solid'); }
+  }
+
   /* reveal */
   const rv = document.querySelectorAll('.rv, .rv-mask');
   if ('IntersectionObserver' in window) {
@@ -37,7 +53,7 @@
   const nice = (s) => s ? new Date(s + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : '';
   const ref = () => 'BRZ-' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
 
-  /* forms: [data-form="booking"|"event"|"contact"|"quick"] */
+  /* forms: [data-form="booking"|"event"|"contact"] */
   document.querySelectorAll('form[data-form]').forEach((form) => {
     const type = form.dataset.form;
     const inEl = form.querySelector('[name=checkin]');
@@ -64,9 +80,6 @@
 
     form.addEventListener('submit', (ev) => {
       ev.preventDefault();
-      if (type === 'quick') {               // homepage strip → hand over to the full booking page
-        const q = new URLSearchParams(new FormData(form)); location.href = form.action + '?' + q.toString(); return;
-      }
       if (!form.reportValidity()) return;
       const fd = new FormData(form); const r = ref();
       const title = { booking: 'Room booking request', event: 'Meeting / event enquiry', contact: 'Website message' }[type] || 'Enquiry';

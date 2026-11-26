@@ -391,8 +391,7 @@
 .mt2-fac-list,.mt2-enq-contact,.mt2-wed-cap,.hx-dining-meta,.ss-step,.ftr-base,.dock{border-top:0}
 .ruled li,.facts div,.spec dl div,.every div,.ov-nav a,.ab-close li,.mt2-panel li,.mt2-fac-list li,
 .mt2-enq-contact li,.credits-none,.mt2-cf-tabs,.summary div,.ct-actions a{border-bottom:0}
-.summary div,.ct-actions a,.dock a,.hx-strip>*{border-right:0}
-.hx-strip>*{border-bottom:0}
+.summary div,.ct-actions a,.dock a{border-right:0}
 .note,.mt2-intro-p,.rx-head p,.rx-cap{border-left:0}
 .meet-grid,.meet-grid>*{border:0}
 /* framing boxes and nested outlines */
