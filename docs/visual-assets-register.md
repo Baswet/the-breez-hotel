@@ -25,3 +25,21 @@ Downloaded 26 Nov 2026 from images.unsplash.com at 2000 px. Shown only with an o
 **Rejected:** a stock hotel bedroom, restaurant interior, conference table, and a pool photo with a fence and loungers — all could be mistaken for the hotel's own facilities.
 
 Reserve (downloaded, not yet placed): pool-reading-lifestyle, kenya-lake-sunset (for a future "Discover Busia" page), food-table-shared, rice-chicken-plate.
+
+## Production website (26 Nov 2026)
+
+The live site at https://baswet.github.io/the-breez-hotel/ uses **87 hotel photographs** (BREEZ ORIGINAL, published with the hotel's permission as confirmed by the project owner) and **6 illustrative stock photographs** (EXTERNAL LICENSED, Unsplash License). On the content pages outside the gallery, 66 of 72 photo placements (92%) are the hotel's own.
+
+Each stock photo carries the on-image label "Illustrative, not The Breez · photographer / Unsplash" and is listed on `credits.html`.
+
+| File | Photographer | Licence | Where used |
+| --- | --- | --- | --- |
+| woman-swimming-pool | Leilani Angel | Unsplash License | Pools collage |
+| pool-reading-lifestyle | Abby Thompson | Unsplash License | Pools collage |
+| kenya-lake-sunset | Tony Samuel Gachie | Unsplash License | About, "The area" |
+| rice-chicken-plate | Takashi Miyazaki | Unsplash License | Dining strip |
+| group-dinner | Jim Nyamao | Unsplash License | Dining, "A table for everyone" |
+| waiter-serving | Kate Townsend | Unsplash License | Dining strip |
+| friends-lunch, long-table-gathering | Sweet Life; Lisa Marie Theck | Unsplash License | Downloaded and converted; held in reserve |
+
+**Withheld from the public site:** `guests-lunch-garden-terrace`, `wedding-party-courtyard` and `wedding-marquee-guests` (identifiable guests, no recorded consent); `reception-christmas`, `lobby-christmas` and `bed-towel-art` (seasonal decoration); `building-palms-umbrellas` (near-duplicate). The staff photo `staff-team-welcome` is used on the About page.

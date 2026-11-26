@@ -1,0 +1,756 @@
+#!/usr/bin/env python3
+"""Build the production website for The Breez Hotel into ./site.
+
+Static HTML, one shared stylesheet (src/css/site.css) and script (src/js/site.js).
+Facts used on the pages are limited to what the hotel's own channels confirm
+(see docs/final-design-recommendation.md). Room categories and features are shown
+"as listed on Booking.com"; rates, capacities, menus and hours are "on request".
+
+Run:  python3 tools/build_site.py
+"""
+import html, json, shutil, datetime
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / 'site'
+BASE_URL = 'https://baswet.github.io/the-breez-hotel/'
+TODAY = datetime.date.today().isoformat()
+
+PHONE_DISPLAY = '0707 461 665'
+TEL = 'tel:+254707461665'
+WA = 'https://wa.me/254707461665'
+EMAIL = 'thebreezhotel@gmail.com'
+FB = 'https://www.facebook.com/TheBreezhotelofficial'
+TT = 'https://www.tiktok.com/@thebreezhotelbusia'
+ADDRESS = 'Kisumu–Busia Road, Busia, Kenya'
+MAP_EMBED = 'https://maps.google.com/maps?q=The%20Breez%20Hotel%2C%20Busia%2C%20Kenya&z=15&output=embed'
+MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=The+Breez+Hotel+Busia+Kenya'
+
+# Photos not published: identifiable guests without recorded consent, and seasonal decor.
+EXCLUDE = {'guests-lunch-garden-terrace', 'wedding-party-courtyard', 'wedding-marquee-guests',
+           'reception-christmas', 'lobby-christmas', 'bed-towel-art', 'building-palms-umbrellas'}
+
+STOCK = {  # key: (photographer, unsplash photo id or page)
+    'woman-swimming-pool': ('Leilani Angel', 'Unsplash'),
+    'pool-reading-lifestyle': ('Abby Thompson', 'Unsplash'),
+    'kenya-lake-sunset': ('Tony Samuel Gachie', 'Unsplash'),
+    'food-table-shared': ('Annie Spratt', 'Unsplash'),
+    'rice-chicken-plate': ('Takashi Miyazaki', 'Unsplash'),
+    'group-dinner': ('Jim Nyamao', 'Unsplash'),
+    'waiter-serving': ('Kate Townsend', 'Unsplash'),
+    'long-table-gathering': ('Lisa Marie Theck', 'Unsplash'),
+    'friends-lunch': ('Sweet Life', 'Unsplash'),
+}
+
+ALT = {
+    'building-palms-pool-court': 'The Breez Hotel building rising behind palms and the pool court',
+    'building-palms-umbrellas': 'Hotel building with palms and poolside umbrellas',
+    'main-building-facade': 'Main building facade of The Breez Hotel',
+    'tower-and-terrace': 'The hotel tower above the terrace',
+    'tower-and-terrace-tall': 'The hotel tower above the terrace',
+    'wing-and-garden': 'Guest wing beside the garden',
+    'entrance-gate': 'Entrance gate of the hotel on the Kisumu–Busia Road',
+    'sign-the-breeze-hotel-karibu': 'Carved stone sign at the hotel reading “The Breeze Hotel — Karibu”',
+    'gate-sign-crop': 'Hotel name sign at the gate',
+    'i-love-the-breez-sign': '“I love The Breez” sign at the hotel',
+    'wall-sign-i-love-the-breez': '“I love The Breez” wall sign',
+    'vip-lounge-tower-kids-pool': 'VIP lounge and tower beside the kids’ pool',
+    'cottage-courtyard-swing': 'Garden swing in the cottage courtyard',
+    'courtyard-fountain-gazebos': 'Courtyard fountain with gazebos',
+    'courtyard-fountain-tent': 'Courtyard fountain with an events tent',
+    'courtyard-lawn-fountain': 'Lawn and fountain in the courtyard',
+    'gazebo-flowerbeds': 'Gazebo among flowerbeds',
+    'gazebo-cypress': 'Gazebo framed by cypress trees',
+    'gazebo-cypress-2': 'Gazebo and cypress trees in the garden',
+    'cottages-lawn': 'Cottages facing the lawn',
+    'gazebo-garden': 'Garden gazebo',
+    'fountain-seating': 'Seating beside the fountain',
+    'gazebo-steps': 'Steps up to a garden gazebo',
+    'garden-gazebo-roof': 'Thatched gazebo roof in the garden',
+    'walkway-cottages': 'Walkway between the cottages',
+    'fountain-lawn-swing': 'Fountain, lawn and swing',
+    'cypress-cottage': 'Cottage behind cypress trees',
+    'pool-umbrellas-above': 'Pool and umbrellas seen from above',
+    'pool-terrace-kids-pool': 'Pool terrace with the kids’ pool',
+    'pool-aerial': 'Aerial view of the swimming pool',
+    'poolside-tables': 'Tables beside the pool',
+    'pool-garden-view': 'Pool with garden view',
+    'pool-lawn-view': 'Pool beside the lawn',
+    'pool-top-down': 'Pool water seen from above',
+    'pool-lanes': 'Pool lanes in sunlight',
+    'pool-lanes-2': 'Pool lanes',
+    'pool-lanes-3': 'Pool lanes and deck',
+    'pool-loungers': 'Loungers along the pool',
+    'pool-fence-umbrellas': 'Pool fence and umbrellas',
+    'kids-pool-umbrellas': 'Kids’ pool with umbrellas',
+    'kids-pool-building': 'Kids’ pool in front of the building',
+    'room-four-poster-window': 'Guest room with four-poster bed by the window',
+    'room-four-poster-2': 'Guest room with four-poster bed',
+    'room-fridge-tv': 'Guest room with fridge and TV',
+    'room-grey-bedding': 'Guest room with grey bedding',
+    'room-desk-armchair': 'Guest room with desk and armchair',
+    'room-portrait': 'Guest room',
+    'room-net-portrait': 'Bed with mosquito net',
+    'room-vanity': 'Room vanity and mirror',
+    'room-tv-fridge': 'TV and fridge in a guest room',
+    'single-room': 'Single guest room',
+    'room-desk': 'Writing desk in a guest room',
+    'room-double': 'Double guest room',
+    'bed-detail': 'Made bed detail',
+    'bed-towel-art': 'Towel art on a made bed',
+    'bed-towel-art-2': 'Towel art welcome on the bed',
+    'bathroom-toilet-basin': 'En-suite bathroom basin',
+    'bathroom-shower': 'En-suite shower',
+    'lounge-rattan-sofas': 'Lounge with rattan sofas',
+    'lounge-rattan-2': 'Rattan lounge seating',
+    'veranda-corridor': 'Veranda corridor',
+    'entrance-lobby': 'Hotel entrance lobby',
+    'hall-classroom-setup': 'Meeting hall in classroom set-up',
+    'hall-gold-cloths': 'Hall dressed with gold cloths',
+    'hall-red-skirting': 'Hall with red table skirting',
+    'hall-classroom-2': 'Meeting hall, classroom layout',
+    'hall-banquet-gold': 'Banquet set-up in gold',
+    'hall-banquet-red': 'Banquet set-up in red',
+    'hall-projector': 'Meeting hall with projector',
+    'hall-theatre-grey': 'Hall in theatre set-up',
+    'hall-banquet-2': 'Banquet set-up',
+    'hall-screen': 'Hall with projection screen',
+    'poolside-meal-juice': 'Meal and fresh juice served by the pool',
+    'restaurant-interior-blue': 'Restaurant interior',
+    'bar-counter-stools': 'Bar counter and stools',
+    'bar-ice-buckets': 'Bar with ice buckets',
+    'bar-shelves': 'Bar shelves',
+    'buffet-samosa-chapati': 'Buffet table',
+    'roast-meat': 'Roast meat from the kitchen',
+    'stew-plate': 'Plate from the kitchen',
+    'grilled-chicken': 'Grilled chicken from the kitchen',
+    'buffet-decor': 'Decorated buffet',
+    'tent-wedding-setup': 'Wedding tent set-up on the grounds',
+    'tent-buffet-line': 'Buffet line inside an events tent',
+    'marquee-lawn': 'Marquee on the lawn',
+    'garden-party-setup': 'Garden party set-up',
+    'garden-party-balloons': 'Garden party with balloons',
+    'tent-red-white': 'Red and white events tent',
+    'staff-team-welcome': 'The Breez Hotel team',
+    'woman-swimming-pool': 'A swimmer floating in a pool',
+    'pool-reading-lifestyle': 'Reading by a pool',
+    'kenya-lake-sunset': 'Sunset over a Kenyan lake',
+    'food-table-shared': 'A shared table of dishes',
+    'rice-chicken-plate': 'A plate of rice and chicken',
+    'group-dinner': 'Friends laughing over dinner',
+    'waiter-serving': 'A waiter carrying drinks',
+    'long-table-gathering': 'A long table gathering',
+    'friends-lunch': 'Friends sharing lunch',
+}
+
+CAT_LABEL = {'exterior': 'Building', 'gardens': 'Gardens', 'pools': 'Pools', 'rooms': 'Rooms',
+             'interiors': 'Interiors', 'conference': 'Meetings', 'dining': 'Dining', 'events': 'Events', 'people': 'People'}
+
+# ---------------------------------------------------------------------------- images
+IMAGES = {}   # key -> dict(path800, path1600, w, h, stock, cat)
+def scan():
+    for p in sorted((ROOT / 'assets/images/breez').glob('*/*-1600.webp')):
+        key = p.name[:-10]
+        if key in EXCLUDE: continue
+        with Image.open(p) as im: w, h = im.size
+        IMAGES[key] = dict(cat=p.parent.name, stock=False, w=w, h=h, rel=f'images/breez/{p.parent.name}/{key}')
+    for p in sorted((ROOT / 'assets/images/stock').glob('*-1600.webp')):
+        key = p.name[:-10]
+        if key not in STOCK: continue
+        with Image.open(p) as im: w, h = im.size
+        IMAGES[key] = dict(cat='stock', stock=True, w=w, h=h, rel=f'images/stock/{key}')
+USED = set()
+
+def img(key, sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None):
+    m = IMAGES[key]; USED.add(key)
+    a = html.escape(alt if alt is not None else ALT.get(key, ''), quote=True)
+    load = 'fetchpriority="high"' if eager else 'loading="lazy"'
+    w1600 = 1600 if m['w'] >= 1600 else m['w']
+    return (f'<img src="{m["rel"]}-1600.webp" srcset="{m["rel"]}-800.webp 800w, {m["rel"]}-1600.webp {w1600}w" '
+            f'sizes="{sizes}" width="{m["w"]}" height="{m["h"]}" alt="{a}" {load} decoding="async">')
+
+def ph(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, cap=True, alt=None, extra=''):
+    m = IMAGES[key]
+    c = ''
+    if m['stock'] and cap:
+        c = f'<figcaption class="cap cap--illus">Illustrative, not The Breez · {STOCK[key][0]} / Unsplash</figcaption>'
+    return f'<figure class="ph {cls}"{extra}>{img(key, sizes, eager, alt)}{c}</figure>'
+
+# ---------------------------------------------------------------------------- chrome
+ICON = {
+  'phone': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg>',
+  'wa': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>',
+  'cal': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  'mail': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6"/></svg>',
+}
+NAV = [('rooms', 'Stay'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings', 'Meetings & Events'),
+       ('gallery', 'Gallery'), ('about', 'About'), ('contact', 'Contact')]
+
+def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
+def cur(slug, s): return ' aria-current="page"' if slug == s else ''
+
+def header(slug):
+    left = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[:4])
+    right = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[4:])
+    ov = ''.join(f'<li><a href="{href(s)}"{cur(slug, s)}>{t}</a></li>' for s, t in [('index', 'Home')] + NAV + [('book', 'Book a stay')])
+    return f'''<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr-in">
+    <nav class="nav" aria-label="Primary">{left}</nav>
+    <a class="mark" href="index.html" aria-label="The Breez Hotel, home"><b>The Breez</b><span>Hotel · Busia</span></a>
+    <nav class="nav nav--r" aria-label="Secondary">{right}<a class="btn btn--book" href="book.html"{cur(slug, 'book')}>Book</a></nav>
+    <button class="menu-btn" type="button" data-open-menu aria-controls="menu" aria-expanded="false"><i></i>Menu</button>
+  </div>
+</header>
+<div class="overlay" id="menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="ov-top"><a class="mark" href="index.html"><b>The Breez</b><span>Hotel · Busia</span></a><button class="ov-close" type="button">Close</button></div>
+  <ul class="ov-nav">{ov}</ul>
+  <div class="ov-foot"><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp {PHONE_DISPLAY}</a><a class="btn btn--light" href="{TEL}">{ICON['phone']} Call reception</a></div>
+</div>'''
+
+def footer():
+    links = ''.join(f'<li><a href="{href(s)}">{t}</a></li>' for s, t in NAV)
+    return f'''<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div><h2>Karibu. We look forward to welcoming you.</h2><p>{ADDRESS}</p><div class="btn-row"><a class="btn btn--book" href="book.html">Request a booking</a><a class="btn btn--light" href="{WA}" target="_blank" rel="noopener">WhatsApp us</a></div></div>
+      <div><span class="label">Reach us</span><ul><li><a href="{TEL}">Call {PHONE_DISPLAY}</a></li><li><a href="{WA}" target="_blank" rel="noopener">WhatsApp {PHONE_DISPLAY}</a></li><li><a href="mailto:{EMAIL}">{EMAIL}</a></li></ul></div>
+      <div><span class="label">Explore</span><ul>{links}</ul></div>
+      <div><span class="label">Follow</span><ul><li><a href="{FB}" target="_blank" rel="noopener">Facebook</a></li><li><a href="{TT}" target="_blank" rel="noopener">TikTok</a></li><li><a href="credits.html">Photo credits</a></li></ul></div>
+    </div>
+    <p class="ftr-word" aria-hidden="true">The Breez<small>Busia</small></p>
+    <div class="ftr-base"><span>© <span data-year>2026</span> The Breez Hotel, Busia, Kenya</span><span>Bookings are requests until confirmed by the hotel.</span></div>
+  </div>
+</footer>
+<nav class="dock" aria-label="Quick actions"><a href="{TEL}">{ICON['phone']} Call</a><a href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a><a href="book.html">{ICON['cal']} Book</a></nav>'''
+
+def jsonld():
+    d = {"@context": "https://schema.org", "@type": "Hotel", "name": "The Breez Hotel", "url": BASE_URL,
+         "image": BASE_URL + "images/og-image.jpg", "telephone": "+254707461665", "email": EMAIL,
+         "address": {"@type": "PostalAddress", "streetAddress": "Kisumu–Busia Road", "addressLocality": "Busia", "addressCountry": "KE"},
+         "sameAs": [FB, TT],
+         "amenityFeature": [{"@type": "LocationFeatureSpecification", "name": n, "value": True} for n in
+                            ["Swimming pools", "Kids' pool", "Restaurant", "Bar", "Meeting rooms", "Free Wi-Fi", "Secure parking", "Gardens"]]}
+    return f'<script type="application/ld+json">{json.dumps(d, ensure_ascii=False)}</script>'
+
+def page(slug, title, desc, body, og_img='images/og-image.jpg'):
+    url = BASE_URL + ('' if slug == 'index' else f'{slug}.html')
+    full = title if slug == 'index' else f'{title} · The Breez Hotel, Busia'
+    ld = jsonld() if slug in ('index', 'contact') else ''
+    doc = f'''<!DOCTYPE html>
+<html lang="en-KE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{html.escape(full)}</title>
+<meta name="description" content="{html.escape(desc, quote=True)}">
+<link rel="canonical" href="{url}">
+<meta name="theme-color" content="#20392B">
+<meta property="og:type" content="website"><meta property="og:site_name" content="The Breez Hotel">
+<meta property="og:title" content="{html.escape(full, quote=True)}"><meta property="og:description" content="{html.escape(desc, quote=True)}">
+<meta property="og:url" content="{url}"><meta property="og:image" content="{BASE_URL}{og_img}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_KE"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css?v={TODAY}">
+{ld}
+</head>
+<body class="p-{slug}">
+{header(slug)}
+<main id="main">
+{body}
+</main>
+{footer()}
+<script src="assets/site.js?v={TODAY}" defer></script>
+</body>
+</html>
+'''
+    (OUT / href(slug)).write_text(doc, encoding='utf-8')
+
+def head(label, title, extra='', light=False, tag='h2'):
+    return f'<div class="head{" head--light" if light else ""} rv"><div><span class="label{" label--light" if light else ""}">{label}</span><{tag} class="h-l">{title}</{tag}></div><div>{extra}</div></div>'
+
+# ---------------------------------------------------------------------------- pages
+ROOMS = {
+    'single': {'Room': 'Standard Single', 'Bed': '1 single bed', 'Sleeps': '1 guest', 'Balcony': 'Listed', 'Air conditioning': 'Not listed', 'View': 'Pool view', 'Breakfast': 'Included as listed', 'Rate': 'On request'},
+    'double': {'Room': 'Double Room', 'Bed': '1 double bed', 'Sleeps': '2 guests', 'Balcony': 'Listed', 'Air conditioning': 'Not listed', 'View': 'Pool view', 'Breakfast': 'Included as listed', 'Rate': 'On request'},
+    'deluxe': {'Room': 'Deluxe Room', 'Bed': '1 double bed', 'Sleeps': '2 guests', 'Balcony': 'Listed', 'Air conditioning': 'Listed', 'View': 'City view', 'Breakfast': 'Included as listed', 'Rate': 'On request'},
+    'king':   {'Room': 'King Room', 'Bed': '1 large double bed', 'Sleeps': '2 guests', 'Balcony': 'Listed', 'Air conditioning': 'Listed', 'View': 'Pool view', 'Breakfast': 'Included as listed', 'Rate': 'On request'},
+}
+
+def home():
+    stay = f'''<section class="sec" aria-labelledby="stay-h">
+  <div class="wrap">
+    {head('01 · Stay', '<span id="stay-h">Rooms that open onto the garden and the pool</span>', '<p class="lead">Four room categories, from a single for the solo traveller to a King room for two. Every stay includes Wi-Fi, housekeeping and secure parking.</p>')}
+    <div class="stay-spread">
+      <a class="stay-card sc1 rv" href="rooms.html#double">{ph('room-four-poster-window', 'ph--zoom', '(max-width:760px) 100vw, 40vw')}<span class="meta">Double · King</span><h3>Four-poster calm</h3><p>Rooms with a four-poster bed, desk and en-suite bathroom.</p></a>
+      <a class="stay-card sc2 rv" href="rooms.html#deluxe">{ph('room-grey-bedding', 'ph--zoom', '(max-width:760px) 100vw, 50vw')}<span class="meta">Deluxe</span><h3>Room to settle in</h3><p>Air conditioning and a balcony, as listed for this category.</p></a>
+      <div class="stay-cta rv"><p class="lead">Rates depend on dates and room. Send a request and reception replies with availability.</p><div class="btn-row"><a class="btn btn--solid" href="rooms.html">See the rooms</a><a class="btn" href="book.html">Request a booking</a></div></div>
+      <a class="stay-card sc3 rv" href="rooms.html#single">{ph('bed-detail', 'ph--zoom', '30vw')}<span class="meta">Standard Single</span><h3>For one</h3></a>
+    </div>
+  </div>
+</section>'''
+    return f'''<section class="h-cover" aria-label="Welcome">
+  {ph('building-palms-pool-court', '', '100vw', eager=True)}
+  <div class="h-cover-in"><span class="label">Hotel · Pools · Gardens · Busia, Kenya</span><h1 class="h-word">The Breez <small>Hotel</small></h1><p>A garden hotel on the Kisumu–Busia Road with pools, a restaurant and bar, meeting halls and lawns made for celebrations.</p></div>
+</section>
+<form class="qbook" data-form="quick" action="book.html" aria-label="Check dates">
+  <label class="field" data-label="Check-in">Check-in<input type="date" name="checkin"></label>
+  <label class="field" data-label="Check-out">Check-out<input type="date" name="checkout"></label>
+  <label class="field" data-label="Guests">Guests<select name="guests"><option>1 adult</option><option selected>2 adults</option><option>3 adults</option><option>4+ adults</option></select></label>
+  <button class="btn btn--book" type="submit">Request dates</button>
+  <p class="hint">Requests go straight to reception on WhatsApp or email. Nothing is charged online.</p>
+</form>
+
+<section class="sec" aria-labelledby="intro-h">
+  <div class="wrap intro">
+    <div class="rv"><span class="label">Karibu</span>
+      <h2 class="h-xl" id="intro-h" style="margin:.3em 0 .4em">A welcome carved <em class="italic">in stone</em> at the gate.</h2>
+      <p class="lead">Behind the gate are palms, a pool court, gazebos on the lawn and a fountain in the courtyard. Guests come to stay the night, to swim, to meet or to celebrate.</p>
+      <div class="btn-row" style="margin-top:24px"><a class="link" href="about.html">The hotel and its grounds</a></div>
+    </div>
+    <div class="intro-media rv">
+      {ph('main-building-facade', 'a', '(max-width:760px) 90vw, 40vw')}
+      {ph('sign-the-breeze-hotel-karibu', 'b', '(max-width:760px) 45vw, 20vw')}
+    </div>
+  </div>
+</section>
+{stay}
+<section class="sec sec--pool" aria-labelledby="pool-h">
+  <div class="wrap">
+    {head('02 · Pools', '<span id="pool-h">Two pools, one for the little ones</span>', '', light=True)}
+    <div class="pool-band">
+      {ph('pool-umbrellas-above', 'pb-a rv', '(max-width:760px) 100vw, 58vw')}
+      {ph('kids-pool-umbrellas', 'pb-b rv', '30vw')}
+      <div class="pb-text rv"><p>The main pool sits in a court of palms and umbrellas, with a shallow kids’ pool beside it. Order lunch and a fresh juice to your lounger.</p><a class="btn btn--light btn--framed" href="pools.html">Visit the pools</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" aria-labelledby="dine-h">
+  <div class="wrap dine-split">
+    <div class="ds-text rv"><span class="label">03 · Dining</span><h2 class="h-l" id="dine-h">Restaurant, bar and the poolside table</h2><p class="lead">Kenyan and international plates, grills from the kitchen and drinks from the bar. Breakfast is included with stays, as listed online.</p><a class="link" href="dining.html">Restaurant &amp; bar</a></div>
+    {ph('poolside-meal-juice', 'ds-a rv ph--zoom', '(max-width:760px) 100vw, 55vw')}
+    {ph('bar-counter-stools', 'ds-b rv', '(max-width:760px) 50vw, 25vw')}
+    {ph('restaurant-interior-blue', 'ds-c rv', '(max-width:760px) 50vw, 30vw')}
+  </div>
+</section>
+
+<section class="sec sec--stone" aria-labelledby="meet-h">
+  <div class="wrap">
+    {head('04 · Meetings &amp; events', '<span id="meet-h">Halls for the workshop, lawns for the wedding</span>')}
+    <div class="meet-grid rv">
+      <div class="mg-text"><p class="lead">Meeting halls come with a projector and screen, Wi-Fi and a full set-up. Packages are flexible and include food and drinks. The lawns and marquees host weddings, ruracio, birthdays and garden parties.</p><div class="btn-row"><a class="btn btn--solid" href="meetings.html">Plan an event</a></div></div>
+      {ph('hall-classroom-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw')}
+      {ph('tent-wedding-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw')}
+      <div class="mg-list"><span class="label">Meetings</span><b>Conferences</b><b>Training</b><b>Workshops</b></div>
+      <div class="mg-list"><span class="label">Celebrations</span><b>Weddings</b><b>Ruracio</b><b>Garden parties</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" aria-labelledby="gal-h">
+  <div class="wrap">
+    {head('05 · Gallery', '<span id="gal-h">Around the hotel</span>', '<a class="link" href="gallery.html">All photographs</a>')}
+    <div class="mosaic rv" data-lightbox>
+      {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, "(max-width:760px) 50vw, 33vw")}</a>' for c, k in [('m1', 'courtyard-fountain-gazebos'), ('m2', 'pool-aerial'), ('m3', 'gazebo-cypress'), ('m4', 'lounge-rattan-sofas'), ('m5', 'tower-and-terrace'), ('m6', 'grilled-chicken')])}
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--stone" aria-labelledby="find-h">
+  <div class="wrap find">
+    <div class="rv"><span class="label">06 · Find us</span><h2 class="h-xl" id="find-h" style="margin:.3em 0 .4em">On the Kisumu–Busia Road.</h2><p class="lead">In Busia, near the Uganda border. Secure parking on site.</p>
+      <ul class="ruled" style="margin:24px 0"><li><span>Call</span><a href="{TEL}"><b>{PHONE_DISPLAY}</b></a></li><li><span>WhatsApp</span><a href="{WA}" target="_blank" rel="noopener"><b>{PHONE_DISPLAY}</b></a></li><li><span>Email</span><a href="mailto:{EMAIL}"><b>{EMAIL}</b></a></li></ul>
+      <a class="link" href="contact.html">Directions and contact</a></div>
+    <div class="map rv"><iframe src="{MAP_EMBED}" title="Map showing The Breez Hotel in Busia" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  </div>
+</section>
+
+<section class="sec" aria-labelledby="close-h">
+  <div class="wrap closing rv"><span class="label">Plan your stay</span><h2 class="h-xl" id="close-h">See you at the gate.</h2><div class="btn-row" style="justify-content:center"><a class="btn btn--book btn--framed" href="book.html">Request a booking</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a></div></div>
+</section>'''
+
+def about():
+    els = [
+        ('The gate', 'A welcome in stone', 'The stone sign at the entrance greets every arrival with “Karibu”, Swahili for welcome. It is the first thing you see from the Kisumu–Busia Road.', 'sign-the-breeze-hotel-karibu', 'portrait'),
+        ('The building', 'A tower above the palms', 'The main building rises behind a court of palms and the pool, and its rounded tower marks the hotel from the road.', 'tower-and-terrace-tall' if 'tower-and-terrace-tall' in IMAGES else 'tower-and-terrace', 'portrait'),
+        ('The garden', 'Gazebos, cypress and a fountain', 'Between the guest wings lies a lawn with thatched gazebos, flowerbeds, a fountain and a swing. It is used for quiet afternoons and for garden parties.', 'courtyard-fountain-gazebos', ''),
+        ('The water', 'A pool court', 'The main pool and a kids’ pool sit together, framed by umbrellas, loungers and the VIP lounge.', 'vip-lounge-tower-kids-pool' if 'vip-lounge-tower-kids-pool' in IMAGES else 'pool-terrace-kids-pool', ''),
+        ('The welcome', 'I love The Breez', 'The orange wall sign carries the name the hotel uses on Facebook and TikTok: The Breez.', 'wall-sign-i-love-the-breez' if 'wall-sign-i-love-the-breez' in IMAGES else 'i-love-the-breez-sign', ''),
+    ]
+    rows = ''.join(f'''<article class="el rv"><span class="el-n">0{i+1}</span><div class="el-text"><span class="label">{a}</span><h2>{b}</h2><p class="lead">{c}</p></div>{ph(k, cls, '(max-width:1100px) 100vw, 45vw')}</article>''' for i, (a, b, c, k, cls) in enumerate(els))
+    return f'''<section class="ab-hero">
+  <div class="wrap ab-hero-in">
+    <h1>A garden hotel in Busia</h1>
+    <p class="lead">The Breez Hotel stands on the Kisumu–Busia Road with rooms, pools, a restaurant and bar, meeting halls and lawns for celebrations.</p>
+    {ph('wing-and-garden', 'ab-sign rv-mask', '100vw', eager=True)}
+  </div>
+</section>
+<section class="sec"><div class="wrap index">{rows}</div></section>
+<section class="sec sec--stone" aria-labelledby="facts-h">
+  <div class="wrap">
+    {head('At a glance', '<span id="facts-h">What the hotel offers</span>')}
+    <div class="facts rv">
+      <div><b>Rooms</b><span>Single, Double, Deluxe and King, as listed online</span></div>
+      <div><b>Pools</b><span>Main pool and kids’ pool</span></div>
+      <div><b>Restaurant &amp; bar</b><span>Including poolside service</span></div>
+      <div><b>Meeting halls</b><span>Projector, Wi-Fi, full set-up, food and drinks</span></div>
+      <div><b>Events</b><span>Weddings, ruracio, birthdays, garden parties</span></div>
+      <div><b>Practical</b><span>Free Wi-Fi, secure parking, housekeeping</span></div>
+    </div>
+  </div>
+</section>
+<section class="sec" aria-labelledby="team-h">
+  <div class="wrap team">
+    {ph('staff-team-welcome', 'rv', '(max-width:760px) 100vw, 55vw')}
+    <div class="rv"><span class="label">The team</span><h2 class="h-l" id="team-h" style="margin:.3em 0 .5em">People who know Busia</h2><p class="lead">Reception answers calls and WhatsApp messages, and helps with transport, events and the area.</p><div class="btn-row" style="margin-top:20px"><a class="btn btn--solid" href="contact.html">Contact reception</a></div></div>
+  </div>
+</section>
+<section class="sec sec--green" aria-labelledby="area-h">
+  <div class="wrap find">
+    <div class="rv"><span class="label label--light">The area</span><h2 class="h-l" id="area-h" style="margin:.3em 0 .5em">Busia, at the border</h2><p class="lead" style="color:var(--green-ink)">Busia is a border town between Kenya and Uganda, on the road from Kisumu. Lake Victoria lies to the south.</p></div>
+    {ph('kenya-lake-sunset', 'ratio-4-3 rv', '(max-width:760px) 100vw, 50vw')}
+  </div>
+</section>'''
+
+def rooms():
+    order = [('single', 'single-room', 'bed-detail', False), ('double', 'room-four-poster-window', 'bathroom-shower', True),
+             ('deluxe', 'room-grey-bedding', 'room-vanity', False), ('king', 'room-four-poster-2', 'room-desk-armchair', True)]
+    blurbs = {'single': 'A single bed, a desk and an en-suite bathroom. For the solo business traveller.',
+              'double': 'A double bed for two, often with a four-poster frame and mosquito net.',
+              'deluxe': 'A double room with air conditioning listed and a city view.',
+              'king': 'The largest bed in the hotel, with a pool view as listed.'}
+    sp = ''
+    for i, (k, main, det, flip) in enumerate(order):
+        d = ROOMS[k]
+        dl = ''.join(f'<div><dt>{f}</dt><dd>{v}</dd></div>' for f, v in d.items() if f not in ('Room',))
+        sp += f'''<article class="spread{' flip' if flip else ''}" id="{k}">
+  <div class="spread-img rv">{ph(main, 'main', '(max-width:1100px) 100vw, 66vw')}{ph(det, 'detail', '25vw')}</div>
+  <div class="spec rv"><span class="label">0{i+1} · Room</span><h2>{d['Room']}</h2><p>{blurbs[k]}</p><dl>{dl}</dl><a class="btn btn--solid" href="book.html?room={d['Room'].replace(' ', '+')}">Request this room</a></div>
+</article>'''
+    picks = ''.join(f'<li><label><input type="checkbox" value="{k}"{" checked" if k in ("double", "deluxe") else ""}> {v["Room"]}</label></li>' for k, v in ROOMS.items())
+    data = html.escape(json.dumps({k: {f: v for f, v in d.items()} for k, d in ROOMS.items()}), quote=True)
+    return f'''<section class="page-hero">
+  <div class="wrap rm-hero">
+    <div class="rv"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Stay</span></nav><h1 class="h-xl">Rooms &amp; stays</h1><p class="lead" style="margin-top:18px">Four room categories, listed below as they appear on Booking.com. Reception confirms the room, rate and availability for your dates.</p></div>
+    {ph('room-double', 'rv ticks', '(max-width:760px) 100vw, 50vw', eager=True)}
+  </div>
+</section>
+<section class="sec" style="padding-top:0"><div class="wrap">{sp}<p class="note">Photographs show rooms at The Breez Hotel; furniture and layout vary by room. Features are as listed on Booking.com in November 2026 and may change.</p></div></section>
+<section class="sec sec--stone" aria-labelledby="cmp-h">
+  <div class="wrap">
+    {head('Compare', '<span id="cmp-h">Side by side</span>', '<p>Choose rooms to compare their listed features.</p>')}
+    <fieldset data-compare-pick style="border:0;padding:0;margin:0 0 20px"><legend class="sr-only">Rooms to compare</legend><ul class="pill-list">{picks}</ul></fieldset>
+    <div class="compare-wrap"><table class="compare" data-compare="{data}" aria-live="polite"><caption class="sr-only">Room comparison</caption><thead><tr></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+<section class="sec" aria-labelledby="every-h">
+  <div class="wrap">
+    {head('Every stay', '<span id="every-h">Included with every room</span>')}
+    <div class="every rv"><div><b>Free Wi-Fi</b><span class="small">Across the hotel</span></div><div><b>Secure parking</b><span class="small">On site</span></div><div><b>Housekeeping</b><span class="small">Daily</span></div><div><b>Pool access</b><span class="small">Main and kids’ pools</span></div></div>
+    <div class="closing" style="margin-top:clamp(48px,7vw,96px)"><h2 class="h-l">Ready to choose your dates?</h2><div class="btn-row" style="justify-content:center"><a class="btn btn--book" href="book.html">Request a booking</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} Ask on WhatsApp</a></div></div>
+  </div>
+</section>'''
+
+def pools():
+    steps = [('pool-umbrellas-above', 'The main pool', 'Lanes of clear water in a court of palms, ringed by umbrellas and loungers.'),
+             ('kids-pool-umbrellas', 'The kids’ pool', 'A shallow pool alongside the main one, so families can swim together.'),
+             ('poolside-tables', 'Poolside tables', 'Lunch, fresh juice and drinks from the bar, served at the water’s edge.'),
+             ('pool-loungers', 'Afternoons on the deck', 'Loungers and shade for long afternoons in the sun.')]
+    media = ''.join(f'{ph(k, "on" if i == 0 else "", "50vw", alt=ALT[k])}' for i, (k, a, b) in enumerate(steps))
+    st = ''.join(f'<div class="ss-step" data-step="{i}">{ph(k, "ph-m", "100vw")}<span class="label label--light">0{i+1}</span><h2>{a}</h2><p class="lead" style="color:#DCEFF3">{b}</p></div>' for i, (k, a, b) in enumerate(steps))
+    col = [('cl1', 'pool-aerial'), ('cl2', 'woman-swimming-pool'), ('cl3', 'pool-lanes'), ('cl4', 'pool-terrace-kids-pool'), ('cl5', 'pool-reading-lifestyle'), ('cl6', 'kids-pool-building')]
+    return f'''<section class="pl-hero">
+  {ph('pool-loungers', '', '100vw', eager=True)}
+  <div class="pl-hero-in"><nav class="crumb" aria-label="Breadcrumb" style="color:#DCEFF3"><a href="index.html">Home</a><span>/</span><span>Pools</span></nav><h1>Pools<em class="italic">in the palm court</em></h1></div>
+</section>
+<section class="sec sec--pool" aria-label="The pools">
+  <div class="wrap sticky-story"><div class="ss-media">{media}</div><div class="ss-steps">{st}</div></div>
+</section>
+<section class="sec" aria-labelledby="col-h">
+  <div class="wrap">
+    {head('Pool days', '<span id="col-h">Water, shade and a juice</span>')}
+    <div class="collage rv">{''.join(ph(k, c, '(max-width:760px) 50vw, 33vw') for c, k in col)}</div>
+  </div>
+</section>
+<section class="sec sec--pool" aria-labelledby="pi-h">
+  <div class="wrap">
+    {head('Good to know', '<span id="pi-h">Before you swim</span>', '', light=True)}
+    <div class="pl-info rv">
+      <div><span class="label label--light">Who</span><b>Hotel guests</b><p>Day visits and events: ask reception.</p></div>
+      <div><span class="label label--light">Families</span><b>Kids’ pool</b><p>Children should be supervised by an adult.</p></div>
+      <div><span class="label label--light">Hours</span><b>Ask reception</b><p>Pool hours and any charges are confirmed by the hotel.</p></div>
+    </div>
+    <div class="btn-row" style="margin-top:40px"><a class="btn btn--book" href="book.html">Request a booking</a><a class="btn btn--light" href="{WA}" target="_blank" rel="noopener">Ask about day visits</a></div>
+  </div>
+</section>'''
+
+def dining():
+    strip = [('poolside-meal-juice', 'By the pool'), ('grilled-chicken', 'From the grill'), ('roast-meat', 'Roasts from the kitchen'),
+             ('waiter-serving', 'Service at the table'), ('stew-plate', 'A plate from the kitchen'), ('buffet-samosa-chapati', 'Event buffets'), ('buffet-decor', 'Dressed for occasions'),
+             ('rice-chicken-plate', 'Rice and chicken')]
+    sf = ''.join(f'<figure>{ph(k, "", "(max-width:760px) 80vw, 30vw")}<figcaption>{c}</figcaption></figure>' for k, c in strip)
+    return f'''<section class="dn-open">
+  {ph('restaurant-interior-blue', 'rv-mask', '100vw', eager=True)}
+  <div class="wrap dn-title"><div><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Dining</span></nav><h1>Restaurant <em class="italic">&amp;</em> bar</h1></div><p class="lead rv">A restaurant, a bar and tables by the pool. The kitchen cooks Kenyan and international food, and caters for meetings and events.</p></div>
+</section>
+<section class="sec" aria-labelledby="plates-h">
+  <div class="wrap">{head('From the kitchen', '<span id="plates-h">At the table</span>', '<div class="strip-ctl" data-strip="plates"><button type="button" data-dir="prev" aria-label="Previous photos">←</button><button type="button" data-dir="next" aria-label="Next photos">→</button></div>')}</div>
+  <div class="strip" id="plates" tabindex="0" aria-label="Food photographs, scroll sideways">{sf}</div>
+</section>
+<section class="sec sec--stone" aria-labelledby="menu-h">
+  <div class="wrap">
+    <div class="menu-card rv">
+      <h2 id="menu-h">Through the day</h2><span class="label">The Breez Hotel · Busia</span>
+      <div class="mc"><span class="label">Morning</span><h3>Breakfast</h3><p>Included with room stays, as listed on Booking.com.</p></div>
+      <div class="mc"><span class="label">Restaurant</span><h3>Lunch &amp; dinner</h3><p>Kenyan and international dishes. Ask for today’s menu.</p></div>
+      <div class="mc"><span class="label">Poolside</span><h3>By the water</h3><p>Meals, fresh juice and drinks served at the pool.</p></div>
+      <div class="mc"><span class="label">Events</span><h3>Catering</h3><p>Buffets and packages for meetings, weddings and parties.</p></div>
+      <p class="note">Menus, prices and opening hours come from the kitchen. Ask reception or send a WhatsApp.</p>
+    </div>
+  </div>
+</section>
+<section class="bar-split" aria-labelledby="bar-h">
+  {ph('bar-shelves', '', '(max-width:760px) 100vw, 50vw')}
+  <div class="rv"><span class="label label--light">The bar</span><h2 id="bar-h">Cold drinks, warm evenings</h2><p>A full bar with stools at the counter, ice buckets for the table and drinks carried out to the pool.</p><a class="btn btn--light" href="{WA}" target="_blank" rel="noopener">Reserve a table on WhatsApp</a></div>
+</section>
+<section class="sec" aria-labelledby="share-h">
+  <div class="wrap find">
+    <div class="rv"><span class="label">Gather</span><h2 class="h-l" id="share-h" style="margin:.3em 0 .5em">A table for everyone</h2><p class="lead">From a quick lunch to a long family dinner or an event buffet for hundreds, tell us what you are planning.</p><div class="btn-row" style="margin-top:20px"><a class="btn btn--solid" href="meetings.html#enquire">Plan a group meal</a></div></div>
+    {ph('group-dinner', 'ratio-4-3 rv', '(max-width:760px) 100vw, 50vw')}
+  </div>
+</section>'''
+
+def event_form():
+    return f'''<div class="form-panel" id="enquire">
+  <div><span class="label">Enquiry</span><h2>Tell us about your event</h2><p class="muted" style="margin-top:8px">Reception replies with availability, set-up options and a quote.</p></div>
+  <form class="form-grid" data-form="event" novalidate>
+    <label class="field" data-label="Event type">Event type<select name="event" required><option value="">Choose…</option><option>Conference / meeting</option><option>Training / workshop</option><option>Wedding</option><option>Ruracio</option><option>Birthday</option><option>Garden party</option><option>Other</option></select></label>
+    <label class="field" data-label="Date">Date<input type="date" name="date" required></label>
+    <label class="field" data-label="Expected guests">Expected guests<input type="number" name="guests" min="1" inputmode="numeric" required></label>
+    <label class="field" data-label="Set-up">Set-up<select name="setup"><option value="">Not sure</option><option>Classroom</option><option>Theatre</option><option>Banquet</option><option>Marquee on the lawn</option></select></label>
+    <label class="field" data-label="Name">Your name<input type="text" name="name" autocomplete="name" required></label>
+    <label class="field" data-label="Phone">Phone<input type="tel" name="phone" autocomplete="tel" required></label>
+    <label class="field full" data-label="Email">Email<input type="email" name="email" autocomplete="email"></label>
+    <label class="field full" data-label="Details">Details<textarea name="details" placeholder="Timings, food, equipment, accommodation…"></textarea></label>
+    <fieldset class="field full" style="border:0;padding:0;margin:0"><legend>Send by</legend><div class="btn-row" style="text-transform:none;letter-spacing:0;font-weight:400"><label><input type="radio" name="channel" value="whatsapp" checked> WhatsApp</label><label><input type="radio" name="channel" value="email"> Email</label></div></fieldset>
+    <div class="full"><button class="btn btn--book" type="submit">Send enquiry</button></div>
+  </form>
+  {status_box()}
+</div>'''
+
+def status_box():
+    return f'''<div class="form-status" role="status" aria-live="polite"><b>Your request is ready to send</b><p>Reference <strong data-ref></strong>. We opened WhatsApp with your details. Press send there. If it did not open, use one of these:</p><div class="btn-row"><a class="btn btn--wa" data-wa href="{WA}" target="_blank" rel="noopener">{ICON['wa']} Send on WhatsApp</a><a class="btn" data-mail href="mailto:{EMAIL}">{ICON['mail']} Send by email</a></div><p class="small">Nothing is booked yet. Reception confirms availability and rate by reply.</p></div>'''
+
+def meetings():
+    layouts = [('hall-classroom-setup', 'Classroom', 'Tables in rows facing the front. For training and workshops.'),
+               ('hall-theatre-grey', 'Theatre', 'Rows of chairs facing the screen. For talks and launches.'),
+               ('hall-banquet-red', 'Banquet', 'Round tables dressed in your colours. For dinners and receptions.')]
+    lay = ''.join(f'<article class="layout rv">{ph(k, "", "(max-width:760px) 100vw, 33vw")}<div><span class="label">Set-up</span><h3>{a}</h3><p class="muted">{b}</p></div></article>' for k, a, b in layouts)
+    return f'''<section class="mt-hero">
+  <div class="wrap" style="padding-top:clamp(28px,4vw,56px)">
+    <div class="mt-hero-grid">
+      <div class="mt-title"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Meetings &amp; events</span></nav><h1>Meetings &amp; events</h1><p class="lead">Halls for conferences and training. Lawns, marquees and a courtyard fountain for weddings and celebrations.</p><div class="btn-row"><a class="btn btn--solid" href="#enquire">Send an enquiry</a><a class="btn" href="{TEL}">Call {PHONE_DISPLAY}</a></div></div>
+      {ph('hall-projector', 'big', '(max-width:1100px) 100vw, 50vw', eager=True)}
+      <div class="mt-stat"><b>Projector</b><span class="small">and screen in the halls</span></div>
+      <div class="mt-stat"><b>Wi-Fi</b><span class="small">for every delegate</span></div>
+    </div>
+  </div>
+</section>
+<section class="sec" aria-labelledby="spec-h">
+  <div class="wrap">
+    {head('Specification', '<span id="spec-h">What is included</span>')}
+    <div class="rv" style="overflow-x:auto"><table class="spec-table">
+      <thead><tr><th scope="col">Item</th><th scope="col">Detail</th><th scope="col">Status</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Meeting halls</th><td>Indoor halls dressed for your event</td><td>Available</td></tr>
+        <tr><th scope="row">Equipment</th><td>Projector and screen, Wi-Fi</td><td>Included in set-up</td></tr>
+        <tr><th scope="row">Set-ups</th><td>Classroom, theatre, banquet</td><td>On request</td></tr>
+        <tr><th scope="row">Food &amp; drink</th><td>Tea breaks, lunch, buffets, bar</td><td>Flexible packages</td></tr>
+        <tr><th scope="row">Outdoor</th><td>Lawns, gazebos, marquees, courtyard fountain</td><td>For events</td></tr>
+        <tr><th scope="row">Capacity</th><td>Depends on hall and set-up</td><td>Confirmed on enquiry</td></tr>
+        <tr><th scope="row">Rooms for delegates</th><td>Single, Double, Deluxe, King</td><td>Subject to availability</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+<section class="sec sec--stone" aria-labelledby="lay-h">
+  <div class="wrap">{head('Halls', '<span id="lay-h">Choose your layout</span>')}<div class="layouts">{lay}</div></div>
+</section>
+<section class="sec" aria-labelledby="ev-h">
+  <div class="wrap">
+    {head('Celebrations', '<span id="ev-h">Weddings, ruracio and garden parties</span>', '<p class="lead">The grounds take a marquee on the lawn, a buffet line under canvas, or a quiet ceremony by the fountain.</p>')}
+    <div class="events">
+      <article class="ev ev1 rv">{ph('tent-wedding-setup', '', '(max-width:760px) 100vw, 50vw')}<div><span class="label label--light">Weddings</span><h3>Under canvas</h3></div></article>
+      <article class="ev ev2 rv">{ph('marquee-lawn', '', '(max-width:760px) 100vw, 50vw')}<div><span class="label label--light">Ruracio &amp; ceremonies</span><h3>On the lawn</h3></div></article>
+      <article class="ev ev3 rv">{ph('garden-party-balloons', '', '(max-width:760px) 100vw, 25vw')}<div><span class="label label--light">Birthdays</span><h3>Garden parties</h3></div></article>
+      <article class="ev ev4 rv">{ph('tent-buffet-line', '', '(max-width:760px) 100vw, 25vw')}<div><span class="label label--light">Catering</span><h3>Buffets</h3></div></article>
+    </div>
+  </div>
+</section>
+<section class="sec sec--stone"><div class="wrap">{event_form()}</div></section>'''
+
+def gallery():
+    cats = ['exterior', 'gardens', 'pools', 'rooms', 'interiors', 'dining', 'conference', 'events', 'people']
+    items = [k for c in cats for k, m in IMAGES.items() if m['cat'] == c]
+    pattern = ['w', '', 't', '', 's', 's', '', 'w', 't', '', '', 's']
+    out = ''
+    for i, k in enumerate(items):
+        m = IMAGES[k]; USED.add(k)
+        cls = pattern[i % len(pattern)]
+        a = html.escape(ALT.get(k, ''), quote=True)
+        out += f'<a{(" class=" + chr(34) + cls + chr(34)) if cls else ""} href="{m["rel"]}-1600.webp" data-cat="{m["cat"]}" data-alt="{a}" data-caption="{a}"><img src="{m["rel"]}-800.webp" width="{m["w"]}" height="{m["h"]}" alt="{a}" loading="lazy" decoding="async"><figcaption>{a}</figcaption></a>'
+    chips = '<button type="button" data-filter="all" aria-pressed="true">All</button>' + ''.join(f'<button type="button" data-filter="{c}" aria-pressed="false">{CAT_LABEL[c]}</button>' for c in cats if any(IMAGES[k]['cat'] == c for k in items))
+    return f'''<section class="page-hero">
+  <div class="wrap gl-hero"><div><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Gallery</span></nav><h1>Gallery</h1></div><p class="lead">{len(items)} photographs of the hotel, its grounds, rooms, food and events.</p></div>
+</section>
+<section class="gl-feature">{ph('courtyard-lawn-fountain', 'rv-mask', '100vw', eager=True)}</section>
+<section class="sec">
+  <div class="wrap">
+    <div class="chips" data-filters="grid" role="group" aria-label="Filter photographs" style="margin-bottom:28px">{chips}</div>
+    <div class="gl-grid" id="grid" data-lightbox>{out}</div>
+    <p class="note" style="margin-top:32px">All photographs on this page are of The Breez Hotel, shared by the hotel. Illustrative stock photos used elsewhere on the site are labelled and listed on the <a href="credits.html">credits page</a>.</p>
+  </div>
+</section>'''
+
+def contact():
+    return f'''<section class="ct">
+  <div class="ct-left">
+    <div class="rv"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Contact</span></nav><h1>Talk to reception</h1><p class="lead" style="margin-top:16px">The quickest way to reach us is WhatsApp or a call. We are on the Kisumu–Busia Road in Busia.</p></div>
+    <div class="ct-actions rv">
+      <a href="{TEL}"><span class="label">Call</span><b>{PHONE_DISPLAY}</b></a>
+      <a href="{WA}" target="_blank" rel="noopener"><span class="label">WhatsApp</span><b>{PHONE_DISPLAY}</b></a>
+      <a href="mailto:{EMAIL}"><span class="label">Email</span><b>{EMAIL}</b></a>
+    </div>
+    <ul class="ruled rv"><li><span>Address</span><b>{ADDRESS}</b></li><li><span>Parking</span><b>Secure, on site</b></li><li><span>Social</span><span><a href="{FB}" target="_blank" rel="noopener">Facebook</a> · <a href="{TT}" target="_blank" rel="noopener">TikTok</a></span></li></ul>
+  </div>
+  <div class="ct-right">
+    <iframe src="{MAP_EMBED}" title="Map showing The Breez Hotel in Busia" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    {ph('entrance-gate', 'ct-gate', '280px')}
+  </div>
+</section>
+<section class="sec sec--stone" aria-labelledby="dir-h">
+  <div class="wrap">
+    {head('Getting here', '<span id="dir-h">Directions</span>', f'<a class="link" href="{MAP_LINK}" target="_blank" rel="noopener">Open in Google Maps</a>')}
+    <div class="dirs rv">
+      <div><h3>By road</h3><p>The hotel is on the Kisumu–Busia Road in Busia town. Look for the stone sign and gate.</p></div>
+      <div><h3>Arriving</h3><p>Drive through the gate to secure parking. Reception is in the main building.</p></div>
+      <div><h3>Need help?</h3><p>Send your location on WhatsApp and reception will guide you in.</p></div>
+    </div>
+  </div>
+</section>
+<section class="sec" aria-labelledby="msg-h">
+  <div class="wrap" style="max-width:880px">
+    <div class="form-panel">
+      <div><span class="label">Message</span><h2 id="msg-h">Send us a message</h2></div>
+      <form class="form-grid" data-form="contact" novalidate>
+        <label class="field" data-label="Name">Your name<input type="text" name="name" autocomplete="name" required></label>
+        <label class="field" data-label="Phone">Phone<input type="tel" name="phone" autocomplete="tel" required></label>
+        <label class="field full" data-label="Email">Email<input type="email" name="email" autocomplete="email"></label>
+        <label class="field full" data-label="Message">Message<textarea name="message" required></textarea></label>
+        <fieldset class="field full" style="border:0;padding:0;margin:0"><legend>Send by</legend><div class="btn-row" style="text-transform:none;letter-spacing:0;font-weight:400"><label><input type="radio" name="channel" value="whatsapp" checked> WhatsApp</label><label><input type="radio" name="channel" value="email"> Email</label></div></fieldset>
+        <div class="full"><button class="btn btn--solid" type="submit">Send message</button></div>
+      </form>
+      {status_box()}
+    </div>
+  </div>
+</section>'''
+
+def book():
+    opts = ''.join(f'<option>{v["Room"]}</option>' for v in ROOMS.values())
+    return f'''<section class="bk">
+  <div class="bk-side">{ph('pool-terrace-kids-pool', '', '(max-width:1100px) 100vw, 45vw', eager=True)}<div><span class="label label--light">Book a stay</span><h1>Request your dates</h1><p>Send your request straight to reception. They reply with availability and the rate for your room.</p></div></div>
+  <div class="bk-form">
+    <ol class="steps"><li data-n="1">Your stay</li><li data-n="2">Your details</li><li data-n="3">Send</li></ol>
+    <form class="form-grid" data-form="booking" novalidate>
+      <label class="field" data-label="Check-in">Check-in<input type="date" name="checkin" required></label>
+      <label class="field" data-label="Check-out">Check-out<input type="date" name="checkout" required></label>
+      <label class="field" data-label="Guests">Guests<select name="guests"><option>1 adult</option><option selected>2 adults</option><option>3 adults</option><option>4+ adults</option></select></label>
+      <label class="field" data-label="Children">Children<select name="children"><option>0</option><option>1</option><option>2</option><option>3+</option></select></label>
+      <label class="field full" data-label="Room">Room<select name="room" required><option value="">Choose a room…</option>{opts}<option>Not sure — please advise</option></select></label>
+      <div class="summary full" aria-live="polite"><div><span class="label">Arrive</span><b data-show="checkin">—</b></div><div><span class="label">Leave</span><b data-show="checkout">—</b></div><div><span class="label">Stay</span><b data-nights>—</b></div></div>
+      <label class="field" data-label="Name">Full name<input type="text" name="name" autocomplete="name" required></label>
+      <label class="field" data-label="Phone">Phone<input type="tel" name="phone" autocomplete="tel" required></label>
+      <label class="field full" data-label="Email">Email<input type="email" name="email" autocomplete="email"></label>
+      <label class="field full" data-label="Requests">Special requests<textarea name="requests" placeholder="Arrival time, extra bed, airport or bus pick-up…"></textarea></label>
+      <fieldset class="field full" style="border:0;padding:0;margin:0"><legend>Send by</legend><div class="btn-row" style="text-transform:none;letter-spacing:0;font-weight:400"><label><input type="radio" name="channel" value="whatsapp" checked> WhatsApp (fastest)</label><label><input type="radio" name="channel" value="email"> Email</label></div></fieldset>
+      <div class="full"><button class="btn btn--book btn--framed" type="submit">Send booking request</button></div>
+      <p class="note full">This is a request, not a confirmed booking. Availability is not shown live online. Nothing is charged here. Reception confirms by reply.</p>
+    </form>
+    {status_box()}
+  </div>
+</section>'''
+
+def credits():
+    rows = ''.join(f'<tr><td>{ALT[k]}</td><td>{STOCK[k][0]}</td><td><a href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash License</a></td></tr>' for k in sorted(USED) if IMAGES[k]['stock'])
+    return f'''<section class="page-hero"><div class="wrap" style="max-width:960px"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Credits</span></nav><h1 class="h-xl">Photo credits</h1><p class="lead" style="margin-top:16px">Photographs of the hotel, its rooms, pools, gardens, food, halls, events and team are by The Breez Hotel and used with permission.</p></div></section>
+<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Illustrative stock photography</h2><p class="muted">These photos set a mood. They are not of The Breez Hotel and the people in them are not hotel guests. Each is labelled “Illustrative” where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond and Karla (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
+
+def notfound():
+    return f'''<section class="sec"><div class="wrap closing"><span class="label">404</span><h1 class="h-xl">This page has wandered off.</h1><p class="lead">The page you were looking for is not here. Try the home page or ask us on WhatsApp.</p><div class="btn-row" style="justify-content:center"><a class="btn btn--solid" href="index.html">Home</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>'''
+
+# ---------------------------------------------------------------------------- assets
+def og_image():
+    src = ROOT / 'assets/images/breez/exterior/building-palms-pool-court-1600.webp'
+    im = ImageOps.fit(Image.open(src).convert('RGB'), (1200, 630), centering=(.5, .45))
+    ov = Image.new('RGBA', im.size, (0, 0, 0, 0)); d = ImageDraw.Draw(ov)
+    for y in range(630): d.line([(0, y), (1200, y)], fill=(20, 16, 12, int(max(0, (y - 230)) / 400 * 190)))
+    im = Image.alpha_composite(im.convert('RGBA'), ov)
+    d = ImageDraw.Draw(im)
+    def font(names, size):
+        for n in names:
+            try: return ImageFont.truetype(n, size)
+            except OSError: pass
+        return ImageFont.load_default()
+    serif = font(['/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'], 104)
+    sans = font(['/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'], 24)
+    d.rectangle([18, 18, 1181, 611], outline=(246, 241, 231, 200), width=2)
+    d.text((64, 430), 'The Breez Hotel', font=serif, fill=(255, 255, 255))
+    d.text((68, 556), 'POOLS · GARDENS · MEETINGS · BUSIA, KENYA', font=sans, fill=(233, 207, 164))
+    im.convert('RGB').save(OUT / 'images/og-image.jpg', quality=84)
+    # apple touch icon
+    t = Image.new('RGB', (180, 180), (32, 57, 43)); dt = ImageDraw.Draw(t)
+    dt.text((90, 92), 'B', font=font(['/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'], 120), fill=(246, 241, 231), anchor='mm')
+    t.save(OUT / 'images/apple-touch-icon.png')
+
+FAVICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#20392B"/><rect x="5" y="5" width="54" height="54" rx="8" fill="none" stroke="#B7772A" stroke-width="2"/><text x="32" y="45" text-anchor="middle" font-family="Georgia,serif" font-size="38" fill="#F6F1E7">B</text></svg>'
+
+def main():
+    if OUT.exists(): shutil.rmtree(OUT)
+    (OUT / 'assets').mkdir(parents=True); (OUT / 'images').mkdir()
+    scan()
+    shutil.copy(ROOT / 'src/css/site.css', OUT / 'assets/site.css')
+    shutil.copy(ROOT / 'src/js/site.js', OUT / 'assets/site.js')
+    pages = [
+        ('index', 'The Breez Hotel · Pools, gardens and rooms in Busia, Kenya', 'A garden hotel on the Kisumu–Busia Road in Busia, Kenya, with rooms, two pools, a restaurant and bar, meeting halls and lawns for weddings and events.', home),
+        ('about', 'About the hotel', 'The Breez Hotel in Busia: the stone gate sign, the tower above the palms, gazebo gardens, a pool court and the team who run it.', about),
+        ('rooms', 'Rooms & stays', 'Standard Single, Double, Deluxe and King rooms at The Breez Hotel, Busia. Compare listed features and request your dates.', rooms),
+        ('pools', 'Pools', 'The main pool and kids’ pool at The Breez Hotel, Busia, with loungers, umbrellas and poolside food and drinks.', pools),
+        ('dining', 'Restaurant & bar', 'Restaurant, bar and poolside dining at The Breez Hotel, Busia. Breakfast with stays, Kenyan and international food, and event catering.', dining),
+        ('meetings', 'Meetings & events', 'Meeting halls with projector and Wi-Fi, and lawns and marquees for weddings, ruracio and garden parties at The Breez Hotel, Busia.', meetings),
+        ('gallery', 'Gallery', 'Photographs of The Breez Hotel in Busia: the building, gardens, pools, rooms, food, halls and events.', gallery),
+        ('contact', 'Contact & directions', 'Call or WhatsApp The Breez Hotel on 0707 461 665, email thebreezhotel@gmail.com, or find us on the Kisumu–Busia Road, Busia.', contact),
+        ('book', 'Book a stay', 'Request a room at The Breez Hotel, Busia. Choose dates, guests and room, then send your request to reception by WhatsApp or email.', book),
+    ]
+    for slug, t, d, fn in pages: page(slug, t, d, fn())
+    page('credits', 'Photo credits', 'Photo credits and licences for The Breez Hotel website.', credits())
+    page('404', 'Page not found', 'This page could not be found.', notfound())
+    # copy all images used anywhere
+    for k in USED:
+        m = IMAGES[k]
+        for w in (800, 1600):
+            s = ROOT / ('assets/' + m['rel'] + f'-{w}.webp'); dst = OUT / (m['rel'] + f'-{w}.webp')
+            dst.parent.mkdir(parents=True, exist_ok=True); shutil.copy(s, dst)
+    og_image()
+    (OUT / 'favicon.svg').write_text(FAVICON)
+    (OUT / '.nojekyll').write_text('')
+    (OUT / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {BASE_URL}sitemap.xml\n')
+    urls = ''.join(f'<url><loc>{BASE_URL}{"" if s == "index" else s + ".html"}</loc><lastmod>{TODAY}</lastmod></url>' for s, *_ in pages + [('credits',)])
+    (OUT / 'sitemap.xml').write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')
+    hotel = sum(1 for k in USED if not IMAGES[k]['stock']); stock = sum(1 for k in USED if IMAGES[k]['stock'])
+    print(f'Built {len(pages) + 2} pages · {hotel} hotel photos · {stock} stock photos · {hotel / (hotel + stock):.0%} hotel')
+
+if __name__ == '__main__':
+    main()

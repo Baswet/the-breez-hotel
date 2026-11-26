@@ -32,3 +32,25 @@ Every concept now opens with the hotel's name in the hero and navigation, gives 
 2. Confirm room categories and match photos to them.
 3. File written permission for the hotel photographs.
 4. Supply logo files.
+
+## Final selection (built and published 26 Nov 2026)
+
+The production site combines the three concepts:
+
+- **Concept A, Editorial Escape, is the base:** ivory and stone grounds, palm green, one warm sandstone accent from the building's cladding (used sparingly, not as "luxury gold"), Cormorant Garamond with Karla, the inset frame on the home cover, double-ruled frames and the "Karibu" welcome.
+- **From Concept B, Architectural Luxury:** ruled specification panels on the room spreads, the meetings specification table, the gridded meetings hero and the column-ruled About hero.
+- **From Concept C, Contemporary Hospitality:** the room comparison table, gallery filters, the quick-dates bar and the mobile bottom dock (Call, WhatsApp, Book).
+
+Each page has its own composition:
+
+| Page | Composition |
+| --- | --- |
+| Home | Framed full-bleed cover with the building and the name, then the overlapping dates bar |
+| About | Numbered architectural index: gate sign, tower, garden, pool court, wall sign |
+| Rooms | Magazine spreads with an inset detail photo and an overlapping spec card, plus a comparison table |
+| Pools | Full-bleed hero, a sticky scroll story and a collage |
+| Dining | A cinematic opening, a sideways photo strip, a printed-menu card and a dark bar split |
+| Meetings | A ruled grid hero, a spec table, layout cards, an events mosaic and an enquiry form |
+| Gallery | Masonry publication with filters and a lightbox |
+| Contact | Split screen: actions on one side, map and gate photo on the other |
+| Book | Photo side panel with a three-step request form and a live summary |

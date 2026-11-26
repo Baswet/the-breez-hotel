@@ -77,3 +77,15 @@ Screenshots are kept privately in `research/screenshots/` (excluded from Git —
 ## Other galleries
 
 [Siteinspire — Interior Design](https://www.siteinspire.com/websites/category/interior-design) · Godly (redirected to [recent.design](https://recent.design/)) · Awwwards listing above.
+
+## Additional research — 26 Nov 2026 (production pass)
+
+| Source | Reference | Technique taken |
+| --- | --- | --- |
+| [Land-book — hotel](https://land-book.com/search/websites?q=hotel) | The Brecon (Swiss Alps), Sonderdays, Aethos Hotels, Ostello, Provider Studio, Veloura | Calm photographic grids; destination cards; journal-style editorial blocks |
+| [Aethos](https://www.aethos.com/) (live) | Short uppercase statements ("The rules are different here"), destination list with one-line descriptions, "Experiences", journal | One-line descriptions per space; uppercase statement openers (About page) |
+| [One Page Love — hotel](https://onepagelove.com/?s=hotel) | Delparco Hotel, Adriatic Luxury Hotels, The Water Rat Hotel, The NoMAD Hotel, Lue Hotel, Hotel Chino Brisbane, Eagle's Nest, VIVTEL | Single-scroll storytelling with anchored sections (homepage rhythm) |
+| [CSS Design Awards gallery](https://www.cssdesignawards.com/website-gallery) | Search did not filter to hotels; recent winners scanned (Kocoro Studio, Luno Studio, Humo) | Fine typographic detailing, restrained motion |
+| Godly | Redirects to recent.design (scanned earlier) | — |
+
+Total recorded references: **~100** (82 earlier + 18 here, counting listed sites).

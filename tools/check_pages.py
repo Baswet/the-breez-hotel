@@ -11,7 +11,7 @@ JS = """() => {
   for (const el of document.querySelectorAll('body *')) {
     const r = el.getBoundingClientRect();
     if (r.width === 0 || getComputedStyle(el).position === 'fixed') continue;
-    if (r.right > W + 1 && !el.closest('[class*=hscroll],.hscroll,.scroll,.ticker,.foot-word,.word,.lb,.labnav,iframe,.xp-bar,[style*="overflow"]')) {
+    if (r.right > W + 1 && !el.closest('[class*=hscroll],.hscroll,.scroll,.ticker,.foot-word,.word,.lb,.labnav,iframe,.strip,.ftr-word,.h-word,.compare-wrap,.xp-bar,[style*="overflow"]')) {
       let p = el.parentElement, clipped = false;
       while (p) { const s = getComputedStyle(p); if (['hidden','clip','auto','scroll'].includes(s.overflowX)) { clipped = true; break; } p = p.parentElement; }
       if (!clipped) over.push((el.className || el.tagName).toString().slice(0, 40) + ' ' + Math.round(r.right - W) + 'px');
@@ -35,7 +35,7 @@ async def main():
                 h = await pg.evaluate('document.body.scrollHeight')
                 for y in range(0, h, 700):
                     await pg.evaluate(f'window.scrollTo(0,{y})'); await pg.wait_for_timeout(60)
-                await pg.evaluate('document.querySelectorAll(".reveal,.reveal-mask").forEach(e=>e.classList.add("is-in"))')
+                await pg.evaluate('document.querySelectorAll(".reveal,.reveal-mask,.rv,.rv-mask").forEach(e=>e.classList.add("is-in","in"))')
                 await pg.evaluate('window.scrollTo(0,0)'); await pg.wait_for_timeout(700)
                 r = await pg.evaluate(JS)
                 res[f'{page_path}@{w}'] = r
