@@ -224,12 +224,6 @@ p{margin:0 0 1em}p:last-child{margin-bottom:0}
 /* ==========================================================================
    ABOUT — architectural storytelling
    ========================================================================== */
-.ab-hero{position:relative;background:var(--stone);overflow:hidden}
-.ab-hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),var(--rule) calc(25% - 1px) 25%);pointer-events:none}
-.ab-hero-in{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end;gap:0;padding:clamp(56px,8vw,120px) 0 0}
-.ab-hero h1{grid-column:1/4;font-size:var(--s-4);text-transform:uppercase;letter-spacing:.02em;line-height:.92;padding-bottom:clamp(32px,5vw,64px)}
-.ab-hero .lead{grid-column:4/5;padding-bottom:clamp(32px,5vw,64px)}
-.ab-sign{grid-column:1/-1;aspect-ratio:21/8}
 .index{counter-reset:el}
 .el{display:grid;grid-template-columns:120px minmax(0,1fr) minmax(0,1.25fr);gap:clamp(20px,3vw,48px);align-items:start;padding:clamp(36px,5vw,72px) 0;border-top:1px solid var(--rule-strong)}
 .el:nth-child(even){grid-template-columns:120px minmax(0,1.25fr) minmax(0,1fr)}
@@ -441,7 +435,6 @@ p{margin:0 0 1em}p:last-child{margin-bottom:0}
   .menu-btn{display:inline-flex}
   .ftr-grid{grid-template-columns:1fr 1fr}
   .meet-grid{grid-template-columns:1fr 1fr}.mg-text{grid-column:1/-1}.mg-img.tall{grid-row:auto}
-  .ab-hero h1{grid-column:1/-1}.ab-hero .lead{grid-column:1/-1}
   .el,.el:nth-child(even){grid-template-columns:80px 1fr}
   .el .ph,.el .ph.portrait{grid-column:1/-1;max-width:none;aspect-ratio:3/2}
   .el:nth-child(even) .el-text{order:0}
@@ -470,8 +463,6 @@ p{margin:0 0 1em}p:last-child{margin-bottom:0}
   .mosaic{grid-template-columns:1fr 1fr;grid-auto-rows:120px}.m1{grid-column:1/-1}.m2,.m3,.m4,.m5,.m6{grid-column:auto;grid-row:span 2}
   .find{grid-template-columns:1fr}
   .ftr-grid{grid-template-columns:1fr}
-  .ab-hero::before{background:repeating-linear-gradient(90deg,transparent 0 calc(50% - 1px),var(--rule) calc(50% - 1px) 50%)}
-  .ab-sign{aspect-ratio:4/3}
   .el,.el:nth-child(even){grid-template-columns:1fr}.el-n{font-size:3rem}
   .facts{grid-template-columns:1fr 1fr}
   .team{grid-template-columns:1fr}

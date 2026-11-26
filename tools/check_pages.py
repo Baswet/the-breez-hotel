@@ -4,7 +4,7 @@ Usage: python3 tools/check_pages.py page1.html [page2.html ...] [--shots DIR] [-
 """
 import asyncio, sys, os, json
 from playwright.async_api import async_playwright
-WIDTHS = [1920, 1440, 1024, 768, 390, 360]
+WIDTHS = [1920, 1440, 1024, 768, 430, 390, 375, 360]
 JS = """() => {
   const W = document.documentElement.clientWidth;
   const over = [];

@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="assets/site.css?v=2026-11-26">
+<link rel="stylesheet" href="assets/heroes.css?v=2026-11-26">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Hotel", "name": "The Breez Hotel", "url": "https://baswet.github.io/the-breez-hotel/", "image": "https://baswet.github.io/the-breez-hotel/images/og-image.jpg", "telephone": "+254707461665", "email": "thebreezhotel@gmail.com", "address": {"@type": "PostalAddress", "streetAddress": "Kisumu–Busia Road", "addressLocality": "Busia", "addressCountry": "KE"}, "sameAs": ["https://www.facebook.com/TheBreezhotelofficial", "https://www.tiktok.com/@thebreezhotelbusia"], "amenityFeature": [{"@type": "LocationFeatureSpecification", "name": "Swimming pools", "value": true}, {"@type": "LocationFeatureSpecification", "name": "Kids' pool", "value": true}, {"@type": "LocationFeatureSpecification", "name": "Restaurant", "value": true}, {"@type": "LocationFeatureSpecification", "name": "Bar", "value": true}, {"@type": "LocationFeatureSpecification", "name": "Meeting rooms", "value": true}, {"@type": "LocationFeatureSpecification", "name": "Free Wi-Fi", "value": true}, {"@type": "LocationFeatureSpecification", "name": "Secure parking", "value": true}, {"@type": "LocationFeatureSpecification", "name": "Gardens", "value": true}]}</script>
 </head>
 <body class="p-index">
@@ -33,17 +34,23 @@
   <div class="ov-foot"><a class="btn btn--wa" href="https://wa.me/254707461665" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg> WhatsApp 0707 461 665</a><a class="btn btn--light" href="tel:+254707461665"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg> Call reception</a></div>
 </div>
 <main id="main">
-<section class="h-cover" aria-label="Welcome">
-  <figure class="ph "><img src="images/breez/exterior/building-palms-pool-court-1600.webp" srcset="images/breez/exterior/building-palms-pool-court-800.webp 800w, images/breez/exterior/building-palms-pool-court-1600.webp 1224w" sizes="100vw" width="1224" height="812" alt="The Breez Hotel building rising behind palms and the pool court" fetchpriority="high" decoding="async"></figure>
-  <div class="h-cover-in"><span class="label">Hotel · Pools · Gardens · Busia, Kenya</span><h1 class="h-word">The Breez <small>Hotel</small></h1><p>A garden hotel on the Kisumu–Busia Road with pools, a restaurant and bar, meeting halls and lawns made for celebrations.</p></div>
+<section class="hx-home" aria-label="Welcome to The Breez Hotel">
+  <figure class="hx-ph "><img src="images/breez/exterior/building-palms-pool-court-1600.webp" srcset="images/breez/exterior/building-palms-pool-court-800.webp 800w, images/breez/exterior/building-palms-pool-court-1600.webp 1224w" sizes="100vw" width="1224" height="812" alt="The Breez Hotel building rising behind palms and the pool court" fetchpriority="high" decoding="async"></figure>
+  <div class="hx-home-side" aria-hidden="true"><span class="hx-v">Kisumu–Busia Road · Busia · Kenya</span></div>
+  <div class="hx-home-in">
+    <span class="hx-k hx-k--light hx-a1">Hotel · Pools · Gardens · Busia</span>
+    <h1 class="hx-title hx-a2">The Breez</h1>
+    <p class="hx-sub hx-a3">A garden hotel on the Kisumu–Busia Road, with two pools, a restaurant and bar, meeting halls and lawns for celebrations.</p>
+  </div>
+  <form class="hx-strip" data-form="quick" action="book.html" aria-label="Check dates">
+    <label data-label="Check-in">Check-in<input type="date" name="checkin"></label>
+    <label data-label="Check-out">Check-out<input type="date" name="checkout"></label>
+    <label class="hx-guests" data-label="Guests">Guests<select name="guests"><option>1 adult</option><option selected>2 adults</option><option>3 adults</option><option>4+ adults</option></select></label>
+    <div class="hx-info"><span>Reception</span><a href="tel:+254707461665"><b>0707 461 665</b></a></div>
+    <button type="submit">Request dates</button>
+  </form>
 </section>
-<form class="qbook" data-form="quick" action="book.html" aria-label="Check dates">
-  <label class="field" data-label="Check-in">Check-in<input type="date" name="checkin"></label>
-  <label class="field" data-label="Check-out">Check-out<input type="date" name="checkout"></label>
-  <label class="field" data-label="Guests">Guests<select name="guests"><option>1 adult</option><option selected>2 adults</option><option>3 adults</option><option>4+ adults</option></select></label>
-  <button class="btn btn--book" type="submit">Request dates</button>
-  <p class="hint">Requests go straight to reception on WhatsApp or email. Nothing is charged online.</p>
-</form>
+<p class="hx-strip-note small">Requests go to reception on WhatsApp or email. Nothing is charged online.</p>
 
 <section class="sec" aria-labelledby="intro-h">
   <div class="wrap intro">
