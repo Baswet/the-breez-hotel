@@ -352,6 +352,7 @@ MOOD_LAYOUT = {  # main photo, supporting photo, composition
     '03': ('tent-wedding-setup', 'garden-party-setup', 'tall'),
     '04': ('room-four-poster-2', None, 'portrait'),
 }
+PAN = {'square': '0.05', 'wide': '0.07', 'tall': '0.06', 'portrait': '0.05'}
 PLACE_WORDS = ['unwind', 'gather', 'celebrate', 'discover', 'belong']
 
 MOODS = [
@@ -387,7 +388,7 @@ def lower_home():
         f'<div class="bx-f rv"><svg class="bx-i" viewBox="0 0 24 24" aria-hidden="true">{({**EXP_ICONS, **LOWER_ICONS})[ic]}</svg>'
         f'<div><span class="lw-no">{n}</span><h3>{h}</h3><p>{t} <a href="{u}">{lt}</a></p></div></div>' for ic, n, h, t, u, lt in HIGHLIGHTS)
     return f'''<section class="lw-rev" aria-labelledby="rev-h">
-  <div class="lw-rev-ph">{img('linen-coffee-eucalyptus', '100vw')}</div>
+  <div class="lw-rev-ph" data-pan="0.06">{img('linen-coffee-eucalyptus', '100vw')}</div>
   <div class="lw-rev-in wrap">
     <div class="lw-rev-panel rv">
       <span class="ed-kick">Guest reviews</span>
@@ -429,19 +430,20 @@ def lower_home():
 </section>'''
 
 def editorial():
-    karibu = f'''<section class="ed-karibu" aria-labelledby="kar-h">
+    karibu = f'''<section class="ed-karibu" data-welcome aria-labelledby="kar-h">
   <div class="ed-k-panel">
-    <span class="ed-kick rv">Karibu</span>
-    <h2 class="ed-k-title rv" id="kar-h">The art of <em>welcome</em></h2>
-    <p class="ed-k-essay rv">In Swahili, <em>karibu</em> is a welcome and an invitation to come closer. At The Breez it begins at the gate and carries on along the shaded veranda, past the fountain and the gazebos, to a cool drink by the pool and a quiet room at the end of the day.</p>
-    <a class="ed-discover rv" href="about.html" aria-label="Discover the hotel and its grounds">Discover</a>
-    <a class="ed-k-ph rv" href="about.html" tabindex="-1" aria-hidden="true">{ph('entrance-lobby', '', '(max-width:760px) 86vw, 36vw')}</a>
+    <div class="ed-k-copy">
+      <span class="ed-kick rv">Karibu</span>
+      <h2 class="ed-k-title rv" id="kar-h">The art of <em>welcome</em></h2>
+      <p class="ed-k-essay rv">In Swahili, <em>karibu</em> is a welcome and an invitation to come closer. At The Breez it begins at the gate and carries on along the shaded veranda, past the fountain and the gazebos, to a cool drink by the pool and a quiet room at the end of the day.</p>
+      <a class="ed-discover rv" href="about.html" aria-label="Discover the hotel and its grounds">Discover</a>
+    </div>
+    <a class="ed-k-ph" href="about.html" tabindex="-1" aria-hidden="true" data-pan="0.04">{ph('entrance-lobby', '', '(max-width:760px) 86vw, 36vw')}</a>
   </div>
   <div class="ed-k-side" aria-hidden="true">
-    <div class="ed-xp" data-arrive>
-      <div class="ed-arch"><div class="ed-arch-in">
+    <div class="ed-xp">
+      <div class="ed-arch"><div class="ed-arch-in" data-pan="0.05">
         <figure class="ed-xp-a">{img('building-palms-pool-court', '(max-width:760px) 86vw, 560px', eager=True).replace('fetchpriority="high"', 'loading="eager" fetchpriority="low"')}</figure>
-        <figure class="ed-xp-b">{img('entrance-lobby', '(max-width:760px) 86vw, 560px', eager=True).replace('fetchpriority="high"', 'loading="eager" fetchpriority="low"')}</figure>
       </div></div>
       <div class="ed-xp-prog"><span class="on">The exterior</span><i><b></b></i><span>The arrival</span></div>
     </div>
@@ -449,9 +451,9 @@ def editorial():
 </section>'''
     def mood(n, lab, h, k, t, u, lt, lay):
         main, support, cls = MOOD_LAYOUT[n]
-        sup = f'<figure class="ed-c-sup" data-reveal="up">{img(support, "(max-width:760px) 46vw, 18vw")}</figure>' if support else ''
+        sup = f'<figure class="ed-c-sup" data-reveal="up" data-pan="-0.05">{img(support, "(max-width:760px) 46vw, 18vw")}</figure>' if support else ''
         return (f'<article class="ed-c ed-c--{cls}">'
-                f'<a class="ed-c-media" href="{u}" tabindex="-1" aria-hidden="true"><figure class="ed-c-main" data-reveal="up">{img(main, "(max-width:760px) 100vw, 46vw")}</figure>{sup}</a>'
+                f'<a class="ed-c-media" href="{u}" tabindex="-1" aria-hidden="true"><figure class="ed-c-main" data-reveal="up" data-pan="{PAN[cls]}">{img(main, "(max-width:760px) 100vw, 46vw")}</figure>{sup}</a>'
                 f'<div class="ed-c-text rv"><span class="ed-c-no">{n}</span><span class="ed-kick">{lab}</span><h3>{h}</h3><p>{t}</p>'
                 f'<a class="ed-mood-link" href="{u}">{lt}<span aria-hidden="true"> &rarr;</span></a></div></article>')
     cards = ''.join(mood(*m) for m in MOODS)
@@ -466,7 +468,7 @@ def editorial():
     </header>
     <div class="ed-coll">{cards}</div>
     <div class="ed-taste">
-      <figure class="ed-taste-ph" data-reveal="up">{img('pool-garden-view', '(max-width:760px) 100vw, 58vw')}</figure>
+      <figure class="ed-taste-ph" data-reveal="up" data-pan="0.06">{img('pool-garden-view', '(max-width:760px) 100vw, 58vw')}</figure>
       <div class="ed-taste-text rv">
         <p class="ed-taste-lead">The Breez is a place to</p>
         <p class="ed-taste-word" data-words aria-label="The Breez is a place to unwind, gather, celebrate, discover and belong">{words}</p>
@@ -495,7 +497,7 @@ EXP_FEATS = [
 
 def experiences():
     tiles = ''.join(
-        f'<a class="bx-t" style="--s:{EXP_SPANS[i]}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">'
+        f'<a class="bx-t" style="--s:{EXP_SPANS[i]};transition-delay:{(i % 3) * 0.12 + (i // 3) * 0.06:.2f}s" data-reveal="{("up", "left", "up")[i % 3]}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">'
         f'{img(k, "(max-width:760px) 50vw, 40vw")}</a>' for i, k in enumerate(EXP_TILES))
     feats = ''.join(
         f'<div class="bx-f rv"><svg class="bx-i" viewBox="0 0 24 24" aria-hidden="true">{EXP_ICONS[ic]}</svg>'
@@ -518,7 +520,7 @@ def home():
   </div>
 </section>'''
     return f'''<section class="hx-home hb" aria-label="Welcome to The Breez Hotel">
-  {hx('pool-loungers', 'hb-ph', '100vw', eager=True)}
+  {hx('pool-loungers', 'hb-ph', '100vw', eager=True).replace('<figure ', '<figure data-hero-pan ', 1)}
   <div class="hb-in">
     <span class="hb-k hb-a1">Karibu &middot; Busia, Kenya</span>
     <h1 class="hb-title hb-a2">The Breez</h1>
@@ -542,8 +544,8 @@ def home():
     {head('04 · Meetings &amp; events', '<span id="meet-h">Halls for the workshop, lawns for the wedding</span>')}
     <div class="meet-grid rv">
       <div class="mg-text"><p class="lead">Meeting halls come with a projector and screen, Wi-Fi and a full set-up. Packages are flexible and include food and drinks. The lawns and marquees host weddings, ruracio, birthdays and garden parties.</p><div class="btn-row"><a class="btn btn--solid" href="meetings.html">Plan an event</a></div></div>
-      {ph('hall-classroom-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw')}
-      {ph('tent-wedding-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw')}
+      {ph('hall-classroom-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw').replace('<figure ', '<figure data-pan="0.05" ', 1)}
+      {ph('tent-wedding-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw').replace('<figure ', '<figure data-pan="-0.04" ', 1)}
       <div class="mg-list"><span class="label">Meetings</span><b>Conferences</b><b>Training</b><b>Workshops</b></div>
       <div class="mg-list"><span class="label">Celebrations</span><b>Weddings</b><b>Ruracio</b><b>Garden parties</b></div>
     </div>
