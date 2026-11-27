@@ -1432,3 +1432,5 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
 .hs-h{justify-self:stretch;width:100%;grid-template-columns:minmax(0,1fr)}
 .hs-k,.hs-m{justify-self:start}
 @media (max-width:760px){ .hs-a{margin-bottom:118px} }
+/* pin Bodoni's optical size: the auto display cut thins the hairlines too far over foliage */
+.hs-m,.hs-a{font-optical-sizing:none;font-variation-settings:"opsz" 14}
