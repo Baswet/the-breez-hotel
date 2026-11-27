@@ -647,38 +647,91 @@ RX = [('room-four-poster-2', 'Four-poster bed and mosquito net', 'organic'), ('r
       ('bed-detail', 'Fresh linen', 'arch'), ('bathroom-shower', 'The en-suite shower', 'circle'), ('room-fridge-tv', 'Fridge and TV in the room', 'full')]
 
 def rooms():
-    order = [('single', 'single-room', 'bed-detail', False), ('double', 'room-four-poster-window', 'bathroom-shower', True),
-             ('deluxe', 'room-grey-bedding', 'room-vanity', False), ('king', 'room-four-poster-2', 'room-desk-armchair', True)]
-    blurbs = {'single': 'A single bed, a desk and an en-suite bathroom. For the solo business traveller.',
-              'double': 'A double bed for two, often with a four-poster frame and mosquito net.',
-              'deluxe': 'A double room with air conditioning listed and a city view.',
-              'king': 'The largest bed in the hotel, with a pool view as listed.'}
-    sp = ''
-    for i, (k, main, det, flip) in enumerate(order):
+    """Rooms: an editorial in six parts. Only verified room data (ROOMS); photographs are the hotel's own
+    and are captioned as rooms at The Breez, not as a specific category."""
+    def spec(k):
         d = ROOMS[k]
-        dl = ''.join(f'<div><dt>{f}</dt><dd>{v}</dd></div>' for f, v in d.items() if f not in ('Room',))
-        sp += f'''<article class="spread{' flip' if flip else ''}" id="{k}">
-  <div class="spread-img">{ph(main, 'main', '(max-width:1100px) 100vw, 66vw', extra=' data-reveal="left"')}{ph(det, 'detail', '25vw')}</div>
-  <div class="spec rv"><span class="label">0{i+1} · Room</span><h2>{d['Room']}</h2><p>{blurbs[k]}</p><dl>{dl}</dl><a class="btn btn--solid" href="book.html?room={d['Room'].replace(' ', '+')}">Request this room</a></div>
-</article>'''
-    return f'''<section class="hx-rooms" aria-labelledby="rooms-h1">
-  <div class="hx-rooms-text">
-    <div>{crumb('Stay')}<span class="hx-k hx-a1">02 · Rooms &amp; stays</span><h1 class="hx-title" id="rooms-h1" data-split="words">Rest in the garden.</h1><p class="hx-sub hx-a3" style="margin-top:18px">Four room categories, as listed on Booking.com. Reception confirms your room and rate.</p></div>
-    <div class="hx-a4"><ul class="hx-index" data-index>{''.join(f'<li><a href="#{k}" data-swap="{IMAGES[m]["rel"]}" data-alt="{html.escape(ALT[m], quote=True)}"{" class=on" if k == "double" else ""}><b>{ROOMS[k]["Room"]}</b><span>{ROOMS[k]["Bed"]} · {ROOMS[k]["Sleeps"]}</span></a></li>' for k, m in [('single', 'single-room'), ('double', 'room-four-poster-window'), ('deluxe', 'room-grey-bedding'), ('king', 'room-four-poster-2')])}</ul><div class="hx-actions" style="margin-top:22px"><a class="btn btn--solid" href="book.html">Request a booking</a></div></div>
+        rows = [('Bed', d['Bed']), ('Sleeps', d['Sleeps']), ('View', d['View']), ('Balcony', d['Balcony']),
+                ('Air conditioning', d['Air conditioning']), ('Breakfast', d['Breakfast']), ('Rate', d['Rate'])]
+        return '<dl class="rm-spec">' + ''.join(f'<div><dt>{a}</dt><dd>{v}</dd></div>' for a, v in rows) + '</dl>'
+    def req(k):
+        return f'<a class="rm-req" href="book.html?room={ROOMS[k]["Room"].replace(" ", "+")}">Request this room <span aria-hidden="true">&rarr;</span></a>'
+    def fig(key, cls, sizes, cap=None, pan=None, reveal=None, eager=False):
+        a = (f' data-pan="{pan}"' if pan else '') + (f' data-reveal="{reveal}"' if reveal else '')
+        c = f'<figcaption>{cap}</figcaption>' if cap else ''
+        return f'<figure class="rm-ph {cls}"{a}>{img(key, sizes, eager=eager)}{c}</figure>'
+    idx = ''.join(f'<li><a href="#{k}"><span>0{i+1}</span>{ROOMS[k]["Room"]}</a></li>' for i, k in enumerate(['single', 'double', 'deluxe', 'king']))
+    opening = f'''<section class="rm-open" aria-labelledby="rooms-h1">
+  <div class="rm-open-text">
+    {crumb('Stay')}
+    <span class="rm-k">02 &middot; Rooms &amp; stays</span>
+    <h1 id="rooms-h1" class="rm-title"><span>Rooms</span><em>at The Breez</em></h1>
+    <p class="rm-lead">Four kinds of room around a garden of palms and pools &mdash; quiet, well kept and close to everything at the hotel.</p>
+    <ol class="rm-index">{idx}</ol>
+    <a class="btn btn--solid" href="book.html">Request a booking</a>
   </div>
-  <div class="hx-rooms-media">
-    {hx('room-four-poster-window', 'main mask-arch', '(max-width:760px) 100vw, 60vw', eager=True)}
-    {hx('bed-detail', 'detail', '280px', extra=' data-parallax="0.06"')}
-    <span class="note">Photographs of rooms at The Breez</span>
+  {fig('room-net-portrait', 'rm-open-a', '(max-width:760px) 100vw, 40vw', pan='0.05', eager=True)}
+  {fig('bed-towel-art-2', 'rm-open-b', '(max-width:760px) 46vw, 18vw', reveal='up')}
+  <p class="rm-note">Photographed at The Breez</p>
+</section>'''
+    staying = f'''<section class="rm-stay" aria-labelledby="stay-h">
+  {fig('room-desk-armchair', 'rm-stay-a', '(max-width:760px) 100vw, 62vw', pan='0.04', reveal='left')}
+  <div class="rm-stay-text rv">
+    <span class="rm-k">The art of staying</span>
+    <h2 id="stay-h" class="rm-h">Light through <em>tall curtains</em>, a bed made for the night.</h2>
+    <p>A room at The Breez is simple and cared for: fresh linen, a mosquito net where the bed has a frame, a desk to sit at and an en-suite bathroom. Every category lists a balcony, and three of the four list a view over the pool.</p>
   </div>
-</section>
-<section class="xp" data-expand aria-labelledby="xp-h">
-  <div class="xp-sticky"><span class="xp-word" aria-hidden="true">Rest.</span>
-    <div class="xp-frame">{img('room-four-poster-2', '100vw')}</div>
-    <div class="xp-title"><span class="hx-k hx-k--light">Rooms at The Breez</span><h2 id="xp-h">Unwind, by the garden.</h2></div>
+  {fig('bed-detail', 'rm-stay-b', '(max-width:760px) 70vw, 30vw', reveal='up')}
+</section>'''
+    R = ROOMS
+    discover = f'''<section class="rm-disc" aria-labelledby="disc-h">
+  <header class="rm-disc-head"><span class="rm-k">Discover the rooms</span><h2 id="disc-h" class="rm-h">Four rooms, <em>one garden</em>.</h2><p>Room details are as listed on Booking.com. Reception confirms your room and rate when you request a stay.</p></header>
+
+  <article class="rm-r rm-r1" id="single" aria-labelledby="single-h">
+    {fig('single-room', 'rm-r1-a', '(max-width:760px) 100vw, 34vw', pan='0.05', reveal='up')}
+    <div class="rm-r-text"><span class="rm-n">01</span><h3 id="single-h" class="rm-name">Standard <em>Single</em></h3>
+      <p class="rm-say">For one guest: a single bed, its own balcony as listed, and the pool in view.</p>{spec('single')}{req('single')}</div>
+  </article>
+
+  <article class="rm-r rm-r2" id="double" aria-labelledby="double-h">
+    <h3 id="double-h" class="rm-name rm-name--xl"><span class="rm-n">02</span>Double <em>Room</em></h3>
+    {fig('room-portrait', 'rm-r2-a', '(max-width:760px) 60vw, 30vw', pan='0.05', reveal='up')}
+    {fig('room-double', 'rm-r2-b', '(max-width:760px) 50vw, 22vw', reveal='up')}
+    <div class="rm-r-text"><p class="rm-say">A double bed for two, often under a four-poster frame and mosquito net.</p>{spec('double')}{req('double')}</div>
+  </article>
+
+  <article class="rm-r rm-r3" id="deluxe" aria-labelledby="deluxe-h">
+    {fig('room-grey-bedding', 'rm-r3-a', '100vw', pan='0.04', reveal='left')}
+    <div class="rm-r-text rm-r3-panel"><span class="rm-n">03</span><h3 id="deluxe-h" class="rm-name">Deluxe <em>Room</em></h3>
+      <p class="rm-say">A double room with air conditioning and a city view, as listed.</p>{spec('deluxe')}{req('deluxe')}</div>
+  </article>
+
+  <article class="rm-r rm-r4" id="king" aria-labelledby="king-h">
+    <div class="rm-r-text rm-r4-text"><span class="rm-n">04</span><h3 id="king-h" class="rm-name">King <em>Room</em></h3>
+      <p class="rm-say">The largest bed in the hotel, air conditioning listed and a view over the pool.</p>{spec('king')}{req('king')}</div>
+    {fig('room-fridge-tv', 'rm-r4-a', '(max-width:760px) 100vw, 56vw', pan='0.05', reveal='up')}
+    {fig('room-vanity', 'rm-r4-b', '(max-width:760px) 50vw, 20vw', reveal='up')}
+  </article>
+  <p class="rm-note rm-note--disc">Photographs show rooms at The Breez; furniture and layout vary by category.</p>
+</section>'''
+    details = f'''<section class="rm-det" aria-labelledby="det-h">
+  <div class="rm-det-head"><span class="rm-k">The details</span><h2 id="det-h" class="rm-h">Small things, <em>looked after</em>.</h2></div>
+  <div class="rm-det-grid">
+    {fig('room-tv-fridge', 'rm-d1', '(max-width:760px) 50vw, 24vw', cap='Fridge and TV', reveal='up')}
+    {fig('bathroom-shower', 'rm-d2', '(max-width:760px) 100vw, 30vw', cap='The en-suite shower', reveal='up')}
+    {fig('room-desk', 'rm-d3', '(max-width:760px) 50vw, 20vw', cap='A desk by the window', reveal='up')}
+    {fig('bathroom-toilet-basin', 'rm-d4', '(max-width:760px) 50vw, 20vw', cap='Basin and washroom', reveal='up')}
   </div>
-</section>
-<section class="sec rx-sec" aria-labelledby="sl-h">
+  <div class="rm-every" aria-labelledby="every-h"><h3 id="every-h" class="rm-k">Included with every room</h3>
+    <ul><li><b>Free Wi-Fi</b><span>Across the hotel</span></li><li><b>Secure parking</b><span>On site</span></li><li><b>Housekeeping</b><span>Daily</span></li><li><b>Pool access</b><span>Main and kids&rsquo; pools</span></li></ul></div>
+</section>'''
+    closing = f'''<section class="rm-close" aria-labelledby="close-h">
+  {fig('room-four-poster-window', 'rm-close-ph', '100vw', pan='0.06')}
+  <div class="rm-close-in"><span class="rm-k">The booking moment</span><h2 id="close-h" class="rm-close-h">Stay <em>a little longer.</em></h2>
+    <p>Tell reception your dates and the room you would like. They will confirm availability and the rate.</p>
+    <div class="btn-row"><a class="btn btn--book" href="book.html">Request a booking</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} Ask on WhatsApp</a></div></div>
+</section>'''
+    rxblock = f'''<section class="sec rx-sec" aria-labelledby="sl-h">
   <div class="wrap">
     <div class="rx-head"><div><span class="label">Inside the rooms</span><h2 class="h-l" id="sl-h" data-split="words">A closer look</h2></div><p>Photographs of rooms at The Breez. Furniture and layout vary by category.</p></div>
     <div class="rx" data-rx data-style="organic" tabindex="0" aria-roledescription="carousel" aria-label="Room photographs">
@@ -690,15 +743,8 @@ def rooms():
       </div>
     </div>
   </div>
-</section>
-<section class="sec" style="padding-top:0"><div class="wrap">{sp}</div></section>
-<section class="sec" aria-labelledby="every-h">
-  <div class="wrap">
-    {head('Every stay', '<span id="every-h">Included with every room</span>')}
-    <div class="every rv"><div><b>Free Wi-Fi</b><span class="small">Across the hotel</span></div><div><b>Secure parking</b><span class="small">On site</span></div><div><b>Housekeeping</b><span class="small">Daily</span></div><div><b>Pool access</b><span class="small">Main and kids’ pools</span></div></div>
-    <div class="closing" style="margin-top:clamp(48px,7vw,96px)"><h2 class="h-l">Ready to choose your dates?</h2><div class="btn-row" style="justify-content:center"><a class="btn btn--book" href="book.html">Request a booking</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} Ask on WhatsApp</a></div></div>
-  </div>
 </section>'''
+    return opening + '\n' + staying + '\n' + discover + '\n' + rxblock + '\n' + details + '\n' + closing
 
 def pools():
     steps = [('pool-umbrellas-above', 'The main pool', 'Lanes of clear water in a court of palms, ringed by umbrellas and loungers.'),
