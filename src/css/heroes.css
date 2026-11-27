@@ -791,9 +791,57 @@
 .lw-book-line em{font-style:italic;color:var(--green-2)}
 .lw-book-act{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px}
 .lw-wa{font-size:.95rem;color:var(--ink-2);text-decoration:underline;text-underline-offset:4px;padding:12px 0}
-/* highlights */
-.lw-hl{padding:clamp(88px,10vw,140px) 45px}
-.lw-no{display:block;font:400 1.1rem/1 var(--f-display);color:var(--sand-ink);margin-bottom:10px;letter-spacing:.04em}
+/* highlights: a compact botanical band. The palm-green ground runs edge to edge,
+   leaves (tools/make_botanical.py) emerge from the left and cross its edges into the ivory. */
+.lw-hl{--leaf-w:clamp(280px,24vw,390px);--hair:rgba(233,239,231,.15);position:relative;padding:clamp(56px,6vw,92px) 0}
+.bt-band{position:relative;color:var(--green-ink);background:
+  radial-gradient(90% 170% at 0% 50%,rgba(46,83,64,.62),rgba(46,83,64,0) 58%),
+  linear-gradient(180deg,rgba(14,28,20,.2),rgba(14,28,20,0) 24%,rgba(14,28,20,0) 76%,rgba(14,28,20,.24)),
+  var(--green)}
+.bt-leaves{position:absolute;left:0;top:calc(var(--leaf-w) * -.138);width:var(--leaf-w);z-index:1;pointer-events:none}
+.bt-leaves img{width:100%;height:auto}
+.bt-in{position:relative;z-index:2;width:min(100% - 2*var(--pad),var(--max));margin-inline:auto;
+  padding-block:clamp(46px,4.4vw,70px);
+  padding-left:max(0px,calc(var(--leaf-w)*.84 + 20px - (100% - min(100% - 2*var(--pad),var(--max)))/2));
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,4fr);gap:clamp(24px,2.6vw,48px);align-items:center}
+.bt-intro{display:grid;gap:14px;align-content:center}
+.bt-k{display:flex;align-items:center;gap:14px;font:700 .72rem/1.3 var(--f-text);letter-spacing:.24em;text-transform:uppercase;color:var(--sand-soft)}
+.bt-k::after{content:"";flex:0 1 30px;min-width:14px;height:1px;background:currentColor;opacity:.55}
+.bt-h{font:300 clamp(2.2rem,1.45rem + 1.5vw,3.25rem)/.98 var(--f-display);letter-spacing:-.025em;color:var(--ivory);margin:0}
+.bt-h em{font-style:italic;color:var(--sand-soft)}
+.bt-p{margin:0;font:400 clamp(1.05rem,.98rem + .2vw,1.18rem)/1.5 var(--f-display);color:rgba(233,239,231,.78);max-width:28ch}
+.bt-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.bt-f{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"i no" "h h" "p p" "a a";column-gap:12px;row-gap:10px;align-content:start;padding:4px clamp(14px,1.4vw,24px);border-left:1px solid var(--hair)}
+.bt-i{grid-area:i;align-self:center;width:24px;height:24px;fill:var(--sand-soft)}
+.bt-no{grid-area:no;align-self:center;font:400 .95rem/1 var(--f-display);letter-spacing:.08em;color:rgba(233,207,164,.7)}
+.bt-f h3{grid-area:h;margin:4px 0 0;font:400 clamp(1.3rem,1.1rem + .35vw,1.55rem)/1.12 var(--f-display);letter-spacing:-.005em;color:var(--ivory)}
+.bt-f p{grid-area:p;margin:0;font-size:.93rem;line-height:1.55;color:rgba(233,239,231,.72)}
+.bt-a{grid-area:a;justify-self:start;padding:10px 0;margin-top:-2px;font:700 .66rem/1.2 var(--f-text);letter-spacing:.2em;text-transform:uppercase;color:var(--sand-soft);text-decoration:none;background:linear-gradient(currentColor,currentColor) 0 calc(100% - 6px)/0 1px no-repeat;transition:background-size .45s}
+.bt-a:hover{background-size:100% 1px}
+.lw-hl :focus-visible{outline-color:var(--sand-soft)}
+/* tablet: the low sprig crosses the band's top edge; the intro sits beside it */
+@media (max-width:1179px){
+  .lw-hl{--leaf-w:clamp(250px,34vw,340px)}
+  .bt-leaves{top:0;transform:translateY(-37.5%)}
+  .bt-in{grid-template-columns:1fr;padding-left:0;row-gap:clamp(34px,5vw,50px);align-items:start}
+  .bt-intro{min-height:calc(var(--leaf-w)*.39);padding-left:max(0px,calc(var(--leaf-w)*.72 + 20px - (100vw - min(100vw - 2*var(--pad),var(--max)))/2))}
+  .bt-f:first-child{border-left:0;padding-left:0}
+}
+@media (max-width:959px){
+  .bt-list{grid-template-columns:1fr 1fr;row-gap:30px}
+  .bt-f:nth-child(odd){border-left:0;padding-left:0}
+}
+/* phone: the sprig takes the top corner and the text starts below it; icons run down a left column */
+@media (max-width:760px){
+  .lw-hl{--leaf-w:min(66vw,270px);padding:clamp(62px,16vw,84px) 0 52px}
+  .bt-in{padding-block:calc(var(--leaf-w)*.39 + 16px) 40px;row-gap:26px}
+  .bt-intro{padding-left:0;min-height:0}
+  .bt-list{grid-template-columns:1fr;row-gap:0}
+  .bt-f,.bt-f:nth-child(odd){grid-template-columns:24px minmax(0,1fr);grid-template-areas:"i no" "i h" "i p" "i a";column-gap:16px;row-gap:6px;padding:18px 0 14px;border-left:0;border-top:1px solid var(--hair)}
+  .bt-i{align-self:start;margin-top:1px}
+  .bt-no{align-self:start}
+  .bt-f h3{margin:0}
+}
 /* location */
 .lw-loc{background:var(--stone);padding:clamp(88px,10vw,150px) 0 clamp(96px,11vw,170px)}
 .lw-loc-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(32px,6vw,96px);align-items:center}
@@ -824,7 +872,6 @@
   .lw-rev-in{justify-items:start;padding-block:48px 72px}
   .lw-loc-grid{grid-template-columns:1fr}
   .lw-map{aspect-ratio:4/5;margin-top:12px}
-  .lw-hl{padding:72px 27px}
 }
 @media (max-width:760px){
   .lw-loc{padding:72px 0 96px}

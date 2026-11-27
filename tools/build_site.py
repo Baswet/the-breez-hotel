@@ -377,12 +377,13 @@ MOODS = [
      'rooms.html', 'Discover the rooms', 'side'),
 ]
 
-HIGHLIGHTS = [
-    ('leaf', '01', 'A place to unwind', 'Palms, lawns, gazebos and a fountain in the courtyard: quiet corners to sit, read and let the afternoon pass.', 'about.html', 'The hotel and its grounds'),
-    ('wave', '02', 'Moments by the pool', 'A swimming pool and a children&rsquo;s pool, with loungers, blue umbrellas and a fresh juice brought to the table.', 'pools.html', 'See the pools'),
+HIGHLIGHTS = [  # short lines for the botanical band: each is the opening of the confirmed copy
+    ('leaf', '01', 'A place to unwind', 'Palms, lawns, gazebos and a fountain in the courtyard.', 'about.html', 'The hotel and its grounds'),
+    ('wave', '02', 'Moments by the pool', 'A swimming pool and a children&rsquo;s pool, with loungers and blue umbrellas.', 'pools.html', 'See the pools'),
     ('star', '03', 'Room to come together', 'Halls, lawns and marquees for conferences, weddings, ruracio and birthdays.', 'meetings.html', 'Plan an event'),
-    ('bed', '04', 'A stay to remember', 'Four room categories, with free Wi-Fi, daily housekeeping, secure parking and access to both pools.', 'rooms.html', 'See the rooms'),
+    ('bed', '04', 'A stay to remember', 'Four room categories, with free Wi-Fi, daily housekeeping and secure parking.', 'rooms.html', 'See the rooms'),
 ]
+LEAVES = 'images/botanical/leaves'
 LOWER_ICONS = {'leaf': '<path d="M20.5 3.5C11 3.6 4.6 8.4 4.2 15.6c-.1 1.2 0 2.4.4 3.5L2.8 21l1.4 1.4 1.9-1.9c1 .4 2.2.5 3.4.4 7.2-.5 11-6.9 11-17.4zM8.9 18.1l6.7-6.7-1.4-1.4-6.7 6.7c-.2-.7-.2-1.4-.1-2.1.3-4.9 4.3-8.4 10.8-8.9-.5 6.5-3.6 11-8.6 11.4-.3 0-.5 0-.7 0z"/>',
     'bed': '<path d="M3 5h2.6v6.2H8V9.4C8 8.1 9 7 10.4 7h7.8C20.3 7 22 8.7 22 10.8V19h-2.6v-2.6H5.6V19H3zm2.6 8.8h13.8v-2.6H5.6z"/>'}
 SOCIAL_ICON = {
@@ -392,8 +393,8 @@ SOCIAL_ICON = {
 
 def lower_home():
     hl = ''.join(
-        f'<div class="bx-f rv"><svg class="bx-i" viewBox="0 0 24 24" aria-hidden="true">{({**EXP_ICONS, **LOWER_ICONS})[ic]}</svg>'
-        f'<div><span class="lw-no">{n}</span><h3>{h}</h3><p>{t} <a href="{u}">{lt}</a></p></div></div>' for ic, n, h, t, u, lt in HIGHLIGHTS)
+        f'<li class="bt-f rv"><svg class="bt-i" viewBox="0 0 24 24" aria-hidden="true">{({**EXP_ICONS, **LOWER_ICONS})[ic]}</svg>'
+        f'<span class="bt-no">{n}</span><h3>{h}</h3><p>{t}</p><a class="bt-a" href="{u}">{lt}</a></li>' for ic, n, h, t, u, lt in HIGHLIGHTS)
     return f'''<section class="lw-rev" aria-labelledby="rev-h">
   <div class="lw-rev-ph" data-pan="0.06">{img('linen-coffee-eucalyptus', '100vw')}</div>
   <div class="lw-rev-in wrap">
@@ -411,7 +412,20 @@ def lower_home():
 </section>
 
 <section class="lw-hl" aria-labelledby="hl-h">
-  <div class="bx-wrap"><h2 class="sr-only" id="hl-h">Why guests choose The Breez</h2><div class="bx-fgrid">{hl}</div></div>
+  <div class="bt-band">
+    <picture class="bt-leaves" aria-hidden="true">
+      <source media="(max-width:1179px)" srcset="{LEAVES}-corner-320.webp 320w, {LEAVES}-corner-640.webp 640w" sizes="(max-width:760px) 66vw, 340px" width="640" height="400">
+      <img src="{LEAVES}-side-380.webp" srcset="{LEAVES}-side-380.webp 380w, {LEAVES}-side-760.webp 760w" sizes="390px" width="760" height="1000" alt="" loading="lazy" decoding="async">
+    </picture>
+    <div class="bt-in">
+      <div class="bt-intro rv">
+        <span class="bt-k">Why guests choose us</span>
+        <h2 class="bt-h" id="hl-h">Rooted in the <em>garden</em>.</h2>
+        <p class="bt-p">From the rooms to the pool, life at The Breez opens onto the garden.</p>
+      </div>
+      <ul class="bt-list" role="list">{hl}</ul>
+    </div>
+  </div>
 </section>
 
 <section class="lw-loc" aria-labelledby="loc-h">
@@ -1199,6 +1213,7 @@ def main():
         for w in (800, 1600):
             s = ROOT / ('assets/' + m['rel'] + f'-{w}.webp'); dst = OUT / (m['rel'] + f'-{w}.webp')
             dst.parent.mkdir(parents=True, exist_ok=True); shutil.copy(s, dst)
+    shutil.copytree(ROOT / 'assets/images/botanical', OUT / 'images/botanical')   # original renders, tools/make_botanical.py
     og_image()
     (OUT / 'favicon.svg').write_text(FAVICON)
     (OUT / '.nojekyll').write_text('')
