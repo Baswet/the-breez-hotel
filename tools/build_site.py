@@ -231,7 +231,7 @@ _SRC = {'site.css': 'src/css/site.css', 'heroes.css': 'src/css/heroes.css', 'mot
 # cache-busting: version each asset by its content, so every deploy that changes a file changes its URL
 ASSET_V = {k: _hl.sha1((ROOT / v).read_bytes()).hexdigest()[:10] for k, v in _SRC.items()}
 
-NAV = [('rooms', 'Stay'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings', 'Meetings & Events'),
+NAV = [('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings', 'Meetings & Events'),
        ('gallery', 'Gallery'), ('about', 'About'), ('contact', 'Contact')]
 
 def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
@@ -659,7 +659,7 @@ def rooms():
     idx = ''.join(f'<li><a href="#{k}"><span>0{i+1}</span>{ROOMS[k]["Room"]}</a></li>' for i, k in enumerate(['single', 'double', 'deluxe', 'king']))
     opening = f'''<section class="rm-open" aria-labelledby="rooms-h1">
   <div class="rm-open-text">
-    {crumb('Stay')}
+    {crumb('Rooms')}
     <span class="rm-k">02 &middot; Rooms &amp; stays</span>
     <h1 id="rooms-h1" class="rm-title"><span>Rooms</span><em>at The Breez</em></h1>
     <p class="rm-lead">Four kinds of room around a garden of palms and pools &mdash; quiet, well kept and close to everything at the hotel.</p>
