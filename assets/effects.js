@@ -710,7 +710,7 @@
 })();
 
 /* Rooms hero: crossfading photographs whose surrounding washes and light follow each photo's palette.
-   Pauses on hover, keyboard focus, a hidden tab or when scrolled away; manual choices restart the timer. */
+   Pauses while the controls are hovered, on keyboard focus, a hidden tab or when scrolled away; manual choices restart the timer. */
 (function () {
   const root = document.querySelector('[data-rh]'); if (!root) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -758,8 +758,9 @@
   play.addEventListener('click', () => { paused = !paused; syncPlay(); paused ? stop() : start(); });
   syncPlay();
   stage.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(i - 1); } });
-  stage.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; stop(); } });
-  stage.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
+  const ctl = root.querySelector('.rh-ctl');                // hovering the controls holds the slide; the photo keeps playing
+  ctl.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; stop(); } });
+  ctl.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
   stage.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) { focus = true; stop(); } });
   stage.addEventListener('focusout', (e) => { if (!stage.contains(e.relatedTarget)) { focus = false; start(); } });
   const photo = root.querySelector('.rh-photo'); let sx = null;
@@ -769,4 +770,64 @@
   if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { vis = e.isIntersecting; vis ? start() : stop(); }, { threshold: 0.35 }).observe(stage);
   else { vis = true; start(); }
   ready(1);
+})();
+
+/* Meetings & events opening, after the Casa Angelina recording. While the page sits at the top, the hero photographs
+   cross-fade under the script title. As the visitor scrolls, the stage stays on screen (position: sticky, scrolling is
+   never taken over) and one progress value p, 0 to 1 across the section, choreographs the scene: the title fades, the
+   photograph shrinks out of the full frame towards the right and settles into .me-slot as a wide image, the panoramic
+   strip slides in from the left edge and the four lines open around them. Each part has its own window of p and its
+   own easing, so nothing moves in lockstep. With reduced motion the scene switches between its two states. */
+(function () {
+  const hero = document.querySelector('[data-me-hero]'); if (!hero) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stage = hero.querySelector('.me-stage'), win = hero.querySelector('.me-hero-win'), slot = hero.querySelector('.me-slot');
+  const slides = [...hero.querySelectorAll('.me-hs')];
+  const clamp = (v) => Math.min(1, Math.max(0, v));
+  const seg = (p, a, b) => clamp((p - a) / (b - a));
+  const inOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const out = (t) => 1 - Math.pow(1 - t, 3);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  let i = 0, timer = 0, ticking = false, atTop = true, W = 0, H = 0, S = null;
+
+  /* the film at the top of the page */
+  const loadImg = (k) => { const im = slides[k].querySelector('img'); im.loading = 'eager'; return im.complete ? Promise.resolve() : new Promise((r) => { im.onload = im.onerror = r; }); };
+  const show = (k) => loadImg(k).then(() => {
+    if (k === i) return;
+    slides[i].classList.remove('on'); slides[i].setAttribute('aria-hidden', 'true');
+    slides[k].classList.add('on', 'run'); slides[k].removeAttribute('aria-hidden');
+    const old = slides[i]; setTimeout(() => old.classList.remove('run'), 2400); i = k; });
+  const play = () => { clearInterval(timer); if (!reduce && atTop && !document.hidden && slides.length > 1) timer = setInterval(() => show((i + 1) % slides.length), 6500); };
+  if (slides.length > 1) { slides[0].classList.add('run'); loadImg(1); play(); document.addEventListener('visibilitychange', play); }
+
+  /* the scroll-driven scene */
+  const measure = () => { W = stage.clientWidth; H = stage.clientHeight; S = { x: slot.offsetLeft, y: slot.offsetTop, w: slot.offsetWidth, h: slot.offsetHeight }; };
+  const set = (n, v) => hero.style.setProperty(n, v);
+  const frame = () => {
+    ticking = false; if (!S) return;
+    const r = hero.getBoundingClientRect(), travel = hero.offsetHeight - stage.offsetHeight;
+    let p = travel > 0 ? clamp(-r.top / travel) : 0;
+    if (reduce) p = p > 0.3 ? 1 : 0;
+    // the photograph: its left edge and bottom lead, the right edge holds and then tucks in, the top follows,
+    // so it draws away towards the right and then lifts into its place
+    const kl = out(seg(p, 0.03, 0.5)), kb = inOut(seg(p, 0.03, 0.58)), kt = inOut(seg(p, 0.1, 0.62)), kr = inOut(seg(p, 0.26, 0.62));
+    const x0 = lerp(0, S.x, kl), x1 = lerp(W, S.x + S.w, kr), y0 = lerp(0, S.y, kt), y1 = lerp(H, S.y + S.h, kb);
+    win.style.setProperty('--bx', x0.toFixed(1) + 'px'); win.style.setProperty('--by', y0.toFixed(1) + 'px');
+    win.style.setProperty('--bw', (x1 - x0).toFixed(1) + 'px'); win.style.setProperty('--bh', (y1 - y0).toFixed(1) + 'px');
+    set('--o', (1 - seg(p, 0, 0.14)).toFixed(3));
+    set('--k', inOut(seg(p, 0.03, 0.62)).toFixed(4));
+    set('--s', out(seg(p, 0.26, 0.72)).toFixed(4));
+    set('--wa', out(seg(p, 0.4, 0.72)).toFixed(4));
+    set('--wb', out(seg(p, 0.5, 0.8)).toFixed(4));
+    set('--wc', out(seg(p, 0.55, 0.84)).toFixed(4));
+    set('--wd', out(seg(p, 0.42, 0.84)).toFixed(4));
+    hero.classList.toggle('is-set', p > 0.2);
+    // the film plays only at the top; once the scene starts it settles back on the hall, which is what moves into place
+    const top = p < 0.015 && r.bottom > 0;
+    if (top !== atTop) { atTop = top; if (atTop) play(); else { clearInterval(timer); show(0); } }
+  };
+  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+  addEventListener('scroll', req, { passive: true });
+  addEventListener('resize', () => { measure(); frame(); });
+  measure(); frame();
 })();
