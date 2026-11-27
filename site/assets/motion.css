@@ -393,7 +393,6 @@
 .mt2-enq-contact li,.credits-none,.mt2-cf-tabs,.summary div,.ct-actions a{border-bottom:0}
 .summary div,.ct-actions a,.dock a{border-right:0}
 .note,.mt2-intro-p,.rx-head p,.rx-cap{border-left:0}
-.meet-grid,.meet-grid>*{border:0}
 /* framing boxes and nested outlines */
 .qbook,.qbook::before,.map,.spec,.menu-card,.form-panel,.mt2-enq-right .form-panel,.ct-actions,.summary,
 .pl-info,.mt2-glass,.mt2-panel,.mt2-os-ctl,.pd-ctl,.hx-rail .hx-ph{border:0}

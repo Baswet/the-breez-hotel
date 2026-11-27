@@ -552,28 +552,6 @@ def home():
 
 {experiences()}
 
-<section class="sec sec--stone" aria-labelledby="meet-h">
-  <div class="wrap">
-    {head('04 · Meetings &amp; events', '<span id="meet-h">Halls for the workshop, lawns for the wedding</span>')}
-    <div class="meet-grid rv">
-      <div class="mg-text"><p class="lead">Meeting halls come with a projector and screen, Wi-Fi and a full set-up. Packages are flexible and include food and drinks. The lawns and marquees host weddings, ruracio, birthdays and garden parties.</p><div class="btn-row"><a class="btn btn--solid" href="meetings.html">Plan an event</a></div></div>
-      {ph('hall-classroom-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw').replace('<figure ', '<figure data-pan="0.05" ', 1)}
-      {ph('tent-wedding-setup', 'mg-img tall', '(max-width:760px) 100vw, 25vw').replace('<figure ', '<figure data-pan="-0.04" ', 1)}
-      <div class="mg-list"><span class="label">Meetings</span><b>Conferences</b><b>Training</b><b>Workshops</b></div>
-      <div class="mg-list"><span class="label">Celebrations</span><b>Weddings</b><b>Ruracio</b><b>Garden parties</b></div>
-    </div>
-  </div>
-</section>
-
-<section class="sec" aria-labelledby="gal-h">
-  <div class="wrap">
-    {head('05 · Gallery', '<span id="gal-h">Around the hotel</span>', '<a class="link" href="gallery.html">All photographs</a>')}
-    <div class="mosaic" data-lightbox data-stagger data-drift>
-      {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, "(max-width:760px) 50vw, 33vw")}</a>' for c, k in [('m1', 'courtyard-fountain-gazebos'), ('m2', 'pool-aerial'), ('m3', 'gazebo-cypress'), ('m4', 'lounge-rattan-sofas'), ('m5', 'tower-and-terrace'), ('m6', 'bar-counter-stools')])}
-    </div>
-  </div>
-</section>
-
 {lower_home()}'''
 
 def about():
