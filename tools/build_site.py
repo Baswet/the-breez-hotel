@@ -558,7 +558,7 @@ def home():
   {hx('pool-loungers', 'hb-ph', '100vw', eager=True).replace('<figure ', '<figure data-hero-pan ', 1)}
   <div class="hb-in hs">
     <h1 class="hs-h"><span class="hs-k"><span class="hs-orn">{BM.pavilion('hs-emb')}</span><span class="hs-w">The art of</span></span>
-      <span class="hs-m"><span class="hs-l"><span>making</span></span><span class="hs-l hs-l2"><span>you feel</span></span></span>
+      <span class="hs-m"><span class="hs-l"><span>making</span></span> <span class="hs-l hs-l2"><span>you feel</span></span></span>
       <span class="hs-a"><span class="hs-ai">at home</span><span class="hs-dot">.</span></span><span class="sr-only"> &mdash; The Breez Hotel, Busia</span></h1>
     <div class="hs-actions"><a class="hb-btn hb-btn--gold" href="book.html">Book your stay</a><a class="hs-link" href="about.html">Explore the hotel <span aria-hidden="true">&rarr;</span></a></div>
   </div>
