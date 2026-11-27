@@ -23,6 +23,10 @@
       };
       watch(); addEventListener('resize', watch);
     } else { hdr.classList.add('is-solid'); }
+    /* belt and braces: also check the hero edge on scroll, so a throttled
+       observer can never leave the header in the wrong state */
+    let hb = 0;
+    addEventListener('scroll', () => { if (hb) return; hb = requestAnimationFrame(() => { hb = 0; hdr.classList.toggle('is-solid', heroEl.getBoundingClientRect().bottom <= hdr.offsetHeight); }); }, { passive: true });
   }
 
   /* reveal */
