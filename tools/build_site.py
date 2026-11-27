@@ -225,6 +225,11 @@ ICON = {
   'cal': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   'mail': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6"/></svg>',
 }
+import hashlib as _hl
+_SRC = {'site.css': 'src/css/site.css', 'heroes.css': 'src/css/heroes.css', 'motion.css': 'src/css/motion.css', 'site.js': 'src/js/site.js', 'effects.js': 'src/js/effects.js'}
+# cache-busting: version each asset by its content, so every deploy that changes a file changes its URL
+ASSET_V = {k: _hl.sha1((ROOT / v).read_bytes()).hexdigest()[:10] for k, v in _SRC.items()}
+
 NAV = [('rooms', 'Stay'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings', 'Meetings & Events'),
        ('gallery', 'Gallery'), ('about', 'About'), ('contact', 'Contact')]
 
@@ -300,9 +305,9 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="assets/site.css?v={TODAY}">
-<link rel="stylesheet" href="assets/heroes.css?v={TODAY}">
-<link rel="stylesheet" href="assets/motion.css?v={TODAY}">
+<link rel="stylesheet" href="assets/site.css?v={ASSET_V["site.css"]}">
+<link rel="stylesheet" href="assets/heroes.css?v={ASSET_V["heroes.css"]}">
+<link rel="stylesheet" href="assets/motion.css?v={ASSET_V["motion.css"]}">
 {ld}
 </head>
 <body class="p-{slug}">
@@ -311,8 +316,8 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 {body}
 </main>
 {footer()}
-<script src="assets/site.js?v={TODAY}" defer></script>
-<script src="assets/effects.js?v={TODAY}" defer></script>
+<script src="assets/site.js?v={ASSET_V["site.js"]}" defer></script>
+<script src="assets/effects.js?v={ASSET_V["effects.js"]}" defer></script>
 </body>
 </html>
 '''
