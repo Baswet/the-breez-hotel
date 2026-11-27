@@ -830,3 +830,51 @@
   addEventListener('resize', () => { measure(); frame(); });
   measure(); frame();
 })();
+
+/* Gallery, the garden: photographs standing on the inside of a curve, after the supplied reference. The viewer sits
+   between the curve's centre and its far wall, so the photographs nearer the edges turn towards the eye and grow.
+   One position s (in photographs) drives it: it drifts slowly while on screen, follows a drag or swipe, and the
+   arrow keys step it. Cards are re-used round the ring, so the strip never ends. Reduced motion: no drift. */
+(function () {
+  const view = document.querySelector('[data-curve]'); if (!view) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards = [...view.querySelectorAll('.gc-card')], n = cards.length; if (!n) return;
+  let s = 0, target = null, vis = false, last = 0, drag = null, W = 0, R = 0, step = 0;
+  const measure = () => {
+    W = cards[0].offsetWidth;
+    R = Math.max(view.clientWidth * 0.95, W * 4);                       // radius of the curve
+    view.style.setProperty('--gc-p', Math.round(R * 0.52) + 'px');      // the eye: a little behind the curve's centre
+    step = 2 * Math.atan((W * 0.56) / R);                               // radians between photographs
+  };
+  const place = () => {
+    cards.forEach((c, i) => {
+      let k = ((i - s) % n + n) % n; if (k > n / 2) k -= n;              // position relative to the centre, -n/2..n/2
+      const th = k * step, deg = th * 180 / Math.PI;
+      const fade = Math.max(0, Math.min(1, (0.95 - Math.abs(th)) / 0.22));   // fade out before the edge of sight
+      c.style.transform = `translateZ(${R.toFixed(0)}px) rotateY(${(-deg).toFixed(3)}deg) translateZ(${(-R).toFixed(0)}px)`;
+      c.style.opacity = fade.toFixed(3); c.style.visibility = fade > 0 ? 'visible' : 'hidden';
+      c.setAttribute('aria-hidden', String(Math.abs(k) > 0.5));
+    });
+  };
+  const tick = (t) => {
+    if (!vis) { last = 0; return; }
+    const dt = last ? Math.min(0.05, (t - last) / 1000) : 0; last = t;
+    if (target !== null) { s += (target - s) * Math.min(1, dt * 6); if (Math.abs(target - s) < 0.002) { s = target; target = null; } }
+    else if (!drag && !reduce) s += dt * 0.12;                           // about one photograph every eight seconds
+    place(); requestAnimationFrame(tick);
+  };
+  const start = () => { if (vis) { last = 0; requestAnimationFrame(tick); } };
+  view.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, s }; target = null; view.setPointerCapture(e.pointerId); });
+  view.addEventListener('pointermove', (e) => { if (drag) { s = drag.s - (e.clientX - drag.x) / (W * 1.1); if (reduce) place(); } });
+  const end = () => { if (drag) { target = Math.round(s); drag = null; if (reduce) { s = target; target = null; place(); } } };
+  view.addEventListener('pointerup', end); view.addEventListener('pointercancel', end);
+  view.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return; e.preventDefault();
+    target = Math.round(target ?? s) + (e.key === 'ArrowRight' ? 1 : -1);
+    if (reduce) { s = target; target = null; place(); }
+  });
+  addEventListener('resize', () => { measure(); place(); });
+  measure(); place();
+  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { const was = vis; vis = e.isIntersecting; if (vis && !was) start(); }).observe(view);
+  else { vis = true; start(); }
+})();

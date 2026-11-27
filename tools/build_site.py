@@ -724,7 +724,7 @@ def rooms_hero():
       <ol class="rh-index" aria-label="Show a room">{tabs}</ol>
       <p class="rh-note" data-rh-note>{RH[0][4]}</p>
       <div class="rh-caps">{caps}</div>
-      <a class="rh-book" href="#single">Explore our rooms <span aria-hidden="true">&rarr;</span></a>
+      <a class="rh-book" href="#rd-h">Explore our rooms <span aria-hidden="true">&rarr;</span></a>
     </div>
     <p class="rh-motto"><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></p>
     <p class="sr-only" aria-live="polite" data-rh-live></p>
@@ -734,11 +734,6 @@ def rooms_hero():
 def rooms():
     """Rooms: an editorial in six parts. Only verified room data (ROOMS); photographs are the hotel's own
     and are captioned as rooms at The Breez, not as a specific category."""
-    def spec(k):
-        d = ROOMS[k]
-        rows = [('Bed', d['Bed']), ('Sleeps', d['Sleeps']), ('View', d['View']), ('Balcony', d['Balcony']),
-                ('Air conditioning', d['Air conditioning']), ('Breakfast', d['Breakfast']), ('Rate', d['Rate'])]
-        return '<dl class="rm-spec">' + ''.join(f'<div><dt>{a}</dt><dd>{v}</dd></div>' for a, v in rows) + '</dl>'
     def req(k):
         return f'<a class="rm-req" href="book.html?room={ROOMS[k]["Room"].replace(" ", "+")}">Request this room <span aria-hidden="true">&rarr;</span></a>'
     def fig(key, cls, sizes, cap=None, pan=None, reveal=None, eager=False):
@@ -756,35 +751,41 @@ def rooms():
   {fig('bed-detail', 'rm-stay-b', '(max-width:760px) 70vw, 30vw', reveal='up')}
 </section>'''
     R = ROOMS
-    discover = f'''<section class="rm-disc" aria-labelledby="disc-h">
-  <header class="rm-disc-head"><span class="rm-k">Discover the rooms</span><h2 id="disc-h" class="rm-h">Four rooms, <em>one garden</em>.</h2><p>Room details are as listed on Booking.com. Reception confirms your room and rate when you request a stay.</p></header>
-
-  <article class="rm-r rm-r1" id="single" aria-labelledby="single-h">
-    {fig('single-room', 'rm-r1-a', '(max-width:760px) 100vw, 34vw', pan='0.05', reveal='up')}
-    <div class="rm-r-text"><span class="rm-n">01</span><h3 id="single-h" class="rm-name">Standard <em>Single</em></h3>
-      <p class="rm-say">For one guest: a single bed, its own balcony as listed, and the pool in view.</p>{spec('single')}{req('single')}</div>
-  </article>
-
-  <article class="rm-r rm-r2" id="double" aria-labelledby="double-h">
-    <h3 id="double-h" class="rm-name rm-name--xl"><span class="rm-n">02</span>Double <em>Room</em></h3>
-    {fig('room-portrait', 'rm-r2-a', '(max-width:760px) 60vw, 30vw', pan='0.05', reveal='up')}
-    {fig('room-double', 'rm-r2-b', '(max-width:760px) 50vw, 22vw', reveal='up')}
-    <div class="rm-r-text"><p class="rm-say">A double bed for two, often under a four-poster frame and mosquito net.</p>{spec('double')}{req('double')}</div>
-  </article>
-
-  <article class="rm-r rm-r3" id="deluxe" aria-labelledby="deluxe-h">
-    {fig('room-grey-bedding', 'rm-r3-a', '100vw', pan='0.04', reveal='left')}
-    <div class="rm-r-text rm-r3-panel"><span class="rm-n">03</span><h3 id="deluxe-h" class="rm-name">Deluxe <em>Room</em></h3>
-      <p class="rm-say">A double room with air conditioning and a city view, as listed.</p>{spec('deluxe')}{req('deluxe')}</div>
-  </article>
-
-  <article class="rm-r rm-r4" id="king" aria-labelledby="king-h">
-    <div class="rm-r-text rm-r4-text"><span class="rm-n">04</span><h3 id="king-h" class="rm-name">King <em>Room</em></h3>
-      <p class="rm-say">The largest bed in the hotel, air conditioning listed and a view over the pool.</p>{spec('king')}{req('king')}</div>
-    {fig('room-fridge-tv', 'rm-r4-a', '(max-width:760px) 100vw, 56vw', pan='0.05', reveal='up')}
-    {fig('room-vanity', 'rm-r4-b', '(max-width:760px) 50vw, 20vw', reveal='up')}
-  </article>
-  <p class="rm-note rm-note--disc">Photographs show rooms at The Breez; furniture and layout vary by category.</p>
+    # 02 the rooms, one by one: an architectural editorial after the supplied Dev.UN reference (a large two-line
+    # heading; per room a tall photograph, the name and a few lines, label/value pairs by a fine rule, an outlined
+    # number in a fine frame, and a wide and a tall photograph completing the mosaic). Verified details only.
+    RD = [('single', 'a', 'For one guest: a single bed, its own balcony as listed, and the pool in view.', ('single-room', 'bed-towel-art-2', 'room-net-portrait')),
+          ('double', 'b', 'A double bed for two, often under a four-poster frame and a mosquito net, with the pool in view.', ('room-portrait', 'room-four-poster-2', 'room-double')),
+          ('deluxe', 'a', 'A double room with air conditioning, a balcony and a city view, as listed.', ('room-desk', 'room-grey-bedding', 'room-desk-armchair')),
+          ('king', 'b', 'The largest bed in the hotel, with air conditioning and a view over the pool.', ('room-vanity', 'room-fridge-tv', None))]
+    def facts(k):
+        d = ROOMS[k]; f = []
+        if d['Balcony'] == 'Listed': f.append('Balcony')
+        if d['Air conditioning'] == 'Listed': f.append('Air conditioning')
+        f.append(d['View'])
+        if d['Breakfast'].startswith('Included'): f.append('Breakfast included')
+        return ' &middot; '.join(f)
+    def rate(k):   # the rate comes from ROOMS; until a verified price is entered there, it reads "On request"
+        r = ROOMS[k]['Rate']
+        return f'{r}<small>{"confirmed by reception" if r == "On request" else "per night, as listed"}</small>'
+    def rd_room(i, k, v, say, ph3):
+        a, b, c = ph3
+        pic = lambda key, cls, sz: f'<figure class="rd-ph {cls}" data-reveal="up">{img(key, sz)}</figure>' if key else ''
+        return f'''<article class="rd-r rd-r--{v}" id="{k}" aria-labelledby="{k}-h">
+    <span class="rd-frame" aria-hidden="true"></span><span class="rd-n" aria-hidden="true">{i + 1:02d}</span>
+    {pic(a, 'rd-pa', '(max-width:760px) 100vw, 26vw')}
+    <div class="rd-text rv"><h3 id="{k}-h" class="rd-name">{ROOMS[k]["Room"]}</h3><p class="rd-say">{say}</p><p class="rd-facts">{facts(k)}</p>{req(k)}</div>
+    <dl class="rd-meta rv"><div><dt>bed</dt><dd>{ROOMS[k]["Bed"]}</dd></div><div><dt>sleeps</dt><dd>{ROOMS[k]["Sleeps"]}</dd></div><div class="rd-rate"><dt>rate</dt><dd>{rate(k)}</dd></div></dl>
+    {pic(b, 'rd-pb', '(max-width:760px) 100vw, 42vw')}
+    {pic(c, 'rd-pc', '(max-width:760px) 50vw, 30vw')}
+  </article>'''
+    discover = f'''<section class="rd" aria-labelledby="rd-h">
+  <header class="rd-head">
+    <p class="rd-aside rv">Room details as listed on Booking.com. Reception confirms your room and rate.</p>
+    <h2 id="rd-h" class="rd-h"><span class="rd-h1">Four rooms,</span> <span class="rd-h2">one garden.</span></h2>
+  </header>
+  {''.join(rd_room(i, *r) for i, r in enumerate(RD))}
+  <p class="rd-note">Photographs show rooms at The Breez; furniture and layout vary by category.</p>
 </section>'''
     details = f'''<section class="rm-det" aria-labelledby="det-h">
   <div class="rm-det-head"><span class="rm-k">The details</span><h2 id="det-h" class="rm-h">Small things, <em>looked after</em>.</h2></div>
@@ -816,7 +817,7 @@ def rooms():
     </div>
   </div>
 </section>'''
-    return opening + '\n' + staying + '\n' + discover + '\n' + rxblock + '\n' + details + '\n' + closing
+    return opening + '\n' + discover + '\n' + staying + '\n' + rxblock + '\n' + details + '\n' + closing
 
 def pools():
     steps = [('pool-umbrellas-above', 'The main pool', 'Lanes of clear water in a court of palms, ringed by umbrellas and loungers.'),
@@ -1126,11 +1127,29 @@ def gallery():
     lq_imgs = ''.join(f'<img src="{IMAGES[k]["rel"]}-1600.webp" srcset="{IMAGES[k]["rel"]}-800.webp 800w, {IMAGES[k]["rel"]}-1600.webp 1600w" sizes="(max-width:760px) 100vw, 1320px" alt="{html.escape(ALT[k], quote=True)}" width="{IMAGES[k]["w"]}" height="{IMAGES[k]["h"]}" decoding="async"{"" if i == 0 else " loading=lazy"}>' for i, (k, c) in enumerate(LQ))
     lq_caps = ''.join(f'<p data-cap{" class=on" if i == 0 else ""}>{c}</p>' for i, (k, c) in enumerate(LQ))
     film = ''.join(f'<figure>{hx(k, "", "(max-width:760px) 70vw, 30vw", extra=f" style=--ar:{ar}")}<figcaption><b>0{i+1}</b>{c}</figcaption></figure>' for i, (k, c, ar) in enumerate(FILM))
-    return f'''<section class="hx-gal" aria-labelledby="gal-h1">
-  <div class="wrap hx-gal-grid" data-lightbox data-drift>
-    <div class="hx-gal-title">{crumb('Gallery')}<span class="hx-k hx-a1">06 · A visual journey</span><h1 class="hx-title" id="gal-h1" data-split="chars">Gallery</h1><p class="hx-sub hx-a3">{len(items)} photographs of the hotel, its grounds, rooms, food and events.</p></div>
-    {''.join(f'<a class="{c}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">{img(k, sz, eager=True)}<b>{n}</b></a>' for c, k, n, sz in [('g1 mask-arch', 'tower-and-terrace-tall', '01', '(max-width:760px) 66vw, 33vw'), ('g2', 'garden-gazebo-roof', '02', '25vw'), ('g3', 'kids-pool-building', '03', '25vw'), ('g4 mask-circle', 'fountain-seating', '04', '(max-width:760px) 33vw, 25vw'), ('g5', 'pool-umbrellas-above', '05', '(max-width:760px) 33vw, 50vw')])}
+    # the opening, after the supplied 'Our Work' reference: a heading and a button on one strong colour (the Breez
+    # forest green), then two rows of photographs drifting in opposite directions. Each row is written twice so the
+    # loop is seamless; the second copy is hidden from assistive tech and opens the same photo in the viewer.
+    ROWS = [['pool-aerial', 'restaurant-interior-blue', 'room-four-poster-window', 'tent-wedding-setup', 'entrance-lobby', 'bar-counter-stools', 'hall-banquet-gold', 'kids-pool-umbrellas', 'gazebo-steps'],
+            ['building-palms-pool-court', 'poolside-meal-juice', 'lounge-rattan-sofas', 'marquee-lawn', 'pool-lanes', 'garden-party-balloons', 'veranda-corridor', 'roast-meat', 'wing-and-garden']]
+    def tile(k, twin):
+        a_ = html.escape(ALT[k], quote=True)
+        return (f'<a class="gh-t" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{a_}" data-caption="{a_}"'
+                f'{f" data-twin={chr(34)}{k}{chr(34)} tabindex={chr(34)}-1{chr(34)}" if twin else f" data-k={chr(34)}{k}{chr(34)}"}>{img(k, "(max-width:760px) 44vw, 20vw", alt="" if twin else None)}</a>')
+    rows = ''.join(f'<div class="gh-row gh-row--{d}"><div class="gh-track">{"".join(tile(k, False) for k in r)}<span class="gh-copy" aria-hidden="true">{"".join(tile(k, True) for k in r)}</span></div></div>'
+                   for d, r in zip('lr', ROWS))
+    # the garden, after the supplied curved-gallery reference: a centred heading over photographs standing on the
+    # inside of a curve, drifting slowly round; drag, swipe or the arrow keys move it (effects.js, [data-curve])
+    GARDEN = ['cottage-courtyard-swing', 'gazebo-cypress', 'fountain-lawn-swing', 'gazebo-flowerbeds', 'walkway-cottages', 'courtyard-fountain-gazebos', 'cypress-cottage',
+              'gazebo-garden', 'courtyard-lawn-fountain', 'garden-gazebo-roof', 'fountain-seating', 'gazebo-cypress-2', 'cottages-lawn', 'courtyard-fountain-tent']
+    curve = ''.join(f'<figure class="gc-card">{img(k, "(max-width:760px) 56vw, 22vw")}</figure>' for k in GARDEN)
+    return f'''<section class="gh" aria-labelledby="gal-h1">
+  <div class="gh-head">
+    <div class="gh-crumb">{crumb('Gallery')}</div>
+    <div class="gh-title"><span class="gh-k">06 &middot; A visual journey</span><h1 class="gh-h" id="gal-h1">Gallery</h1><p class="gh-sub">{len(items)} photographs of the hotel, its grounds, rooms, food and events.</p></div>
+    <a class="gh-btn" href="#arc-h">Every photograph <span aria-hidden="true">&rarr;</span></a>
   </div>
+  <div class="gh-rows" data-lightbox>{rows}</div>
 </section>
 
 <section class="lq" data-liquid tabindex="0" aria-roledescription="carousel" aria-labelledby="lq-h">
@@ -1147,13 +1166,9 @@ def gallery():
   <div class="film-strip" data-filmstrip tabindex="0" aria-label="A day at The Breez, scroll sideways">{film}</div>
 </section>
 
-<section class="gcol" aria-labelledby="col-h">
-  <div class="wrap gcol-in">
-    {hx('cottage-courtyard-swing', 'cg-a mask-arch', '(max-width:760px) 80vw, 50vw', extra=' data-reveal="arch"')}
-    {hx('fountain-lawn-swing', 'cg-b mask-circle', '(max-width:760px) 50vw, 25vw', extra=' data-reveal="circle" data-parallax="0.06"')}
-    {hx('walkway-cottages', 'cg-c', '(max-width:760px) 50vw, 33vw', extra=' data-reveal="up"')}
-    <div class="cg-t"><span class="hx-k">The garden</span><h2 data-split="lines">Gazebos, cypress and a fountain.</h2><p class="hx-sub">Between the guest wings, a lawn for slow afternoons and garden parties.</p></div>
-  </div>
+<section class="gc" aria-labelledby="col-h">
+  <div class="gc-head"><span class="gc-k">The garden</span><h2 id="col-h" class="gc-h">Gazebos, cypress and a fountain.</h2><p class="gc-sub">Between the guest wings, a lawn for slow afternoons and garden parties.</p></div>
+  <div class="gc-view" data-curve tabindex="0" aria-roledescription="carousel" aria-label="Garden photographs. Drag, swipe or use the arrow keys."><div class="gc-ring">{curve}</div></div>
 </section>
 
 <section class="sec" aria-labelledby="arc-h">

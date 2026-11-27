@@ -152,8 +152,9 @@
     };
     const close = () => { box.hidden = true; document.body.style.overflow = ''; if (last) last.focus(); };
     groups.forEach((g) => g.addEventListener('click', (ev) => {
-      const a = ev.target.closest('a[href]'); if (!a || !g.contains(a)) return;
-      ev.preventDefault(); last = a; items = [...g.querySelectorAll('a[href]')].filter((x) => !x.hidden);
+      let a = ev.target.closest('a[href]'); if (!a || !g.contains(a)) return;
+      ev.preventDefault(); last = a; items = [...g.querySelectorAll('a[href]')].filter((x) => !x.hidden && !x.dataset.twin);
+      if (a.dataset.twin) a = g.querySelector(`a[data-k="${a.dataset.twin}"]`) || a;   // a looping copy opens its original
       show(items.indexOf(a)); box.hidden = false; document.body.style.overflow = 'hidden'; box.querySelector('.lb-x').focus();
     }));
     box.querySelector('.lb-x').onclick = close;
