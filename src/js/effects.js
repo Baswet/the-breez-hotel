@@ -710,7 +710,7 @@
 })();
 
 /* Rooms hero: crossfading photographs whose surrounding washes and light follow each photo's palette.
-   Pauses on hover, keyboard focus, a hidden tab or when scrolled away; manual choices restart the timer. */
+   Pauses while the controls are hovered, on keyboard focus, a hidden tab or when scrolled away; manual choices restart the timer. */
 (function () {
   const root = document.querySelector('[data-rh]'); if (!root) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -758,8 +758,9 @@
   play.addEventListener('click', () => { paused = !paused; syncPlay(); paused ? stop() : start(); });
   syncPlay();
   stage.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(i - 1); } });
-  stage.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; stop(); } });
-  stage.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
+  const ctl = root.querySelector('.rh-ctl');                // hovering the controls holds the slide; the photo keeps playing
+  ctl.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; stop(); } });
+  ctl.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
   stage.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) { focus = true; stop(); } });
   stage.addEventListener('focusout', (e) => { if (!stage.contains(e.relatedTarget)) { focus = false; start(); } });
   const photo = root.querySelector('.rh-photo'); let sx = null;
@@ -769,4 +770,35 @@
   if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { vis = e.isIntersecting; vis ? start() : stop(); }, { threshold: 0.35 }).observe(stage);
   else { vis = true; start(); }
   ready(1);
+})();
+
+/* Meetings & events opening, after the Casa Angelina recording: the hero photographs cross-fade, and as the page
+   scrolls the hero draws back into an inset window (--p) while the statement's photographs drift ([data-drift]). */
+(function () {
+  const hero = document.querySelector('[data-me-hero]'); if (!hero) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const slides = [...hero.querySelectorAll('.me-hs')];
+  const drifts = [...document.querySelectorAll('[data-drift]')].map((el) => { const [ax, v] = el.dataset.drift.split(':'); return { el, ax, v: +v }; });
+  let i = 0, timer = 0, ticking = false, onScreen = true;
+  const loadImg = (k) => { const im = slides[k].querySelector('img'); im.loading = 'eager'; return im.complete ? Promise.resolve() : new Promise((r) => { im.onload = im.onerror = r; }); };
+  const next = () => { const k = (i + 1) % slides.length; loadImg(k).then(() => {
+    slides[i].classList.remove('on'); slides[i].setAttribute('aria-hidden', 'true');
+    slides[k].classList.add('on', 'run'); slides[k].removeAttribute('aria-hidden');
+    const old = slides[i]; setTimeout(() => old.classList.remove('run'), 2400); i = k; loadImg((k + 1) % slides.length); }); };
+  const play = () => { clearInterval(timer); if (!reduce && onScreen && !document.hidden && slides.length > 1) timer = setInterval(next, 6500); };
+  if (slides.length > 1) { slides[0].classList.add('run'); loadImg(1); play();
+    document.addEventListener('visibilitychange', play); }
+  if (reduce) return;
+  const frame = () => {
+    ticking = false;
+    const h = hero.offsetHeight, p = Math.min(1, Math.max(0, scrollY / (h * 0.85)));
+    hero.style.setProperty('--p', p.toFixed(4));
+    const was = onScreen; onScreen = scrollY < h; if (was !== onScreen) (onScreen ? play() : clearInterval(timer));
+    const vh = innerHeight;
+    drifts.forEach((d) => { const r = d.el.getBoundingClientRect(); if (r.bottom < -200 || r.top > vh + 200) return;
+      const t = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height))); const o = (d.v * Math.min(1, innerWidth / 1280) * (0.5 - t) * 2).toFixed(1);   // gentler on small screens
+      d.el.style.transform = d.ax === 'x' ? `translate3d(${o}px,0,0)` : `translate3d(0,${o}px,0)`; });
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener('resize', frame); frame();
 })();

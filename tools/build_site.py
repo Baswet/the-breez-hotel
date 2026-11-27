@@ -238,8 +238,8 @@ ASSET_V = {k: _hl.sha1((ROOT / v).read_bytes()).hexdigest()[:10] for k, v in _SR
 NAV = [('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings', 'Meetings & Events'),
        ('gallery', 'Gallery'), ('about', 'About'), ('contact', 'Contact')]
 
-BODONI_TEXT = {'index': 'ThartofmakingyoufeelHome.', 'rooms': 'Rooms'}   # Bodoni Moda is loaded as a subset of only these letters
-PAGE_FONTS = {'meetings': 'family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500'}   # the editorial Meetings page only
+BODONI_TEXT = {'index': 'ThartofmakingyoufeelHome.'}   # Bodoni Moda is loaded as a subset of only these letters
+PAGE_FONTS = {'meetings': 'family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Jost:wght@200;300;400;500&family=Mrs+Saint+Delafield'}   # the editorial Meetings page only
 def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
 def cur(slug, s): return ' aria-current="page"' if slug == s else ''
 
@@ -698,16 +698,29 @@ def rooms_hero():
     dots = ''.join(f'<button type="button" class="rh-dot{" on" if i == 0 else ""}" data-rh-dot="{i}" aria-label="Slide {i + 1}: {html.escape(name.replace("<em>", "").replace("</em>", ""), quote=True)}"'
                    f' aria-current="{"true" if i == 0 else "false"}"></button>' for i, (k, a, name, *_) in enumerate(RH))
     arrow = lambda d: f'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="{"M15 5l-7 7 7 7" if d < 0 else "M9 5l7 7-7 7"}"/></svg>'
-    deco = '''<svg class="rh-deco" viewBox="0 0 1000 460" preserveAspectRatio="none" aria-hidden="true">
-      <rect x="368" y="22" width="594" height="404"/><rect x="380" y="50" width="574" height="388"/>
-      <path d="M336 22H368M368 0V22M962 426V460M962 426H996M900 0L962 62M380 438L358 460"/>
-      <path d="M0 372A88 88 0 0 1 56 460M0 398A62 62 0 0 1 38 460M0 424A36 36 0 0 1 22 460M0 360H48"/></svg>'''
+    # fine champagne lines, drawn on the same box as the frame artwork (.rh-art, 886 x 610 units)
+    deco = '''<svg class="rh-deco" viewBox="0 0 886 610" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="66" y="74" width="740" height="528"/><rect x="88" y="52" width="740" height="514"/>
+      <path d="M650 0L862 212M690 0L866 176M30 52H88M88 18V52M828 566V606M806 602H862"/>
+      <path d="M66 506A96 96 0 0 1 162 602M66 538A64 64 0 0 1 130 602M66 570A32 32 0 0 1 98 602"/>
+      <path d="M566 548H700V610M600 528H724V606M724 528L770 482"/></svg>'''
+    tile = '''<svg class="rh-tile" viewBox="0 0 140 260" aria-hidden="true"><defs><linearGradient id="rh-foil" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C9A766"/><stop offset=".45" stop-color="#E6CD95"/><stop offset=".7" stop-color="#B48F55"/><stop offset="1" stop-color="#D9BC80"/></linearGradient></defs>
+      <rect class="f" x="0" y="0" width="140" height="132"/><rect class="g" x="82" y="0" width="58" height="132"/><rect class="f" x="0" y="140" width="96" height="120"/>
+      <path d="M0 124A110 110 0 0 1 110 14M0 100A86 86 0 0 1 86 14M0 76A62 62 0 0 1 62 14M0 52A38 38 0 0 1 38 14M14 132V20H132M28 132V34H118"/>
+      <path d="M0 252L88 164M0 220L56 164M24 260L96 188M10 150H90V250"/></svg>'''
+    tl = '<svg class="rh-tl" viewBox="0 0 180 40" aria-hidden="true"><path d="M0 1H120L150 31H180M24 1V39M24 39H96L124 11M60 1V20H140"/></svg>'
     return f'''<section class="rh" data-rh aria-roledescription="carousel" aria-labelledby="rooms-h1">
   <div class="rh-top">{crumb('Rooms')}</div>
   <div class="rh-stage" style="{vars_(RH[0][0])}">
-    <div class="rh-amb" aria-hidden="true">{ambient}<span class="rh-veil"></span><span class="rh-grain"></span></div>
-    <span class="rh-w rh-w1" aria-hidden="true"><i></i></span><span class="rh-w rh-w3" aria-hidden="true"><i></i></span><span class="rh-w rh-w5" aria-hidden="true"><i></i></span>
-    <div class="rh-photo"><div class="rh-frame">{slides}</div>
+    <div class="rh-amb" aria-hidden="true">{ambient}<span class="rh-veil"></span><span class="rh-palm"></span><span class="rh-grain"></span>{tl}</div>
+    <span class="rh-w rh-w5" aria-hidden="true"><i></i></span><span class="rh-block" aria-hidden="true"><i></i></span>
+    <div class="rh-art">
+      <span class="rh-l rh-l-sage" aria-hidden="true"><i></i></span>
+      <div class="rh-photo"><div class="rh-frame">{slides}</div></div>
+      <span class="rh-l rh-l-gold" aria-hidden="true"><i></i></span><span class="rh-l rh-l-rose" aria-hidden="true"><i></i></span>
+      <span class="rh-l rh-l-paper" aria-hidden="true"><i></i></span><span class="rh-l rh-l-green" aria-hidden="true"><i></i></span>
+      {deco}
       <p class="rh-count" aria-hidden="true"><b data-rh-num>01</b><span>/ {n:02d}</span></p>
       <div class="rh-ctl">
         <button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button>
@@ -715,9 +728,8 @@ def rooms_hero():
         <button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button>
         <button type="button" class="rh-btn rh-play" data-rh-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button>
       </div>
+      <p class="rh-note" data-rh-note>{RH[0][4]}</p>
     </div>
-    <span class="rh-w rh-w2" aria-hidden="true"><i></i></span><span class="rh-w rh-w4" aria-hidden="true"><i></i></span>
-    {deco}
     <div class="rh-panel">
       <span class="rh-paper" aria-hidden="true"></span>
       <div class="rh-copy">
@@ -729,7 +741,7 @@ def rooms_hero():
         <a class="rh-book" href="book.html">Request a booking <span aria-hidden="true">&rarr;</span></a>
       </div>
     </div>
-    <p class="rh-note" data-rh-note>{RH[0][4]}</p>
+    {tile}
     <p class="sr-only" aria-live="polite" data-rh-live></p>
   </div>
   <p class="rh-motto"><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></p>
@@ -965,23 +977,31 @@ def meetings():
     strip = ''.join(f'<figure class="me-card">{img(k, "(max-width:760px) 70vw, 24vw")}<figcaption>{c}</figcaption></figure>' for i, (k, c) in enumerate(OUT))
     fac = ''.join(f'<li><span class="me-fn">0{i+1}</span><b>{t}</b><span class="me-fd">{d}</span></li>' for i, (t, d) in enumerate(FAC))
     words = ''.join(f'<span>{w}</span>' for w in ['Conferences', 'Weddings', 'Training', 'Ruracio', 'Workshops', 'Garden parties'])
-    return f'''<section class="me-hero" data-hero-edge aria-label="Meetings and events at The Breez">
-  {pic('hall-banquet-gold', 'me-hero-ph', '100vw', eager=True)}
-  <div class="me-hero-shade" aria-hidden="true"></div>
-  <div class="me-hero-in">
-    <div class="me-hero-crumb">{crumb('Meetings &amp; events')}</div>
-    <p class="me-hero-k">05 &middot; Meetings &amp; events</p>
-    <p class="me-hero-tag"><span>Halls &middot; Lawns &middot; Marquees</span>Projector and screen, Wi-Fi, full set-up and catering packages.</p>
-    <a class="me-scroll" href="#meet-h1" aria-label="Scroll to the introduction"><i></i></a>
+    HERO = ['hall-banquet-gold', 'garden-party-balloons', 'cottage-courtyard-swing']   # the hotel's own photographs
+    hero_slides = ''.join(f'<figure class="me-ph me-hs{" on" if i == 0 else ""}"{"" if i == 0 else " aria-hidden=\"true\""}>{img(k, "100vw", i == 0)}</figure>' for i, k in enumerate(HERO))
+    return f'''<section class="me-hero" data-me-hero aria-label="Meetings and events at The Breez">
+  <span class="me-hero-edge" data-hero-edge aria-hidden="true"></span>
+  <div class="me-hero-win">
+    {hero_slides}
+    <div class="me-hero-shade" aria-hidden="true"></div>
+    <div class="me-hero-in">
+      <div class="me-hero-crumb">{crumb('Meetings &amp; events')}</div>
+      <p class="me-hero-script">Meetings &amp; events</p>
+      <p class="me-hero-k">05 &middot; Meetings &amp; events</p>
+      <p class="me-hero-tag"><span>Halls &middot; Lawns &middot; Marquees</span>Projector and screen, Wi-Fi, full set-up and catering packages.</p>
+      <a class="me-scroll" href="#meet-h1" aria-label="Scroll to the introduction"><i></i></a>
+    </div>
   </div>
 </section>
 
-<section class="me-state" aria-labelledby="meet-h1">
+<section class="me-state" aria-labelledby="meet-h1" data-me-state>
   <h1 id="meet-h1" class="me-h1" aria-label="Make room for something remarkable.">
-    <span class="me-h1-a" aria-hidden="true">Make</span>
-    {vert('ROOM', 'me-vert--xl')}
-    <span class="me-h1-b" aria-hidden="true"><span>for something</span><span>remarkable.</span></span>
+    <span class="me-big me-ghost" aria-hidden="true" data-drift="x:70">Make room</span>
+    <span class="me-mid" aria-hidden="true" data-drift="x:-40">for something</span>
+    <span class="me-big me-dark" aria-hidden="true" data-drift="x:-60">remarkable.</span>
   </h1>
+  {pic('tent-red-white', 'me-st-a', '(max-width:760px) 60vw, 26vw', extra=' data-drift="y:-90"')}
+  {pic('main-building-facade', 'me-st-pano', '(max-width:760px) 100vw, 75vw', extra=' data-drift="x:-160"')}
   <div class="me-state-side rv">
     <p class="me-lead">From important business gatherings to unforgettable celebrations, discover a setting for occasions worth remembering.</p>
     <div class="me-acts"><a class="me-link" href="#enquire">Send an enquiry</a><a class="me-link" href="{TEL}">Call {PHONE_DISPLAY}</a></div>
@@ -1230,7 +1250,7 @@ def book():
 def credits():
     rows = ''.join(f'<tr><td>{ALT[k]}</td><td>{STOCK[k][0]}</td><td><a href="{LICENSES[STOCK[k][1]]}" target="_blank" rel="noopener">{STOCK[k][1]} License</a></td></tr>' for k in sorted(USED) if IMAGES[k]['stock'])
     return f'''<section class="page-hero"><div class="wrap" style="max-width:960px"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Credits</span></nav><h1 class="h-xl">Photo credits</h1><p class="lead" style="margin-top:16px">Photographs of the hotel, its rooms, pools, gardens, food, halls, events and team are by The Breez Hotel and used with permission.</p></div></section>
-<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond, Karla, Bodoni Moda, Old Standard TT and Jost (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
+<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond, Karla, Bodoni Moda, Old Standard TT, Jost and Mrs Saint Delafield (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
 
 def notfound():
     return f'''<section class="sec"><div class="wrap closing"><span class="label">404</span><h1 class="h-xl">This page has wandered off.</h1><p class="lead">The page you were looking for is not here. Try the home page or ask us on WhatsApp.</p><div class="btn-row" style="justify-content:center"><a class="btn btn--solid" href="index.html">Home</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>'''

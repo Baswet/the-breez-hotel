@@ -167,17 +167,99 @@ def photo_tones(img):
     return mean, accent
 
 
+# ---- the frame: one composition of torn and painted paper around the photograph -------------------
+# Drawn on the box the CSS calls .rh-art (the photograph plus the artwork around it). Each layer is a
+# shape only; the page paints it in the slide's colours. Boxes are fractions of that box (x0, y0, x1, y1),
+# laid out after the supplied reference: deep green torn paper at the upper left and down the right,
+# ochre and peach watercolour over the left, lower and upper-right edges, scraps of ivory paper between.
+FW, FH = 1330, 916
+
+
+def place(canvas, piece, box):
+    h, w = canvas.shape
+    x0, y0, x1, y1 = (int(round(v)) for v in (box[0] * w, box[1] * h, box[2] * w, box[3] * h))
+    im = Image.fromarray((np.clip(piece, 0, 1) * 255).astype(np.uint8), 'L').resize((x1 - x0, y1 - y0), Image.BICUBIC)
+    a = np.asarray(im, np.float32) / 255
+    cx0, cy0, cx1, cy1 = max(x0, 0), max(y0, 0), min(x1, w), min(y1, h)
+    if cx1 <= cx0 or cy1 <= cy0:
+        return
+    sub = a[cy0 - y0:cy1 - y0, cx0 - x0:cx1 - x0]
+    canvas[cy0:cy1, cx0:cx1] = np.maximum(canvas[cy0:cy1, cx0:cx1], sub)
+
+
+def box_sd(w, h, x0, y0, x1, y1):
+    y, x = np.mgrid[0:h, 0:w].astype(np.float32)
+    return -np.maximum(np.maximum(x0 - x, x - x1), np.maximum(y0 - y, y - y1))
+
+
+def scrap(h, w, seed, big=10, fine=2.4):
+    """A torn scrap of paper: a slightly skewed rectangle with a fibrous tear."""
+    rng = np.random.default_rng(seed)
+    sd = box_sd(w, h, w * .08, h * .1, w * .92, h * .9)
+    y, x = np.mgrid[0:h, 0:w].astype(np.float32)
+    sd = sd + (x - w / 2) * rng.uniform(-.06, .06) + (y - h / 2) * rng.uniform(-.06, .06)
+    return torn(sd, h, w, big=big, fine=fine)
+
+
+def field(blobs, seed, rough=.55):
+    """A painted mass: soft ellipses (cx, cy, rx, ry as fractions of the frame) roughened by noise."""
+    rng = np.random.default_rng(seed)
+    y, x = np.mgrid[0:FH, 0:FW].astype(np.float32)
+    f = np.zeros((FH, FW), np.float32)
+    for cx, cy, rx, ry in blobs:
+        f = np.maximum(f, np.exp(-(((x / FW - cx) / rx) ** 2 + ((y / FH - cy) / ry) ** 2)))
+    d = np.minimum(np.minimum(x / FW, 1 - x / FW) * FW / FH, np.minimum(y / FH, 1 - y / FH))   # distance to the box edge
+    f = f - (1 - smoothstep(.0, .06, d)) * .9                         # so every shape tears before the edge, never cut by it
+    return f + (fbm(FH, FW, (150, 56, 18), (.55, .3, .15), rng) - .5) * rough, rng
+
+
+def torn_mass(blobs, seed, t=.42):
+    f, rng = field(blobs, seed)
+    f += (fbm(FH, FW, (5, 2), (.6, .4), rng) - .5) * .05
+    inside = smoothstep(t, t + .012, f)
+    streak = np.asarray(Image.fromarray((noise(FH, FW, 3, rng) * 255).astype(np.uint8)).resize((FW // 7, FH)).resize((FW, FH), Image.BICUBIC), np.float32) / 255
+    tex = .88 + .14 * (fbm(FH, FW, (70, 16), (.6, .4), rng) - .5) * 2 + .07 * (streak - .5) * 2
+    pale = 1 - .45 * (smoothstep(t, t + .012, f) - smoothstep(t + .012, t + .04, f))   # white paper core along the tear
+    return inside * np.clip(tex, 0, 1) * pale
+
+
+def wash_mass(blobs, seed, t=.4, body=.62):
+    f, rng = field(blobs, seed, rough=.6)
+    inside = smoothstep(t, t + .04, f)
+    ring = np.exp(-((f - t - .02) / .03) ** 2) * smoothstep(t - .02, t + .01, f)
+    bloom = smoothstep(.42, .8, fbm(FH, FW, (80, 26), (.7, .3), rng))
+    gran = (noise(FH, FW, 2, rng) - .5) * .18 + (noise(FH, FW, 5, rng) - .5) * .12
+    a = inside * (body + .22 * bloom + gran) + .35 * ring
+    return np.asarray(Image.fromarray((np.clip(a, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(.8)), np.float32) / 255
+
+
+def frame():
+    lay = {
+        # pale sage bloom behind the photograph: upper left, and outside the right edge
+        'sage': wash_mass([(.14, .0, .26, .16), (1.0, .42, .06, .4), (.40, .0, .12, .06)], 31, body=.75),
+        # ochre pooled over the lower left edge, along the bottom, and across the top towards the right
+        'gold': wash_mass([(.10, .62, .13, .3), (.18, .95, .17, .12), (.42, 1.0, .2, .08), (.62, .03, .19, .1),
+                           (.82, .1, .1, .15), (.38, .02, .1, .07), (.02, .82, .06, .12)], 41, body=.7),
+        # peach and dusty rose: the upper right corner, the lower left
+        'rose': wash_mass([(.93, .07, .13, .2), (.99, .32, .05, .12), (.26, 1.0, .1, .08), (.06, .99, .07, .09)], 51, body=.7),
+        # deep green torn paper: the upper left corner, down the right, the lower right
+        'green': torn_mass([(.07, .17, .12, .33), (.17, .03, .12, .11), (.02, .5, .05, .2), (.99, .52, .065, .33),
+                            (.97, .86, .09, .17), (.80, 1.0, .18, .085), (.94, .03, .04, .06)], 71),
+    }
+    lay['paper'] = torn_mass([(.42, .0, .1, .065), (.56, -.01, .07, .05), (.0, .64, .03, .1), (.55, 1.0, .09, .045), (.86, .2, .025, .06)], 61)
+    for k, a in lay.items():
+        save_mask(a, f'frame-{k}')
+    sd = box_sd(FW, FH, FW * .075, FH * .035, FW * .93, FH * .965)
+    save_mask(torn(sd, FH, FW, big=13, fine=3), 'frame-hole')
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     print('masks')
     sd = rounded_rect_sd(860, 1000, 22, 10)
     panel, rim = torn(sd, 1000, 860, big=7, fine=2.2, rim=True)
     save_mask(panel, 'mask-panel'); save_mask(rim, 'mask-rim')
-    save_mask(torn(rounded_rect_sd(1600, 1000, 26, 46), 1000, 1600, big=9, fine=2.6), 'mask-photo')
-    for i, s in enumerate((11, 12, 13)):
-        save_mask(torn_wash(640, 860, s), f'wash-torn-{i + 1}')
-    for i, s in enumerate((21, 22, 23)):
-        save_mask(soft_wash(640, 860, s), f'wash-soft-{i + 1}')
+    save_mask(torn_wash(640, 860, 13), 'wash-left')        # behind the panel's left edge
+    frame()
     paper_tile()
 
     print('ambient light and palette')
