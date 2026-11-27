@@ -60,6 +60,8 @@ STOCK = {  # key: (photographer, unsplash photo id or page)
     'linen-coffee-eucalyptus': ('Madison Inouye', 'Pexels'),
     'drink-mocktails-sunlit': ('Anastase Maragos', 'Unsplash'),
     'food-lunch-by-water': ('Hameen Reynolds', 'Unsplash'),
+    'bedroom-sunlit-linen': ('Isaac Martin', 'Unsplash'),               # unsplash.com/photos/wH2aFGo-Rt0
+    'nightstand-honey-wood': ('Ronnarit Jirathanyakorn', 'Unsplash'),   # unsplash.com/photos/DeYym9Ji6LI
 }
 
 LICENSES = {'Unsplash': 'https://unsplash.com/license', 'Pexels': 'https://www.pexels.com/license/'}
@@ -178,6 +180,8 @@ ALT = {
     'linen-coffee-eucalyptus': 'A cup of black coffee and a sprig of eucalyptus on white bed linen',
     'drink-mocktails-sunlit': 'Fruit mocktails in afternoon sunlight',
     'food-lunch-by-water': 'Lunch and a cold drink on a ledge by the water',
+    'bedroom-sunlit-linen': 'A sunlit bedroom with white linen and a wooden floor',
+    'nightstand-honey-wood': 'A honey-toned wooden nightstand beside a made bed',
 }
 
 CAT_LABEL = {'exterior': 'Building', 'gardens': 'Gardens', 'pools': 'Pools', 'rooms': 'Rooms',
@@ -234,6 +238,7 @@ ASSET_V = {k: _hl.sha1((ROOT / v).read_bytes()).hexdigest()[:10] for k, v in _SR
 NAV = [('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings', 'Meetings & Events'),
        ('gallery', 'Gallery'), ('about', 'About'), ('contact', 'Contact')]
 
+BODONI_TEXT = {'index': 'ThartofmakingyoufeelHome.', 'rooms': 'Rooms'}   # Bodoni Moda is loaded as a subset of only these letters
 def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
 def cur(slug, s): return ' aria-current="page"' if slug == s else ''
 
@@ -311,7 +316,7 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
-{'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&display=swap&amp;text=' + 'ThartofmakingyoufeelHome.' + '">' if slug == 'index' else ''}
+{'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&display=swap&amp;text=' + BODONI_TEXT[slug] + '">' if slug in BODONI_TEXT else ''}
 <link rel="stylesheet" href="assets/site.css?v={ASSET_V["site.css"]}">
 <link rel="stylesheet" href="assets/heroes.css?v={ASSET_V["heroes.css"]}">
 <link rel="stylesheet" href="assets/motion.css?v={ASSET_V["motion.css"]}">
@@ -642,6 +647,78 @@ def about():
 RX = [('room-four-poster-2', 'Four-poster bed and mosquito net', 'organic'), ('room-grey-bedding', 'Made up for the night', 'double'), ('room-desk-armchair', 'A desk and an armchair', 'diagonal'),
       ('bed-detail', 'Fresh linen', 'arch'), ('bathroom-shower', 'The en-suite shower', 'circle'), ('room-fridge-tv', 'Fridge and TV in the room', 'full')]
 
+# Rooms hero slides: (photo, room anchor or None, name, line, note). Room lines use only the listed facts in
+# ROOMS; photographs are paired with categories as elsewhere on the site. The last two are Unsplash photographs
+# shown for atmosphere, labelled as such and credited on the slide.
+RH = [
+    ('bed-detail', 'single', 'Standard <em>Single</em>', 'Thoughtful comfort for one: a single bed, fresh linen, a balcony and the pool in view.', 'Photographed at The Breez'),
+    ('room-four-poster-window', 'double', 'Double <em>Room</em>', 'A double bed for two, often under a four-poster frame and a mosquito net, with the pool in view.', 'Photographed at The Breez'),
+    ('room-grey-bedding', 'deluxe', 'Deluxe <em>Room</em>', 'A double room with air conditioning, a balcony and a city view.', 'Photographed at The Breez'),
+    ('room-fridge-tv', 'king', 'King <em>Room</em>', 'The largest bed in the hotel, with air conditioning and the pool in view.', 'Photographed at The Breez'),
+    ('bedroom-sunlit-linen', None, 'Morning <em>light</em>', 'The pleasure of a slow start, when the curtains open onto a new day.', 'Illustration, not The Breez &middot; Photo: Isaac Martin / Unsplash'),
+    ('nightstand-honey-wood', None, 'Evening <em>calm</em>', 'A last cup by the bed, and a quiet room at the end of the day.', 'Illustration, not The Breez &middot; Photo: Ronnarit Jirathanyakorn / Unsplash'),
+]
+RH_ART = 'images/rooms-art'
+
+def rooms_hero():
+    pal = json.loads((ROOT / 'assets/images/rooms-art/palette.json').read_text())
+    n = len(RH)
+    def vars_(k):
+        p = pal[k]; return f'--green:{p["green"]};--gold:{p["gold"]};--rose:{p["rose"]};--amb:{p["amb"]}'
+    slides = ''.join(
+        f'<figure class="rh-slide{" on" if i == 0 else ""}" role="group" aria-roledescription="slide" aria-label="{i + 1} of {n}"'
+        f'{"" if i == 0 else " aria-hidden=\"true\""} data-green="{pal[k]["green"]}" data-gold="{pal[k]["gold"]}" data-rose="{pal[k]["rose"]}" data-amb="{pal[k]["amb"]}"'
+        f' data-note="{note}" data-title="{html.escape(name.replace("<em>", "").replace("</em>", ""), quote=True)}">'
+        f'{img(k, "(max-width:1100px) 92vw, 56vw", eager=(i == 0))}</figure>' for i, (k, a, name, line, note) in enumerate(RH))
+    ambient = ''.join(f'<span class="rh-amb-ph{" on" if i == 0 else ""}" style="background-image:url({RH_ART}/ambient-{k}.webp)"></span>' for i, (k, *_) in enumerate(RH))
+    def cap(i, a, name, line):
+        kick = f'{i + 1:02d} &middot; The room' if a else f'{i + 1:02d} &middot; Atmosphere'
+        link = f'<a class="rh-cap-a" href="#{a}">Discover the room <span aria-hidden="true">&rarr;</span></a>' if a else ''
+        return (f'<div class="rh-cap{" on" if i == 0 else ""}"{"" if i == 0 else " aria-hidden=\"true\""}><span class="rh-cap-k">{kick}</span>'
+                f'<p class="rh-cap-name">{name}</p><p class="rh-cap-p">{line}</p>{link}</div>')
+    caps = ''.join(cap(i, a, name, line) for i, (k, a, name, line, note) in enumerate(RH))
+    tabs = ''.join(f'<li><button type="button" class="rh-tab{" on" if i == 0 else ""}" data-rh-go="{i}" aria-pressed="{"true" if i == 0 else "false"}"><span>{i + 1:02d}</span>{ROOMS[a]["Room"]}</button></li>'
+                   for i, (k, a, *_) in enumerate(RH) if a)
+    dots = ''.join(f'<button type="button" class="rh-dot{" on" if i == 0 else ""}" data-rh-dot="{i}" aria-label="Slide {i + 1}: {html.escape(name.replace("<em>", "").replace("</em>", ""), quote=True)}"'
+                   f' aria-current="{"true" if i == 0 else "false"}"></button>' for i, (k, a, name, *_) in enumerate(RH))
+    arrow = lambda d: f'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="{"M15 5l-7 7 7 7" if d < 0 else "M9 5l7 7-7 7"}"/></svg>'
+    deco = '''<svg class="rh-deco" viewBox="0 0 1000 460" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="368" y="22" width="594" height="404"/><rect x="380" y="50" width="574" height="388"/>
+      <path d="M336 22H368M368 0V22M962 426V460M962 426H996M900 0L962 62M380 438L358 460"/>
+      <path d="M0 372A88 88 0 0 1 56 460M0 398A62 62 0 0 1 38 460M0 424A36 36 0 0 1 22 460M0 360H48"/></svg>'''
+    return f'''<section class="rh" data-rh aria-roledescription="carousel" aria-labelledby="rooms-h1">
+  <div class="rh-top">{crumb('Rooms')}</div>
+  <div class="rh-stage" style="{vars_(RH[0][0])}">
+    <div class="rh-amb" aria-hidden="true">{ambient}<span class="rh-veil"></span><span class="rh-grain"></span></div>
+    <span class="rh-w rh-w1" aria-hidden="true"><i></i></span><span class="rh-w rh-w3" aria-hidden="true"><i></i></span><span class="rh-w rh-w5" aria-hidden="true"><i></i></span>
+    <div class="rh-photo"><div class="rh-frame">{slides}</div>
+      <p class="rh-count" aria-hidden="true"><b data-rh-num>01</b><span>/ {n:02d}</span></p>
+      <div class="rh-ctl">
+        <button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button>
+        <span class="rh-dots">{dots}</span>
+        <button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button>
+        <button type="button" class="rh-btn rh-play" data-rh-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button>
+      </div>
+    </div>
+    <span class="rh-w rh-w2" aria-hidden="true"><i></i></span><span class="rh-w rh-w4" aria-hidden="true"><i></i></span>
+    {deco}
+    <div class="rh-panel">
+      <span class="rh-paper" aria-hidden="true"></span>
+      <div class="rh-copy">
+        <span class="rh-k">The Breez &middot; Busia</span>
+        <h1 id="rooms-h1" class="rh-title"><span class="rh-t1">Rooms</span> <em class="rh-t2">at The Breez</em></h1>
+        <p class="rh-lead">Four kinds of room around a garden of palms and pools: quiet, well kept and close to everything at the hotel.</p>
+        <div class="rh-caps">{caps}</div>
+        <ol class="rh-index" aria-label="Show a room">{tabs}</ol>
+        <a class="rh-book" href="book.html">Request a booking <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+    <p class="rh-note" data-rh-note>{RH[0][4]}</p>
+    <p class="sr-only" aria-live="polite" data-rh-live></p>
+  </div>
+  <p class="rh-motto"><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></p>
+</section>'''
+
 def rooms():
     """Rooms: an editorial in six parts. Only verified room data (ROOMS); photographs are the hotel's own
     and are captioned as rooms at The Breez, not as a specific category."""
@@ -656,20 +733,7 @@ def rooms():
         a = (f' data-pan="{pan}"' if pan else '') + (f' data-reveal="{reveal}"' if reveal else '')
         c = f'<figcaption>{cap}</figcaption>' if cap else ''
         return f'<figure class="rm-ph {cls}"{a}>{img(key, sizes, eager=eager)}{c}</figure>'
-    idx = ''.join(f'<li><a href="#{k}"><span>0{i+1}</span>{ROOMS[k]["Room"]}</a></li>' for i, k in enumerate(['single', 'double', 'deluxe', 'king']))
-    opening = f'''<section class="rm-open" aria-labelledby="rooms-h1">
-  <div class="rm-open-text">
-    {crumb('Rooms')}
-    <span class="rm-k">02 &middot; Rooms &amp; stays</span>
-    <h1 id="rooms-h1" class="rm-title"><span>Rooms</span> <em>at The Breez</em></h1>
-    <p class="rm-lead">Four kinds of room around a garden of palms and pools &mdash; quiet, well kept and close to everything at the hotel.</p>
-    <ol class="rm-index">{idx}</ol>
-    <a class="btn btn--solid" href="book.html">Request a booking</a>
-  </div>
-  {fig('room-net-portrait', 'rm-open-a', '(max-width:760px) 100vw, 40vw', pan='0.05', eager=True)}
-  {fig('bed-towel-art-2', 'rm-open-b', '(max-width:760px) 46vw, 18vw', reveal='up')}
-  <p class="rm-note">Photographed at The Breez</p>
-</section>'''
+    opening = rooms_hero()
     staying = f'''<section class="rm-stay" aria-labelledby="stay-h">
   {fig('room-desk-armchair', 'rm-stay-a', '(max-width:760px) 100vw, 62vw', pan='0.04', reveal='left')}
   <div class="rm-stay-text rv">
@@ -1199,6 +1263,7 @@ def main():
         for w in (800, 1600):
             s = ROOT / ('assets/' + m['rel'] + f'-{w}.webp'); dst = OUT / (m['rel'] + f'-{w}.webp')
             dst.parent.mkdir(parents=True, exist_ok=True); shutil.copy(s, dst)
+    shutil.copytree(ROOT / 'assets/images/rooms-art', OUT / 'images/rooms-art', ignore=shutil.ignore_patterns('*.json'))   # tools/make_rooms_art.py
     og_image()
     (OUT / 'favicon.svg').write_text(FAVICON)
     (OUT / '.nojekyll').write_text('')

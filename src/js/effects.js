@@ -708,3 +708,65 @@
   /* safety: never leave it hidden if the observer is throttled */
   addEventListener('scroll',function chk(){ var r=sec.getBoundingClientRect(); if(r.top<innerHeight*.8){ sec.classList.add('in'); removeEventListener('scroll',chk); } },{passive:true});
 })();
+
+/* Rooms hero: crossfading photographs whose surrounding washes and light follow each photo's palette.
+   Pauses on hover, keyboard focus, a hidden tab or when scrolled away; manual choices restart the timer. */
+(function () {
+  const root = document.querySelector('[data-rh]'); if (!root) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stage = root.querySelector('.rh-stage');
+  const slides = [...root.querySelectorAll('.rh-slide')], n = slides.length; if (n < 2) return;
+  const caps = [...root.querySelectorAll('.rh-cap')], ambs = [...root.querySelectorAll('.rh-amb-ph')];
+  const dots = [...root.querySelectorAll('[data-rh-dot]')], tabs = [...root.querySelectorAll('[data-rh-go]')];
+  const num = root.querySelector('[data-rh-num]'), note = root.querySelector('[data-rh-note]');
+  const live = root.querySelector('[data-rh-live]'), play = root.querySelector('[data-rh-play]');
+  const DUR = 8000;
+  let i = 0, t = 0, paused = reduce, hover = false, focus = false, vis = false, busy = false;
+
+  const ready = (k) => { const im = slides[k].querySelector('img'); if (!im) return Promise.resolve();
+    im.loading = 'eager'; return (im.complete ? Promise.resolve() : new Promise((r) => { im.addEventListener('load', r, { once: true }); im.addEventListener('error', r, { once: true }); }))
+      .then(() => (im.decode ? im.decode().catch(() => {}) : 0)); };
+  const set = (list, k, cls = 'on') => list.forEach((el, j) => { el.classList.toggle(cls, j === k); if (el.hasAttribute('aria-hidden') || j !== k) el.setAttribute('aria-hidden', String(j !== k)); });
+
+  async function show(k, user) {
+    k = (k + n) % n; if (k === i || busy) return;
+    busy = true; await ready(k); busy = false;            // never fade towards an unloaded photo
+    i = k; const d = slides[k].dataset;
+    ['green', 'gold', 'rose', 'amb'].forEach((p) => stage.style.setProperty('--' + p, d[p]));
+    set(slides, k); set(caps, k);
+    ambs.forEach((a, j) => a.classList.toggle('on', j === k));
+    dots.forEach((b, j) => { b.classList.toggle('on', j === k); b.setAttribute('aria-current', String(j === k)); });
+    tabs.forEach((b) => { const on = +b.dataset.rhGo === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+    num.textContent = String(k + 1).padStart(2, '0');
+    note.innerHTML = d.note;
+    if (user) live.textContent = `Slide ${k + 1} of ${n}: ${d.title}`;
+    ready((k + 1) % n);                                    // have the next one waiting
+  }
+  const stop = () => { clearTimeout(t); root.classList.remove('rh-run'); };
+  const start = () => {
+    stop(); if (paused || hover || focus || !vis || document.hidden) return;
+    void root.offsetWidth; root.classList.add('rh-run');   // restart the progress line
+    t = setTimeout(() => show(i + 1).then(start), DUR);
+  };
+  const go = (k) => show(k, true).then(start);
+
+  root.querySelector('[data-rh-next]').addEventListener('click', () => go(i + 1));
+  root.querySelector('[data-rh-prev]').addEventListener('click', () => go(i - 1));
+  dots.forEach((b) => b.addEventListener('click', () => go(+b.dataset.rhDot)));
+  tabs.forEach((b) => b.addEventListener('click', () => go(+b.dataset.rhGo)));
+  const syncPlay = () => { play.setAttribute('aria-pressed', String(paused)); play.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow'); };
+  play.addEventListener('click', () => { paused = !paused; syncPlay(); paused ? stop() : start(); });
+  syncPlay();
+  stage.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(i - 1); } });
+  stage.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; stop(); } });
+  stage.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
+  stage.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) { focus = true; stop(); } });
+  stage.addEventListener('focusout', (e) => { if (!stage.contains(e.relatedTarget)) { focus = false; start(); } });
+  const photo = root.querySelector('.rh-photo'); let sx = null;
+  photo.addEventListener('pointerdown', (e) => { sx = e.clientX; });
+  photo.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(e.clientX < sx ? i + 1 : i - 1); sx = null; });
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { vis = e.isIntersecting; vis ? start() : stop(); }, { threshold: 0.35 }).observe(stage);
+  else { vis = true; start(); }
+  ready(1);
+})();
