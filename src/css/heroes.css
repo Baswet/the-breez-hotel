@@ -979,3 +979,59 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
   .ed-taste-word span,.ed-c-main img,.ed-c-sup img{transition:none}
   .ed-xp-prog,.ed-xp-prog span{transition:none}
 }
+
+/* ---- Many moods, refinement after a closer study of Casa Angelina's venue pages:
+   a tall stone spine with one lowercase word, a left-aligned light title with a
+   small uppercase serif subtitle, offset stone blocks layered behind the photos,
+   and a full-width stone band behind the closing composition. ---- */
+.ed-moods2 .wrap{position:relative}
+.ed-spine{position:absolute;left:0;top:0;width:clamp(120px,15.5vw,224px);height:clamp(900px,96vw,1460px);background:var(--stone);z-index:0}
+.ed-spine span{position:absolute;left:50%;top:clamp(36px,4vw,64px);transform:translateX(-50%);font:italic 300 clamp(1.2rem,.9rem + .7vw,1.7rem)/1 var(--f-display);color:var(--ink-3);letter-spacing:.02em}
+.ed-intro{position:relative;z-index:1;justify-items:start;text-align:left;gap:12px;margin:0 0 clamp(64px,8vw,120px) calc(clamp(120px,15.5vw,224px) + clamp(32px,4.5vw,80px))}
+.ed-intro-h{display:block;margin:6px 0 0;line-height:.95}
+.ed-i1{font:300 clamp(3rem,1.5rem + 4.6vw,6.4rem)/.95 var(--f-display)}
+.ed-i2{display:inline;margin:0;font:italic 300 clamp(3rem,1.5rem + 4.6vw,6.4rem)/.95 var(--f-display);color:var(--green-2)}
+.ed-intro-sub{display:block;margin:clamp(12px,1.6vw,20px) 0 0;font:400 .96rem/1.4 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.ed-intro-sub em{font:italic 400 1.05em var(--f-display);text-transform:none;letter-spacing:0;color:var(--ink-2)}
+.ed-coll{position:relative;z-index:1}
+.ed-c--square{grid-column:2/7}
+/* layered stone blocks behind the photographs */
+.ed-c-media{isolation:isolate}
+.ed-c-media::before{content:"";position:absolute;z-index:-1;background:var(--stone)}
+.ed-c--square .ed-c-media::before{display:none}
+.ed-c--wide .ed-c-media::before{right:-7%;bottom:-12%;width:58%;height:62%}
+.ed-c--tall .ed-c-media::before{left:-16%;top:14%;width:44%;height:72%}
+.ed-c--portrait .ed-c-media::before{right:-16%;top:-9%;width:34%;height:118%}
+.ed-c-sup{z-index:2}
+/* closing composition on a full-width stone band */
+.ed-taste{position:relative;isolation:isolate}
+.ed-taste::before{content:"";position:absolute;z-index:-1;left:50%;transform:translateX(-50%);width:100vw;top:22%;height:56%;background:var(--stone)}
+.ed-moods2{overflow:hidden}
+/* rotating word: one word at a time, out first, then in, no overlap */
+.ed-taste-word span{transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.ed-taste-word span.on{transition-delay:.45s}
+@media (max-width:1100px){ .ed-c--square{grid-column:2/7} }
+@media (max-width:760px){
+  .ed-spine{width:30%;height:300px}
+  .ed-intro{margin-left:calc(30% + 18px);margin-bottom:56px}
+  .ed-i1,.ed-i2{font-size:clamp(2.3rem,1.2rem + 5vw,3rem)}
+  .ed-intro-sub{font-size:.8rem}
+  .ed-c--square{grid-column:1/-1}
+  .ed-c--wide .ed-c-media::before{right:-4%;bottom:-8%;width:50%;height:56%}
+  .ed-c--tall .ed-c-media::before{left:auto;right:-4%;top:10%;width:40%;height:70%}
+  .ed-c--portrait .ed-c-media::before{right:auto;left:-4%;top:-6%;width:30%;height:104%}
+  .ed-taste::before{top:auto;bottom:-6%;height:64%}
+}
+/* accent placement and phone intro, after visual review */
+.ed-c--wide .ed-c-sup{left:auto;right:-9%;bottom:-24%;width:30%}
+.ed-c--wide .ed-c-media::before{right:auto;left:-8%;bottom:-12%;width:52%;height:62%}
+.ed-c--wide .ed-c-text{margin-left:0;max-width:24rem}
+@media (max-width:1100px){ .ed-c--wide .ed-c-sup{right:-4%;width:30%} }
+@media (max-width:760px){
+  .ed-spine{width:44%;height:132px}
+  .ed-intro{margin:150px 0 56px}
+  .ed-i1,.ed-i2{font-size:clamp(2.6rem,1.4rem + 6vw,3.4rem)}
+  .ed-c--wide .ed-c-sup{right:-4px;bottom:-14%;width:36%}
+  .ed-c--wide .ed-c-text{margin-top:28px}
+}
+@media (max-width:760px){ .ed-intro{margin:0 0 56px;padding-top:156px} }

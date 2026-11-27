@@ -459,10 +459,11 @@ def editorial():
     words = ''.join(('<span class="on">' if i == 0 else '<span>') + w + '</span>' for i, w in enumerate(PLACE_WORDS))
     story_sec = f'''<section class="ed-moods2" aria-labelledby="moods-h">
   <div class="wrap">
+    <div class="ed-spine" aria-hidden="true"><span>experience</span></div>
     <header class="ed-intro">
       <span class="ed-kick rv">The Breez experience</span>
-      <h2 class="ed-intro-h rv" id="moods-h"><span class="ed-i1">The many moods</span><span class="ed-i2">of The Breez</span></h2>
-      <p class="ed-intro-sub rv"><span class="ed-i3">The best time to visit?</span><em>Every hour of the day.</em></p>
+      <h2 class="ed-intro-h rv" id="moods-h"><span class="ed-i1">The many moods</span> <span class="ed-i2">of The Breez</span></h2>
+      <p class="ed-intro-sub rv">The best time to visit? <em>Every hour of the day.</em></p>
     </header>
     <div class="ed-coll">{cards}</div>
     <div class="ed-taste">
