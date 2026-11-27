@@ -1013,28 +1013,45 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
 .ed-i2{margin-left:clamp(28px,6vw,120px)}
 @media (max-width:760px){ .ed-i2{margin-left:clamp(18px,8vw,40px)} }
 
+
 /* ==========================================================================
-   THE ART OF WELCOME: arch frame with a vertical reveal (see effects.js
-   [data-arrive]). The arch stays still; only the photographs move.
+   THE ART OF WELCOME: restored arch (building photograph shown from the start,
+   cream surround, caption beneath) and the final editorial composition, where
+   the lower photograph is uncovered and the writings settle onto its upper part.
+   Movement is driven by effects.js [data-welcome]; without it, the original
+   layout simply stands.
    ========================================================================== */
 .ed-k-side{padding:clamp(56px,7vw,110px) clamp(28px,5vw,88px)}
-.ed-xp{position:sticky;top:calc(var(--hx-head) + 4vh);height:calc(100svh - var(--hx-head) - 8vh);display:grid;place-items:center}
-.ed-arch{position:relative;height:min(100%,800px);aspect-ratio:.66;max-width:100%;background:#EADFC8;padding:clamp(16px,1.7vw,28px);border-radius:9999px 9999px 0 0;box-shadow:0 34px 60px -48px rgba(31,27,23,.5)}
+.ed-xp{position:sticky;top:calc(var(--hx-head) + 5vh);display:grid;justify-items:center;gap:20px}
+.ed-arch{height:min(calc(100svh - var(--hx-head) - 18vh),760px);aspect-ratio:.66;max-width:100%;background:#EADFC8;padding:clamp(16px,1.7vw,28px);border-radius:9999px 9999px 0 0;box-shadow:0 34px 60px -48px rgba(31,27,23,.5)}
 .ed-arch-in{position:relative;height:100%;border-radius:9999px 9999px 0 0;overflow:hidden;background:#E3D7C1}
-.ed-arch-in figure{position:absolute;inset:0;margin:0;-webkit-mask-image:linear-gradient(to bottom,#000 -14%,transparent 0%);mask-image:linear-gradient(to bottom,#000 -14%,transparent 0%)}
-.ed-arch-in img{width:100%;height:108%;margin-top:-4%;object-fit:cover;display:block;will-change:transform}
-.ed-xp-a img{object-position:38% 50%}
-.ed-xp-b img{object-position:50% 55%}
-.ed-xp-prog{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;font:700 .62rem var(--f-text);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3);opacity:var(--po,0);transition:opacity .5s;white-space:nowrap}
+.ed-arch-in figure{position:absolute;inset:0;margin:0}
+.ed-arch-in img{width:100%;height:100%;object-fit:cover;object-position:38% 50%;display:block}
+.ed-xp-prog{display:flex;align-items:center;gap:12px;font:700 .62rem var(--f-text);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
 .ed-xp-prog span{transition:color .4s}.ed-xp-prog span.on{color:var(--green)}
 .ed-xp-prog i{position:relative;width:56px;height:1px;background:var(--rule-strong);overflow:hidden}
 .ed-xp-prog b{position:absolute;inset:0;background:var(--green);transform-origin:left;transform:scaleX(var(--pp,0))}
+/* panel: writings above the lower photograph, as originally */
+.ed-k-panel{position:relative}
+.ed-k-copy{position:relative;z-index:2;display:grid;justify-items:center;gap:22px;scale:calc(1 - .06 * var(--q,0));will-change:translate}
+.ed-k-ph{position:relative;z-index:1;overflow:hidden}
+.ed-k-ph::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:var(--q,0);
+  background:linear-gradient(180deg,rgba(236,228,214,.95) 0%,rgba(236,228,214,.88) 34%,rgba(236,228,214,.35) 56%,rgba(236,228,214,0) 72%)}
 @media (max-width:1100px){ .ed-k-side{padding:56px 28px} }
 @media (max-width:760px){
-  .ed-k-side{order:0;padding:4px 0 72px;background:var(--stone)}
-  .ed-xp{position:relative;top:auto;height:auto;display:block}
-  .ed-arch{width:84%;height:auto;margin:0 auto;padding:14px}
+  .ed-k-side{order:0;padding:8px 0 64px;background:var(--stone)}
+  .ed-xp{position:relative;top:auto}
+  .ed-arch{height:auto;width:84%;padding:14px}
   .ed-arch-in{height:auto;aspect-ratio:.7}
-  .ed-xp-prog{bottom:-36px}
 }
-@media (prefers-reduced-motion:reduce){ .ed-xp-prog,.ed-xp-prog span{transition:none} }
+@media (prefers-reduced-motion:reduce){ .ed-xp-prog span{transition:none} }
+
+/* ==========================================================================
+   HOMEPAGE PHOTOGRAPHIC BEHAVIOUR support: frames that hold a moving
+   photograph clip it; nothing else about them changes.
+   ========================================================================== */
+[data-pan]{overflow:hidden}
+[data-pan] img,[data-hero-pan] img{will-change:translate}
+/* final composition, readability refinement */
+.ed-k-copy{scale:calc(1 - .12 * var(--q,0))}
+.ed-k-ph::after{background:linear-gradient(180deg,rgba(236,228,214,.97) 0%,rgba(236,228,214,.95) 50%,rgba(236,228,214,.6) 62%,rgba(236,228,214,0) 78%)}

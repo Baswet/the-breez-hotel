@@ -616,47 +616,58 @@
 })();
 
 /* ==========================================================================
-   The art of welcome: vertical reveal with a concealed handover ([data-arrive]).
-   The building photograph opens downwards inside the arch; then the lobby is
-   uncovered upwards from the bottom through a feathered edge, aligned so warm
-   floor meets warm floor and palms meet palms before the ceiling gives it away.
-   Scroll-linked both ways, mask/transform only, no scroll locking.
+   HOMEPAGE PHOTOGRAPHIC BEHAVIOUR (after Casa Angelina). Active only where the
+   homepage markup opts in, so no other page is affected.
+   - [data-pan="f"]   the photograph moves gently inside its unchanged frame
+                      (f = share of frame height; negative = opposite way, for
+                      accents); a slight overscan keeps edges covered
+   - [data-hero-pan]  hero photograph drifts down and settles larger as the
+                      hero scrolls away, so it hands over to the next section
+   - [data-welcome]   the art of welcome: the lower photograph is uncovered
+                      upwards as it arrives; the writings travel with the
+                      visitor and settle onto its upper part; the arch caption
+                      moves from "The exterior" to "The arrival"
+   All scroll-linked, reversible, rAF-throttled; nothing locks or hijacks the
+   scroll. Reduced motion: still photographs, writings in their place.
    ========================================================================== */
 (() => {
-  const st = document.querySelector('[data-arrive]'); if (!st) return;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const col = st.parentElement, A = st.querySelector('.ed-xp-a'), B = st.querySelector('.ed-xp-b');
-  const Ai = A.querySelector('img'), Bi = B.querySelector('img'), labels = st.querySelectorAll('.ed-xp-prog span');
-  const hdr = document.querySelector('.hdr');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const small = () => innerWidth <= 760;
   const cl = (v) => Math.max(0, Math.min(1, v));
   const io = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-  const F = 18; // feather, % of frame height
+  const pans = [...document.querySelectorAll('[data-pan]')].map((el) => ({ el, f: parseFloat(el.dataset.pan) || 0, img: el.querySelector('img') })).filter((p) => p.img);
+  pans.forEach((p) => { p.img.style.scale = String(1 + Math.abs(p.f) * 2.2); });
+  const hero = document.querySelector('[data-hero-pan]'), heroImg = hero && hero.querySelector('img');
+  const wel = document.querySelector('[data-welcome]');
+  let W = null;
+  if (wel) {
+    const copy = wel.querySelector('.ed-k-copy'), ph = wel.querySelector('.ed-k-ph'), labels = wel.querySelectorAll('.ed-xp-prog span'), prog = wel.querySelector('.ed-xp-prog');
+    W = { copy, ph, labels, prog, D: 0 };
+    const measure = () => { W.copy.style.translate = ''; W.D = small() ? 0 : Math.max(0, W.ph.offsetTop - W.copy.offsetTop - W.copy.offsetHeight * 0.05); };
+    measure(); addEventListener('resize', measure);
+  }
   let raf = 0;
   const draw = () => {
-    raf = 0;
-    const vh = innerHeight, head = hdr ? hdr.offsetHeight : 0;
-    let p;
-    if (getComputedStyle(st).position === 'sticky') {
-      const r = col.getBoundingClientRect(), start = vh * 0.42;
-      p = cl((start - r.top) / Math.max(1, r.height - (vh - head) + (start - head)));
-    } else {
-      /* phones: the arch scrolls normally; the exterior opens as it rises into
-         view, the interior is uncovered while the whole arch is on screen */
-      const t = st.getBoundingClientRect().top / vh;
-      p = t > 0.45 ? cl((0.85 - t) / 0.4) * 0.45 : 0.45 + cl((0.42 - t) / 0.36) * 0.55;
+    raf = 0; const vh = innerHeight, k = small() ? 0.55 : 1;
+    pans.forEach(({ el, f, img }) => {
+      const r = el.getBoundingClientRect(); if (r.bottom < -100 || r.top > vh + 100) return;
+      const c = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2)));
+      img.style.translate = `0 ${(-c * f * 100 * k).toFixed(2)}%`;
+    });
+    if (heroImg) {
+      const r = hero.getBoundingClientRect(), t = cl(-r.top / Math.max(1, r.height));
+      heroImg.style.translate = `0 ${(t * 18 * k).toFixed(2)}%`; heroImg.style.scale = String(1 + t * 0.06);
     }
-    let a = io(cl(p / 0.36)), b = io(cl((p - 0.46) / 0.42));
-    if (reduce) { a = p > 0.08 ? 1 : 0; b = p > 0.6 ? 1 : 0; }
-    // upper photograph opens downwards
-    const ea = a * (100 + F);
-    A.style.webkitMaskImage = A.style.maskImage = `linear-gradient(to bottom,#000 ${ea - F}%,transparent ${ea}%)`;
-    // lower photograph is uncovered upwards, drifting into register
-    const eb = b * (100 + F);
-    B.style.webkitMaskImage = B.style.maskImage = `linear-gradient(to top,#000 ${eb - F}%,transparent ${eb}%)`;
-    Bi.style.transform = `translate3d(0,${(1 - b) * 7}%,0)`;
-    st.style.setProperty('--po', a > 0.9 ? 1 : 0);
-    st.style.setProperty('--pp', cl(a * 0.45 + b * 0.55).toFixed(3));
-    labels[0].classList.toggle('on', b < 0.6); labels[1].classList.toggle('on', b >= 0.6);
+    if (W) {
+      const r = W.ph.getBoundingClientRect();
+      const rev = io(cl((vh * 1.02 - r.top) / (r.height * 0.95)));            // lower photograph uncovered upwards
+      W.ph.style.clipPath = `inset(${((1 - rev) * 100).toFixed(2)}% 0 0 0)`;
+      const q = small() ? 0 : io(cl((vh * 0.78 - r.top) / (vh * 0.5)));       // writings settle onto it
+      W.copy.style.translate = `0 ${(q * W.D).toFixed(1)}px`;
+      W.copy.style.setProperty('--q', q.toFixed(3)); W.ph.style.setProperty('--q', q.toFixed(3));
+      W.prog.style.setProperty('--pp', (rev * 0.5 + q * 0.5).toFixed(3));
+      W.labels[0].classList.toggle('on', q < 0.5); W.labels[1].classList.toggle('on', q >= 0.5);
+    }
   };
   const req = () => { if (!raf) raf = requestAnimationFrame(draw); };
   addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); draw();
