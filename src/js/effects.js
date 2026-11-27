@@ -673,6 +673,17 @@
   addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); draw();
 })();
 
+/* The many moods: captions read light while they travel over the anchored
+   band, dark once they are on the ivory below. */
+(() => {
+  const mm = document.querySelector('[data-mm]'); if (!mm) return;
+  const band = mm.querySelector('.mm-band'), tiles = [...mm.querySelectorAll('.mm-t')];
+  let raf = 0;
+  const run = () => { raf = 0; const b = band.getBoundingClientRect().bottom;
+    tiles.forEach((t) => { const c = t.querySelector('.mm-cap').getBoundingClientRect(); t.classList.toggle('on-band', c.top + c.height * 0.4 < b && getComputedStyle(band).position === 'sticky'); }); };
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(run); }, { passive: true }); addEventListener('resize', run); run();
+})();
+
 /* The many moods: "The Breez is a place to ..." rotating word (one at a time,
    fixed line box so nothing shifts; pauses off-screen; static if reduced motion). */
 (() => {

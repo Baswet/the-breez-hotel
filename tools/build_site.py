@@ -449,30 +449,43 @@ def editorial():
     </div>
   </div>
 </section>'''
-    def mood(n, lab, h, k, t, u, lt, lay):
-        main, support, cls = MOOD_LAYOUT[n]
-        sup = f'<figure class="ed-c-sup" data-reveal="up" data-pan="-0.05">{img(support, "(max-width:760px) 46vw, 18vw")}</figure>' if support else ''
-        return (f'<article class="ed-c ed-c--{cls}">'
-                f'<a class="ed-c-media" href="{u}" tabindex="-1" aria-hidden="true"><figure class="ed-c-main" data-reveal="up" data-pan="{PAN[cls]}">{img(main, "(max-width:760px) 100vw, 46vw")}</figure>{sup}</a>'
-                f'<div class="ed-c-text rv"><span class="ed-c-no">{n}</span><span class="ed-kick">{lab}</span><h3>{h}</h3><p>{t}</p>'
-                f'<a class="ed-mood-link" href="{u}">{lt}<span aria-hidden="true"> &rarr;</span></a></div></article>')
-    cards = ''.join(mood(*m) for m in MOODS)
-    words = ''.join(('<span class="on">' if i == 0 else '<span>') + w + '</span>' for i, w in enumerate(PLACE_WORDS))
-    story_sec = f'''<section class="ed-moods2" aria-labelledby="moods-h">
-  <div class="wrap">
-    <div class="ed-spine" aria-hidden="true"><span>experience</span></div>
-    <header class="ed-intro">
-      <span class="ed-kick rv">The Breez experience</span>
-      <h2 class="ed-intro-h rv" id="moods-h"><span class="ed-i1">The many moods</span> <span class="ed-i2">of The Breez</span></h2>
-      <p class="ed-intro-sub rv">The best time to visit? <em>Every hour of the day.</em></p>
-    </header>
-    <div class="ed-coll">{cards}</div>
-    <div class="ed-taste">
-      <figure class="ed-taste-ph" data-reveal="up" data-pan="0.06">{img('pool-garden-view', '(max-width:760px) 100vw, 58vw')}</figure>
-      <div class="ed-taste-text rv">
-        <p class="ed-taste-lead">The Breez is a place to</p>
-        <p class="ed-taste-word" data-words aria-label="The Breez is a place to unwind, gather, celebrate, discover and belong">{words}</p>
-        <p class="ed-taste-copy">Some places are made for slowing down. At The Breez, discover the pleasure of peaceful mornings, refreshing afternoons, meaningful gatherings and evenings worth remembering.</p>
+    def strip(h):
+        return h.replace('<em>', '').replace('</em>', '').rstrip('.')
+    M = {m[0]: m for m in MOODS}
+    def tile(cls, key, title, line, desc, url, sizes='(max-width:900px) 100vw, 26vw'):
+        return (f'<a class="mm-t mm-t--{cls}" href="{url}" aria-label="{title}. {line}. {desc}"><figure class="mm-ph">{img(key, sizes)}</figure>'
+                f'<span class="mm-cap" aria-hidden="true"><span class="mm-cap-t">{title}</span><span class="mm-cap-l">{line}</span></span></a>')
+    n1, n2, n3, n4 = M['01'], M['02'], M['03'], M['04']
+    tiles = ''.join([
+        tile('pair', 'garden-gazebo-roof', n1[1], strip(n1[2]), n1[4], n1[5]),
+        tile('pair', 'pool-umbrellas-above', n2[1], strip(n2[2]), n2[4], n2[5]),
+        tile('wide', 'hall-banquet-gold', n3[1], strip(n3[2]), n3[4], n3[5], '(max-width:900px) 100vw, 54vw'),
+        tile('tall', 'tent-wedding-setup', 'A marquee for the wedding', 'Round tables on the lawn', 'There is room for everyone who matters.', n3[5]),
+        tile('tall', 'room-four-poster-2', n4[1], strip(n4[2]), n4[4], n4[5]),
+    ])
+    links = ''.join(f'<li><a href="{m[5]}"><span>{m[1]}</span><i aria-hidden="true">&rarr;</i></a></li>' for m in MOODS)
+    words = ''.join(('<span class="on">' if i == 0 else '<span>') + ''.join(f'<b style="--i:{j}">{c}</b>' for j, c in enumerate(w)) + '</span>' for i, w in enumerate(PLACE_WORDS))
+    story_sec = f'''<section class="mm" data-mm aria-labelledby="moods-h">
+  <div class="mm-stage">
+  <div class="mm-band">
+    <div class="mm-band-in">
+      <div class="mm-text">
+        <span class="mm-k">The Breez experience</span>
+        <h2 class="mm-h" id="moods-h"><span>The many moods</span><em>of The Breez</em></h2>
+        <p class="mm-lead">The best time to visit? Every hour of the day.</p>
+        <p class="mm-p">Some places are made for slowing down. At The Breez, discover the pleasure of peaceful mornings, refreshing afternoons, meaningful gatherings and evenings worth remembering.</p>
+      </div>
+    </div>
+  </div>
+  <div class="mm-cols">{tiles}</div>
+  </div>
+  <div class="mm-next">
+    <p class="mm-next-k">The Breez is a place to</p>
+    <div class="mm-next-band">
+      <div class="mm-next-in">
+        <p class="mm-word" data-words aria-label="The Breez is a place to unwind, gather, celebrate, discover and belong">{words}</p>
+        <ul class="mm-list">{links}</ul>
+        <figure class="mm-next-ph">{img('pool-garden-view', '(max-width:900px) 100vw, 60vw')}</figure>
       </div>
     </div>
   </div>

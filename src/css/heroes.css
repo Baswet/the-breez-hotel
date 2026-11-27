@@ -1055,3 +1055,110 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
 /* final composition, readability refinement */
 .ed-k-copy{scale:calc(1 - .12 * var(--q,0))}
 .ed-k-ph::after{background:linear-gradient(180deg,rgba(236,228,214,.97) 0%,rgba(236,228,214,.95) 50%,rgba(236,228,214,.6) 62%,rgba(236,228,214,0) 78%)}
+
+/* ==========================================================================
+   THE MANY MOODS: recreation of the supplied Casa Angelina recording.
+   A full-width band is anchored under the header (top ~46% of the screen)
+   with the editorial text in its right-hand column; two photographic columns
+   travel up through it and on into the ivory below (pair, wide, tall pair),
+   captions attached. The section then hands over to "The Breez is a place to",
+   whose huge word straddles the top edge of a second band.
+   ========================================================================== */
+.mm{position:relative;background:var(--ivory);--bandh:max(46vh,340px)}
+.mm-band{position:sticky;top:var(--hx-head);height:var(--bandh);margin-bottom:calc(-1 * var(--bandh));background:var(--green);z-index:0}
+.mm-band-in{height:100%;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap)}
+.mm-text{grid-column:9/13;align-self:center;display:grid;gap:12px;color:var(--green-ink)}
+.mm-k{font:700 .7rem var(--f-text);letter-spacing:.26em;text-transform:uppercase;color:var(--sand-soft)}
+.mm-h{margin:2px 0 4px;display:grid;line-height:.95}
+.mm-h span{font:300 clamp(2.2rem,1.2rem + 2.3vw,3.7rem)/.95 var(--f-display);letter-spacing:-.02em;color:#fff}
+.mm-h em{font:italic 300 clamp(2.2rem,1.2rem + 2.3vw,3.7rem)/.95 var(--f-display);color:var(--sand-soft);margin-left:.6em}
+.mm-lead{margin:6px 0 0;font:400 .92rem var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:rgba(233,239,231,.8)}
+.mm-p{margin:0;font:400 clamp(1rem,.92rem + .25vw,1.14rem)/1.75 var(--f-display);color:rgba(233,239,231,.88);max-width:30ch}
+/* photographic columns */
+.mm-cols{position:relative;z-index:1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);row-gap:clamp(34px,3.6vw,60px);padding-top:clamp(28px,6vh,64px);padding-bottom:clamp(64px,9vw,140px);align-items:start}
+.mm-t{display:grid;gap:clamp(16px,1.6vw,24px);text-decoration:none;color:inherit}
+.mm-t:nth-child(1),.mm-t:nth-child(4){grid-column:1/5}
+.mm-t:nth-child(2),.mm-t:nth-child(5){grid-column:5/9}
+.mm-t--wide{grid-column:1/9}
+.mm-ph{margin:0;overflow:hidden;background:var(--stone-2)}
+.mm-t--pair .mm-ph{aspect-ratio:4/3}
+.mm-t--wide .mm-ph{aspect-ratio:2.1/1}
+.mm-t--tall .mm-ph{aspect-ratio:4/5}
+.mm-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s cubic-bezier(.22,1,.36,1)}
+.mm-t:hover .mm-ph img{transform:scale(1.03)}
+.mm-t--wide .mm-ph img{object-position:50% 60%}
+.mm-t--tall:last-child .mm-ph img{object-position:42% 50%}
+.mm-cap{display:grid;justify-items:center;text-align:center;gap:6px;transition:color .35s}
+.mm-cap-t{font:400 clamp(1.05rem,.95rem + .35vw,1.3rem) var(--f-text);letter-spacing:.01em;color:var(--ink)}
+.mm-cap-l{font:400 .9rem/1.35 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);max-width:26ch}
+.mm-cap-d{font:400 .92rem/1.5 var(--f-display);color:var(--ink-3);max-width:32ch;opacity:.85}
+.mm-cap-t,.mm-cap-l,.mm-cap-d{transition:color .35s}
+.mm-t.on-band .mm-cap-t{color:#fff}
+.mm-t.on-band .mm-cap-l,.mm-t.on-band .mm-cap-d{color:rgba(233,239,231,.78)}
+/* hand-over: "The Breez is a place to" */
+.mm-next{position:relative;z-index:1}
+.mm-next-k{margin:0 auto;width:min(100% - 2 * var(--pad),var(--max));font:300 clamp(1.3rem,1rem + 1vw,2.1rem)/1 var(--f-text);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.mm-next-band{background:#8E9283;margin-top:clamp(10px,1vw,16px);padding-bottom:clamp(64px,8vw,130px)}
+.mm-next-in{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);row-gap:clamp(36px,5vw,72px)}
+.mm-word{grid-column:1/-1;position:relative;margin:calc(-.42em) 0 0;height:1em;font:400 clamp(4rem,1.6rem + 7.4vw,10rem)/1 var(--f-display);letter-spacing:-.01em;text-transform:uppercase;color:#fff}
+.mm-word>span{position:absolute;left:0;top:0;white-space:nowrap;display:flex}
+.mm-word b{display:inline-block;font-weight:400;opacity:0;transform:translateY(.42em) rotate(7deg);transform-origin:0 100%;transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i) * 45ms)}
+.mm-word>span.on b{opacity:1;transform:none;transition-delay:calc(.35s + var(--i) * 45ms)}
+.mm-word>span.out b{opacity:0;transform:translateY(-.25em) rotate(-4deg);transition-duration:.35s,.45s;transition-delay:calc(var(--i) * 20ms)}
+.mm-list{grid-column:1/5;list-style:none;margin:0;padding:0;display:grid;gap:4px;align-self:start}
+.mm-list a{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;color:#fff;text-decoration:none;font:400 1.08rem var(--f-text)}
+.mm-list i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#fff;color:var(--green);font-style:normal;font-size:.9rem;transition:transform .3s}
+.mm-list a:hover i{transform:translateX(4px)}
+.mm-next-ph{grid-column:6/13;margin:0 calc(-1 * max(var(--pad),(100vw - var(--max)) / 2)) 0 0;aspect-ratio:16/10;overflow:hidden}
+.mm-next-ph img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:900px){
+  .mm-band{position:relative;top:auto;height:auto;margin-bottom:0;padding:64px 0 56px}
+  .mm-text{grid-column:1/-1}
+  .mm-cols{grid-template-columns:1fr;padding-top:48px}
+  .mm-t:nth-child(n){grid-column:1/-1}
+  .mm-t--wide .mm-ph{aspect-ratio:3/2}
+  .mm-next-in{grid-template-columns:1fr}
+  .mm-word,.mm-list,.mm-next-ph{grid-column:1/-1}
+  .mm-word{font-size:clamp(2.8rem,1.4rem + 9vw,4.4rem)}
+  .mm-next-ph{margin:0 calc(-1 * var(--pad))}
+}
+@media (prefers-reduced-motion:reduce){ .mm-word b,.mm-cap-t,.mm-cap-l,.mm-cap-d,.mm-ph img{transition:none} }
+/* ---- many moods: corrections after the frame-by-frame comparison ---- */
+.mm{--l:7.8vw;--col:25.2vw;--g:2.5vw}
+.mm-stage{position:relative}
+.mm-band-in{display:block;position:relative;height:100%;padding:0 var(--l)}
+.mm-text{position:absolute;left:65.6vw;top:clamp(22px,4.2vh,40px);width:min(25vw,460px);align-self:auto}
+.mm-cols{display:grid;grid-template-columns:var(--col) var(--col);column-gap:var(--g);padding-left:var(--l);padding-right:0;width:auto}
+.mm-t:nth-child(1),.mm-t:nth-child(4){grid-column:1}
+.mm-t:nth-child(2),.mm-t:nth-child(5){grid-column:2}
+.mm-t--wide{grid-column:1/3}
+.mm-t--tall .mm-ph{aspect-ratio:.97}
+.mm-cap{gap:4px}
+.mm-cap-t{font:300 clamp(1.05rem,.6rem + .55vw,1.3rem) var(--f-text);letter-spacing:.02em}
+.mm-cap-l{font:400 clamp(.82rem,.6rem + .3vw,.98rem)/1.35 var(--f-display);letter-spacing:.05em;max-width:24ch}
+.mm-next{padding-top:clamp(70px,9vw,150px)}
+.mm-next-k{width:auto;margin:0;padding-left:var(--l);font:300 clamp(1.2rem,.8rem + .9vw,2rem)/1 var(--f-text);letter-spacing:.05em}
+.mm-next-band{margin-top:clamp(4px,.4vw,8px)}
+.mm-next-in{padding:0 0 0 var(--l);column-gap:var(--g)}
+.mm-word{margin:0;padding-top:.04em;height:1.06em;font-size:clamp(3.2rem,1rem + 5.2vw,7.4rem)}
+.mm-next-ph{grid-column:6/13;margin:0}
+@media (max-width:900px){
+  .mm{--l:var(--pad)}
+  .mm-band-in{padding:0 var(--pad)}
+  .mm-text{position:relative;left:auto;top:auto;width:auto}
+  .mm-cols{grid-template-columns:1fr;padding:48px var(--pad) 72px}
+  .mm-t:nth-child(n),.mm-t--wide{grid-column:1/-1}
+  .mm-next-in{padding:0 var(--pad)}
+  .mm-next-ph{margin:0 calc(-1 * var(--pad))}
+}
+.mm-cols{padding-bottom:clamp(20px,2vw,32px)}
+.mm-next{padding-top:clamp(110px,12vw,200px)}
+@media (max-width:900px){ .mm-cols{padding-bottom:40px} .mm-next{padding-top:72px} }
+.mm-band{margin-bottom:0}
+.mm-cols{margin-top:calc(-1 * var(--bandh))}
+@media (max-width:900px){ .mm-cols{margin-top:0} }
+@media (max-width:900px){
+  .mm-next-in{display:block;padding:0 var(--pad) 56px}
+  .mm-list{margin:28px 0 32px}
+  .mm-next-ph{margin:0 calc(-1 * var(--pad));grid-column:auto}
+}
