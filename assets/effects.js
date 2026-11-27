@@ -616,58 +616,47 @@
 })();
 
 /* ==========================================================================
-   The art of welcome: building -> lobby arrival ([data-arrive]).
-   Scroll-linked, clip-path + transform only, no scroll locking. The arch opens
-   (cream frame and inset shrink to nothing) as the visitor scrolls, then the
-   lobby fades in inside the same frame. Reduced motion: two still states.
+   The art of welcome: vertical reveal with a concealed handover ([data-arrive]).
+   The building photograph opens downwards inside the arch; then the lobby is
+   uncovered upwards from the bottom through a feathered edge, aligned so warm
+   floor meets warm floor and palms meet palms before the ceiling gives it away.
+   Scroll-linked both ways, mask/transform only, no scroll locking.
    ========================================================================== */
 (() => {
   const st = document.querySelector('[data-arrive]'); if (!st) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const col = st.parentElement, frame = st.querySelector('.ed-xp-frame'), win = st.querySelector('.ed-xp-win');
-  const a = st.querySelector('.ed-xp-a img'), b = st.querySelector('.ed-xp-b'), labels = st.querySelectorAll('.ed-xp-prog span');
+  const col = st.parentElement, A = st.querySelector('.ed-xp-a'), B = st.querySelector('.ed-xp-b');
+  const Ai = A.querySelector('img'), Bi = B.querySelector('img'), labels = st.querySelectorAll('.ed-xp-prog span');
   const hdr = document.querySelector('.hdr');
-  const lobby = document.querySelector('.ed-k-ph');
   const cl = (v) => Math.max(0, Math.min(1, v));
-  const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const io = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  const F = 18; // feather, % of frame height
   let raf = 0;
   const draw = () => {
     raf = 0;
     const vh = innerHeight, head = hdr ? hdr.offsetHeight : 0;
-    const sticky = getComputedStyle(st).position === 'sticky';
-    let e, f, p;
-    if (sticky && lobby) {
-      /* coordinated with the lobby photograph in the text column: the building
-         opens fully as that photograph comes into view, then the frame arrives
-         at the lobby while the visitor reads past it */
-      const cTop = col.getBoundingClientRect().top, lTop = lobby.getBoundingClientRect().top, off = lTop - cTop;
-      const s0 = vh * 0.95, s1 = vh * 0.62 - off;
-      e = ease(cl((s0 - cTop) / Math.max(1, s0 - s1)));
-      f = cl((vh * 0.5 - lTop) / (vh * 0.32));
-      p = (e * 0.6) + (f * 0.4);
+    let p;
+    if (getComputedStyle(st).position === 'sticky') {
+      const r = col.getBoundingClientRect(), start = vh * 0.42;
+      p = cl((start - r.top) / Math.max(1, r.height - (vh - head) + (start - head)));
     } else {
-      /* phones: the stage scrolls normally; it opens while rising from the
-         bottom of the screen to near the top, then arrives at the lobby */
-      const r = st.getBoundingClientRect();
-      e = ease(cl((vh * 0.98 - r.top) / (vh * 0.8)));
-      f = cl((vh * 0.16 - r.top) / (r.height * 0.45));
-      p = e * 0.6 + f * 0.4;
+      /* phones: the arch scrolls normally; the exterior opens as it rises into
+         view, the interior is uncovered while the whole arch is on screen */
+      const t = st.getBoundingClientRect().top / vh;
+      p = t > 0.45 ? cl((0.85 - t) / 0.4) * 0.45 : 0.45 + cl((0.42 - t) / 0.36) * 0.55;
     }
-    if (reduce) { e = p > 0.25 ? 1 : 0; f = p > 0.7 ? 1 : 0; }
-    const W = st.clientWidth, H = st.clientHeight;
-    let ah = Math.min(H * 0.84, 780), aw = ah * 0.66;
-    if (aw > W * 0.82) { aw = W * 0.82; ah = aw / 0.66; }
-    const bd = Math.max(14, Math.min(28, W * 0.03));
-    const L = (W - aw) / 2, T = (H - ah) / 2, k = 1 - e;
-    const rad = (aw / 2) * k;
-    frame.style.clipPath = `inset(${T * k}px ${L * k}px ${T * k}px ${L * k}px round ${rad}px ${rad}px 0 0)`;
-    const ib = bd * k, ir = Math.max(0, rad - ib);
-    win.style.clipPath = `inset(${T * k + ib}px ${L * k + ib}px ${T * k + ib}px ${L * k + ib}px round ${ir}px ${ir}px 0 0)`;
-    a.style.transform = `scale(${1.12 - 0.12 * e})`;
-    b.style.opacity = f;
-    st.style.setProperty('--po', e > 0.6 ? 1 : 0);
-    st.style.setProperty('--pp', cl(p).toFixed(3));
-    labels[0].classList.toggle('on', f < 0.5); labels[1].classList.toggle('on', f >= 0.5);
+    let a = io(cl(p / 0.36)), b = io(cl((p - 0.46) / 0.42));
+    if (reduce) { a = p > 0.08 ? 1 : 0; b = p > 0.6 ? 1 : 0; }
+    // upper photograph opens downwards
+    const ea = a * (100 + F);
+    A.style.webkitMaskImage = A.style.maskImage = `linear-gradient(to bottom,#000 ${ea - F}%,transparent ${ea}%)`;
+    // lower photograph is uncovered upwards, drifting into register
+    const eb = b * (100 + F);
+    B.style.webkitMaskImage = B.style.maskImage = `linear-gradient(to top,#000 ${eb - F}%,transparent ${eb}%)`;
+    Bi.style.transform = `translate3d(0,${(1 - b) * 7}%,0)`;
+    st.style.setProperty('--po', a > 0.9 ? 1 : 0);
+    st.style.setProperty('--pp', cl(a * 0.45 + b * 0.55).toFixed(3));
+    labels[0].classList.toggle('on', b < 0.6); labels[1].classList.toggle('on', b >= 0.6);
   };
   const req = () => { if (!raf) raf = requestAnimationFrame(draw); };
   addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); draw();
