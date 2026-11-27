@@ -1035,3 +1035,6 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
   .ed-c--wide .ed-c-text{margin-top:28px}
 }
 @media (max-width:760px){ .ed-intro{margin:0 0 56px;padding-top:156px} }
+.ed-i1,.ed-i2{display:block}
+.ed-i2{margin-left:clamp(28px,6vw,120px)}
+@media (max-width:760px){ .ed-i2{margin-left:clamp(18px,8vw,40px)} }
