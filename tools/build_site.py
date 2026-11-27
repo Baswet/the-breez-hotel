@@ -8,6 +8,7 @@ Facts used on the pages are limited to what the hotel's own channels confirm
 
 Run:  python3 tools/build_site.py
 """
+import brand_marks as BM
 import html, json, shutil, datetime
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -237,6 +238,7 @@ def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
 def cur(slug, s): return ' aria-current="page"' if slug == s else ''
 
 def header(slug):
+    MARK = MARK_HTML
     left = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[:4])
     right = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[4:])
     ov = ''.join(f'<li><a href="{href(s)}"{cur(slug, s)}>{t}</a></li>' for s, t in [('index', 'Home')] + NAV + [('book', 'Book a stay')])
@@ -244,27 +246,31 @@ def header(slug):
 <header class="hdr{' hdr--over' if slug == 'index' else ''}">
   <div class="hdr-in">
     <nav class="nav" aria-label="Primary">{left}</nav>
-    <a class="mark" href="index.html" aria-label="The Breez Hotel, home"><b>The Breez</b><span>Hotel · Busia</span></a>
+    {MARK}
     <nav class="nav nav--r" aria-label="Secondary">{right}<a class="btn btn--book" href="book.html"{cur(slug, 'book')}>Book</a></nav>
     <button class="menu-btn" type="button" data-open-menu aria-controls="menu" aria-expanded="false"><i></i>Menu</button>
   </div>
 </header>
 <div class="overlay" id="menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
-  <div class="ov-top"><a class="mark" href="index.html"><b>The Breez</b><span>Hotel · Busia</span></a><button class="ov-close" type="button">Close</button></div>
+  <div class="ov-top">{MARK}<button class="ov-close" type="button">Close</button></div>
   <ul class="ov-nav">{ov}</ul>
   <div class="ov-foot"><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp {PHONE_DISPLAY}</a><a class="btn btn--light" href="{TEL}">{ICON['phone']} Call reception</a></div>
 </div>'''
 
+MARK_HTML = ('<a class="mark" href="index.html" aria-label="The Breez Hotel, home">' + BM.pavilion('mark-emb') +
+             '<span class="mark-txt">' + BM.wordmark('mark-word') + '<span>Hotel · Busia</span></span></a>')
+
 def footer():
+    MARK = MARK_HTML
     g1 = [('index', 'Home'), ('about', 'About'), ('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining')]
     g2 = [('meetings', 'Meetings &amp; Events'), ('gallery', 'Gallery'), ('contact', 'Contact'), ('book', 'Book a stay')]
     ul = lambda g: ''.join(f'<li><a href="{href(s)}">{t}</a></li>' for s, t in g)
     return f'''<footer class="ftr">
   <svg class="ftr-edge" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 120V78L330 104L640 40L800 82L1010 58L1440 96V120Z"/></svg>
   <div class="wrap ftr-body">
-    <p class="ftr-word" aria-hidden="true">The Breez</p>
+    <div class="ftr-word" aria-hidden="true">{BM.signature()}</div>
     <div class="ftr-grid">
-      <div class="ftr-brand"><a class="mark" href="index.html" aria-label="The Breez Hotel, home"><b>The Breez</b><span>Hotel · Busia</span></a><p>Karibu. We look forward to welcoming you.</p></div>
+      <div class="ftr-brand">{MARK}<p>Karibu. We look forward to welcoming you.</p></div>
       <nav class="ftr-nav" aria-label="Footer"><span class="label">Explore</span><ul>{ul(g1)}</ul></nav>
       <nav class="ftr-nav" aria-label="Footer, more"><span class="label">&nbsp;</span><ul>{ul(g2)}</ul></nav>
       <div class="ftr-contact"><span class="label">Contact</span><ul><li><a href="{TEL}">{PHONE_DISPLAY}</a></li><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ADDRESS}</li></ul>
@@ -429,6 +435,21 @@ def lower_home():
   </div>
 </section>'''
 
+def signature_sec():
+    """The Breez signature: the script crosses from a plum band into the hotel's own photographs."""
+    return f'''<section class="sg" data-sig aria-labelledby="sg-h">
+  <div class="sg-band" aria-hidden="true"></div>
+  <div class="sg-in">
+    <p class="sg-k">The Breez &middot; Busia, Kenya</p>
+    <h2 class="sr-only" id="sg-h">The Breez</h2>
+    <p class="sg-line">Palms, pools and a garden of gazebos on the Kisumu&ndash;Busia Road.</p>
+    <figure class="sg-ph sg-a" data-pan="0.05">{img('building-palms-pool-court', '(max-width:760px) 100vw, 50vw')}</figure>
+    <figure class="sg-ph sg-b">{img('entrance-lobby', '(max-width:760px) 50vw, 24vw')}</figure>
+    <figure class="sg-ph sg-c">{img('pool-top-down', '(max-width:760px) 40vw, 12vw')}</figure>
+    <div class="sg-word">{BM.signature()}</div>
+  </div>
+</section>'''
+
 def editorial():
     karibu = f'''<section class="ed-karibu" data-welcome aria-labelledby="kar-h">
   <div class="ed-k-panel">
@@ -547,6 +568,8 @@ def home():
   </dl>
 </section>
 <div class="mq" data-marquee aria-label="Karibu. Stay, swim, dine, meet and celebrate at The Breez."><div class="mq-track"><span>Karibu</span><span>Stay</span><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></div></div>
+
+{signature_sec()}
 
 {editorial()}
 

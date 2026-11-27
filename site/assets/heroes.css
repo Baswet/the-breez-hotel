@@ -1168,3 +1168,69 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
   .mm-text{position:relative;margin-left:calc(65.6vw - var(--l));padding-top:clamp(22px,4.2vh,40px);top:auto;left:auto}
 }
 @media (min-width:901px){ .mm-p{max-width:none;line-height:1.62} }
+
+/* ===== BREEZ IDENTITY: Pavilion crest + Breez signature (approved 27 Nov 2026) ===== */
+:root{--plum:#4A2131;--brass:#A8823F}
+.mark{display:flex;align-items:center;gap:clamp(9px,.8vw,13px);justify-items:initial}
+.mark-emb{display:block;height:clamp(34px,1.8rem + .6vw,44px);width:auto;flex:none}
+.mark-txt{display:grid;justify-items:start;gap:7px}
+.mark-word{display:block;height:clamp(11px,.55rem + .25vw,14px);width:auto}
+.mark .mark-txt>span{font:700 8.5px/1 var(--f-text);letter-spacing:.52em;text-transform:uppercase;margin:0;padding:0;color:var(--ink-3)}
+.hdr--over .mark .mark-txt>span{color:#EADBBF}
+.hdr--over.is-solid .mark .mark-txt>span{color:var(--ink-3)}
+.ov-top .mark{color:#fff}.ov-top .mark .mark-txt>span{color:var(--sand-soft)}
+.ftr-brand .mark{flex-direction:column;align-items:flex-start;gap:16px;color:#F6F1E7}
+.ftr-brand .mark-emb{height:clamp(64px,3rem + 2vw,84px);color:var(--sand-soft)}
+.ftr-brand .mark-word{height:clamp(16px,.8rem + .4vw,20px)}
+.ftr-brand .mark .mark-txt>span{color:var(--sand-soft)}
+.ftr-word{color:rgba(233,239,231,.06);width:min(92vw,1180px);font-size:0;line-height:0}
+.ftr-word svg{display:block;width:100%;height:auto}
+@media (max-width:760px){ .mark-emb{height:34px} .mark-word{height:10.5px} .mark .mark-txt>span{font-size:8px;letter-spacing:.44em} }
+
+/* the signature composition */
+.sg{position:relative;background:var(--ivory);overflow:hidden;padding-bottom:clamp(40px,5vw,90px)}
+.sg-band{position:absolute;left:0;right:0;top:0;height:clamp(300px,25vw,440px);background:var(--plum)}
+.sg-in{position:relative;height:clamp(620px,56vw,980px);max-width:1600px;margin:0 auto}
+.sg-k{position:absolute;left:6%;top:clamp(44px,4.4vw,80px);margin:0;font:700 11px/1 var(--f-text);letter-spacing:.42em;text-transform:uppercase;color:var(--sand-soft);z-index:4}
+.sg-line{position:absolute;right:6%;top:clamp(40px,4vw,74px);max-width:min(26ch,30vw);margin:0;font:300 clamp(1.15rem,.8rem + .7vw,1.6rem)/1.35 var(--f-display);color:#F1E3E7;z-index:4}
+.sg-ph{position:absolute;margin:0;overflow:hidden;background:var(--stone)}
+.sg-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.sg-a{left:44%;top:22%;width:50%;height:60%}
+.sg-b{left:6%;top:40%;width:24%;height:42%}.sg-b img{object-position:50% 40%}
+.sg-c{left:32%;top:62%;width:10%;height:22%}
+.sg-word{position:absolute;left:3%;top:clamp(110px,10vw,180px);width:84%;z-index:3;color:var(--ivory);
+  transform:translate3d(calc((var(--sp,.5) - .5) * -3%),0,0);filter:drop-shadow(0 2px 26px rgba(40,10,20,.22))}
+.sg-word svg{display:block;width:100%;height:auto}
+/* entrance: the signature is drawn on left to right, then the photographs arrive one after another */
+.js .sg-word svg{clip-path:inset(-10% 100% -10% 0);transition:clip-path 1.9s cubic-bezier(.65,0,.25,1) .15s}
+.js .sg.in .sg-word svg{clip-path:inset(-10% -2% -10% 0)}
+.js .sg-ph{opacity:0;transform:translate3d(0,46px,0);transition:opacity 1.1s ease,transform 1.4s cubic-bezier(.2,.7,.2,1)}
+.js .sg.in .sg-ph{opacity:1;transform:none}
+.js .sg.in .sg-a{transition-delay:.25s}.js .sg.in .sg-b{transition-delay:.55s}.js .sg.in .sg-c{transition-delay:.8s}
+@media (max-width:760px){
+  .sg-band{height:250px}
+  .sg-in{height:auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 var(--pad);align-items:start}
+  .sg-k{position:relative;left:auto;top:auto;grid-column:1/-1;padding-top:34px;font-size:10px;letter-spacing:.34em}
+  .sg-line{position:relative;right:auto;top:auto;grid-column:1/-1;max-width:none;margin-top:10px;font-size:1.15rem;color:#F1E3E7}
+  .sg-word{position:relative;left:auto;top:auto;width:auto;grid-column:1/-1;margin:22px -4px -54px;transform:none}
+  .sg-ph{position:relative;left:auto;top:auto;width:auto;height:auto}
+  .sg-a{grid-column:1/-1;aspect-ratio:4/3;margin:0 calc(-1 * var(--pad))}
+  .sg-b{aspect-ratio:3/4}.sg-c{aspect-ratio:3/4;margin-top:48px}
+}
+@media (prefers-reduced-motion:reduce){
+  .js .sg-word svg{clip-path:none;transition:none}.js .sg-ph{opacity:1;transform:none;transition:none}.sg-word{transform:none}
+}
+@media (min-width:761px){
+  .sg-in{height:clamp(600px,50vw,900px)}
+  .sg-word{width:74%;left:4%;top:clamp(96px,8.6vw,160px)}
+  .sg-a{top:25%;height:66%}.sg-b{top:44%;height:48%}.sg-c{top:68%;height:24%}
+  .mark-word{height:clamp(12px,.6rem + .3vw,15px)}
+}
+.mark .mark-txt,.hdr--over .mark .mark-txt,.hdr--over.is-solid .mark .mark-txt,.ov-top .mark .mark-txt{color:inherit}
+.ftr-brand .mark .mark-txt{color:#F6F1E7}
+@media (max-width:760px){
+  .sg-k,.sg-line{order:0}.sg-word{order:1;position:relative;z-index:3}.sg-a{order:2}.sg-b,.sg-c{order:3}
+  .sg-word{margin:18px -4px -46px}
+}
+@media (max-width:760px){ .sg-band{height:292px} .sg-word{margin-bottom:-84px} }
+@media (max-width:760px){ .sg-band{height:calc(124px + 50vw)} }
