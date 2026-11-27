@@ -695,3 +695,16 @@
   new IntersectionObserver(([en]) => { vis = en.isIntersecting; run(); }, { threshold: 0.3 }).observe(box);
   document.addEventListener('visibilitychange', run);
 })();
+
+/* Breez signature: draw-on when the section arrives; a very small sideways drift with scroll */
+(function(){
+  var sec=document.querySelector('[data-sig]'); if(!sec) return;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce || !('IntersectionObserver' in window)){ sec.classList.add('in'); return; }
+  new IntersectionObserver(function(es,o){ es.forEach(function(e){ if(e.isIntersecting){ sec.classList.add('in'); o.disconnect(); } }); },{threshold:.22}).observe(sec);
+  var tick=false;
+  function upd(){ tick=false; var r=sec.getBoundingClientRect(), vh=innerHeight; var p=(vh-r.top)/(vh+r.height); p=Math.max(0,Math.min(1,p)); sec.style.setProperty('--sp',p.toFixed(3)); }
+  addEventListener('scroll',function(){ if(!tick){ tick=true; requestAnimationFrame(upd);} },{passive:true}); upd();
+  /* safety: never leave it hidden if the observer is throttled */
+  addEventListener('scroll',function chk(){ var r=sec.getBoundingClientRect(); if(r.top<innerHeight*.8){ sec.classList.add('in'); removeEventListener('scroll',chk); } },{passive:true});
+})();
