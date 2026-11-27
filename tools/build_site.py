@@ -341,6 +341,14 @@ STORY_IMGS = [x[0] for x in STORY]
 
 MOOD_POS = {'gazebo-cypress': '45% 50%', 'pool-terrace-kids-pool': '58% 60%', 'garden-party-setup': '50% 60%', 'room-four-poster-window': '55% 50%'}
 
+MOOD_LAYOUT = {  # main photo, supporting photo, composition
+    '01': ('garden-gazebo-roof', None, 'square'),
+    '02': ('pool-umbrellas-above', 'pool-lanes-2', 'wide'),
+    '03': ('tent-wedding-setup', 'garden-party-setup', 'tall'),
+    '04': ('room-four-poster-2', None, 'portrait'),
+}
+PLACE_WORDS = ['unwind', 'gather', 'celebrate', 'discover', 'belong']
+
 MOODS = [
     ('01', 'The quiet of morning', 'Let the day begin <em>gently</em>.', 'gazebo-cypress',
      'Early light on the lawns, the gazebos still in shade, and breakfast with your stay where the room rate includes it.',
@@ -424,21 +432,41 @@ def editorial():
     <a class="ed-discover rv" href="about.html" aria-label="Discover the hotel and its grounds">Discover</a>
     <a class="ed-k-ph rv" href="about.html" tabindex="-1" aria-hidden="true">{ph('entrance-lobby', '', '(max-width:760px) 86vw, 36vw')}</a>
   </div>
-  <div class="ed-k-side" aria-hidden="true"><div class="ed-arch"><div class="ed-arch-in" data-reveal="arch">{ph('veranda-corridor', '', '(max-width:760px) 86vw, 520px')}</div></div></div>
+  <div class="ed-k-side" aria-hidden="true">
+    <div class="ed-xp" data-arrive>
+      <div class="ed-xp-frame"></div>
+      <div class="ed-xp-win">
+        <figure class="ed-xp-a">{img('building-palms-pool-court', '(max-width:760px) 100vw, 50vw')}</figure>
+        <figure class="ed-xp-b">{img('entrance-lobby', '(max-width:760px) 100vw, 50vw')}</figure>
+      </div>
+      <div class="ed-xp-prog"><span class="on">The exterior</span><i><b></b></i><span>The arrival</span></div>
+    </div>
+  </div>
 </section>'''
-    steps = ''.join(
-        f'''<article class="ed-st-step" data-step data-tone="stone">
-        <a class="ed-st-ph" href="{u}" tabindex="-1" aria-hidden="true">{ph(k, '', '100vw')}</a>
-        <span class="ed-st-no">{n}</span><span class="ed-kick">{lab}</span><h3>{h}</h3><p>{t}</p>
-        <a class="ed-mood-link" href="{u}">{lt}<span aria-hidden="true"> &rarr;</span></a>
-      </article>''' for n, lab, h, k, t, u, lt, lay in MOODS)
-    scenes = ''.join(f'<figure data-scene style="--op:{MOOD_POS.get(k, "50% 50%")}">{img(k, "(max-width:1100px) 55vw, 58vw")}</figure>' for n, lab, h, k, t, u, lt, lay in MOODS)
-    story_sec = f'''<section class="ed-story" data-story data-tone="stone" aria-labelledby="moods-h">
+    def mood(n, lab, h, k, t, u, lt, lay):
+        main, support, cls = MOOD_LAYOUT[n]
+        sup = f'<figure class="ed-c-sup" data-reveal="up">{img(support, "(max-width:760px) 46vw, 18vw")}</figure>' if support else ''
+        return (f'<article class="ed-c ed-c--{cls}">'
+                f'<a class="ed-c-media" href="{u}" tabindex="-1" aria-hidden="true"><figure class="ed-c-main" data-reveal="up">{img(main, "(max-width:760px) 100vw, 46vw")}</figure>{sup}</a>'
+                f'<div class="ed-c-text rv"><span class="ed-c-no">{n}</span><span class="ed-kick">{lab}</span><h3>{h}</h3><p>{t}</p>'
+                f'<a class="ed-mood-link" href="{u}">{lt}<span aria-hidden="true"> &rarr;</span></a></div></article>')
+    cards = ''.join(mood(*m) for m in MOODS)
+    words = ''.join(('<span class="on">' if i == 0 else '<span>') + w + '</span>' for i, w in enumerate(PLACE_WORDS))
+    story_sec = f'''<section class="ed-moods2" aria-labelledby="moods-h">
   <div class="wrap">
-    <header class="ed-moods-head"><span class="ed-kick rv">The many moods of The Breez</span><h2 class="rv" id="moods-h">The best time to visit? <em>Every hour of the day.</em></h2></header>
-    <div class="ed-st-in">
-      <div class="ed-st-steps">{steps}</div>
-      <div class="ed-st-media" aria-hidden="true">{scenes}</div>
+    <header class="ed-intro">
+      <span class="ed-kick rv">The Breez experience</span>
+      <h2 class="ed-intro-h rv" id="moods-h"><span class="ed-i1">The many moods</span><span class="ed-i2">of The Breez</span></h2>
+      <p class="ed-intro-sub rv"><span class="ed-i3">The best time to visit?</span><em>Every hour of the day.</em></p>
+    </header>
+    <div class="ed-coll">{cards}</div>
+    <div class="ed-taste">
+      <figure class="ed-taste-ph" data-reveal="up">{img('pool-garden-view', '(max-width:760px) 100vw, 58vw')}</figure>
+      <div class="ed-taste-text rv">
+        <p class="ed-taste-lead">The Breez is a place to</p>
+        <p class="ed-taste-word" data-words aria-label="The Breez is a place to unwind, gather, celebrate, discover and belong">{words}</p>
+        <p class="ed-taste-copy">Some places are made for slowing down. At The Breez, discover the pleasure of peaceful mornings, refreshing afternoons, meaningful gatherings and evenings worth remembering.</p>
+      </div>
     </div>
   </div>
 </section>'''

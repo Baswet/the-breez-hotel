@@ -732,38 +732,6 @@
 @media (prefers-reduced-motion:reduce){ .ed-karibu .ph img,.ed-moods .ph img{transition:none} }
 
 /* ==========================================================================
-   HOME: "The best time to visit? Every hour of the day." Scroll-driven story.
-   Words scroll on the left; one anchored photograph on the right changes with
-   the active chapter (driven by the existing [data-story] script).
-   ========================================================================== */
-.ed-story{background:var(--stone);padding:clamp(88px,11vw,160px) 0 clamp(40px,6vw,90px)}
-.ed-story .ed-moods-head{margin-bottom:clamp(24px,4vw,56px)}
-.ed-st-in{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(32px,6vw,110px);align-items:start}
-.ed-st-steps{display:grid}
-.ed-st-step{min-height:82svh;display:grid;align-content:center;gap:12px;opacity:.26;transition:opacity .8s var(--ease)}
-.ed-st-step.on{opacity:1}
-.ed-st-no{font:400 1.25rem/1 var(--f-display);color:var(--sand-ink);letter-spacing:.04em}
-.ed-st-step h3{font:300 clamp(2.4rem,1.4rem + 2.6vw,4.3rem)/1.02 var(--f-display);letter-spacing:-.02em;margin:6px 0 4px}
-.ed-st-step h3 em{font-style:italic;color:var(--green-2)}
-.ed-st-step p{margin:0;color:var(--ink-2);font-size:1.08rem;line-height:1.62;max-width:36ch}
-.ed-st-ph{display:none}
-.ed-st-media{position:sticky;top:calc(var(--hx-head) + 32px);height:calc(100svh - var(--hx-head) - 64px);max-height:800px;overflow:hidden;background:var(--stone-2)}
-.ed-st-media figure{position:absolute;inset:0;margin:0;opacity:0;transform:scale(1.06);transition:opacity 1.1s cubic-bezier(.22,1,.36,1),transform 1.8s cubic-bezier(.22,1,.36,1)}
-.ed-st-media figure.on{opacity:1;transform:none;z-index:1}
-.ed-st-media img{width:100%;height:100%;object-fit:cover;object-position:var(--op,50% 50%);display:block}
-/* phones and small tablets: each chapter carries its own photograph above the words */
-@media (max-width:900px){
-  .ed-st-in{grid-template-columns:1fr}
-  .ed-st-media{display:none}
-  .ed-st-step{min-height:0;opacity:1;padding:0 0 64px;gap:10px}
-  .ed-st-ph{display:block;margin-bottom:14px}
-  .ed-st-ph .ph{aspect-ratio:4/3;margin:0}
-  .ed-st-ph img{width:100%;height:100%;object-fit:cover;display:block}
-  .ed-story{padding:72px 0 16px}
-}
-@media (prefers-reduced-motion:reduce){ .ed-st-step,.ed-st-media figure{transition:none} .ed-st-media figure{transform:none} }
-
-/* ==========================================================================
    HOMEPAGE HEADER (Passalacqua principle): transparent over the hero with
    light type; once the hero has passed beneath it (IntersectionObserver on the
    hero boundary, see site.js) it becomes the warm ivory header with forest-green
@@ -903,24 +871,111 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
   .ftr-base{flex-direction:column;align-items:flex-start;padding-bottom:72px}
 }
 
+
 /* ==========================================================================
-   THE ART OF WELCOME: the side photograph sits in an architectural arch, a
-   semicircular head, straight jambs and a flat sill, with a thick cream frame
-   and the photo inset like a window. The existing arch reveal (data-reveal=
-   "arch") makes the picture rise into the opening; the arch stays sticky.
+   THE ART OF WELCOME: building -> lobby arrival. The right-hand stage stays in
+   view; the building photograph opens from a cream arch to fill the whole
+   column as you scroll, then the lobby appears in the same frame.
+   Geometry is set by effects.js ([data-arrive]) with clip-path only.
    ========================================================================== */
-.ed-k-side{display:block;padding:clamp(56px,7vw,120px) clamp(28px,5vw,88px)}
-.ed-arch{position:sticky;top:calc(var(--hx-head) + 5vh);margin:0 auto;height:min(calc(100svh - var(--hx-head) - 10vh),780px);aspect-ratio:.66;max-width:100%;
-  background:#EADFC8;padding:clamp(16px,1.7vw,28px);border-radius:9999px 9999px 0 0;box-shadow:0 34px 60px -48px rgba(31,27,23,.5)}
-.ed-arch-in{position:relative;height:100%;border-radius:9999px 9999px 0 0;overflow:hidden;background:var(--stone-2)}
-.ed-k-side .ed-arch .ph{position:relative;top:auto;height:100%;max-height:none;aspect-ratio:auto;margin:0}
-.ed-arch .ph img{width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.ed-k-side{padding:0}
+.ed-xp{position:sticky;top:var(--hx-head);height:calc(100svh - var(--hx-head));overflow:hidden}
+.ed-xp-frame,.ed-xp-win{position:absolute;inset:0;will-change:clip-path}
+.ed-xp-frame{background:#EADFC8;clip-path:inset(8% 18% 8% 18% round 9999px 9999px 0 0)}
+.ed-xp-win{clip-path:inset(10% 20% 10% 20% round 9999px 9999px 0 0);background:var(--stone-2)}
+.ed-xp-win figure{position:absolute;inset:0;margin:0}
+.ed-xp-win img{width:100%;height:100%;object-fit:cover;display:block}
+.ed-xp-a img{object-position:38% 55%;transform-origin:40% 60%;will-change:transform}
+.ed-xp-b{opacity:0;will-change:opacity}
+.ed-xp-b img{object-position:50% 58%;transform-origin:50% 60%}
+.ed-xp-prog{position:absolute;left:50%;bottom:clamp(18px,3vh,32px);transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:2;
+  font:700 .64rem var(--f-text);letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.55);text-shadow:0 1px 10px rgba(0,0,0,.35);opacity:var(--po,0);transition:opacity .4s;white-space:nowrap}
+.ed-xp-prog span{transition:color .4s}.ed-xp-prog span.on{color:#fff}
+.ed-xp-prog i{position:relative;width:56px;height:1px;background:rgba(255,255,255,.35);overflow:hidden}
+.ed-xp-prog b{position:absolute;inset:0;background:#fff;transform-origin:left;transform:scaleX(var(--pp,0))}
+@media (max-width:760px){
+  .ed-k-side{order:0;padding:0 0 56px;background:var(--stone)}
+  .ed-xp{position:relative;top:auto;height:min(122vw,640px)}
+}
+
+/* ==========================================================================
+   THE MANY MOODS (after Casa Angelina's dining pages): tiered serif/sans intro,
+   an image-led collection of four experiences, two per row with offsets and
+   differing proportions, then a closing photograph with a rotating word.
+   ========================================================================== */
+.ed-moods2{background:var(--ivory);padding:clamp(96px,11vw,170px) 0 clamp(96px,11vw,160px)}
+.ed-intro{display:grid;justify-items:center;text-align:center;gap:14px;margin-bottom:clamp(72px,9vw,140px)}
+.ed-intro-h{margin:6px 0 0;display:grid;justify-items:center;line-height:.9}
+.ed-i1{font:300 clamp(3.4rem,1.6rem + 6vw,8rem)/.88 var(--f-display);letter-spacing:-.035em;color:var(--ink)}
+.ed-i2{font:italic 300 clamp(2.4rem,1.2rem + 3.6vw,5.2rem)/1 var(--f-display);color:var(--green-2);margin:-.04em 0 0 clamp(80px,14vw,260px)}
+.ed-intro-sub{margin:clamp(14px,2vw,26px) 0 0;display:grid;gap:6px;justify-items:center}
+.ed-i3{font:700 .72rem var(--f-text);letter-spacing:.3em;text-transform:uppercase;color:var(--ink-3)}
+.ed-intro-sub em{font:italic 400 clamp(1.3rem,1rem + .8vw,1.8rem) var(--f-display);color:var(--ink-2)}
+/* collection */
+.ed-coll{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);row-gap:clamp(96px,11vw,180px);align-items:start}
+.ed-c{display:grid;gap:clamp(22px,2.6vw,34px)}
+.ed-c-media{position:relative;display:block}
+.ed-c-main{margin:0;overflow:hidden;background:var(--stone-2)}
+.ed-c-main img,.ed-c-sup img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.4s cubic-bezier(.22,1,.36,1)}
+.ed-c-media:hover .ed-c-main img{transform:scale(1.035)}
+.ed-c-sup{position:absolute;margin:0;overflow:hidden;background:var(--stone-2);border:clamp(6px,.7vw,10px) solid var(--ivory)}
+.ed-c-text{display:grid;gap:10px;max-width:30rem}
+.ed-c-no{font:300 1.15rem/1 var(--f-display);color:var(--sand-ink);letter-spacing:.06em}
+.ed-c h3{font:300 clamp(2.1rem,1.3rem + 2vw,3.5rem)/1.03 var(--f-display);letter-spacing:-.02em;margin:4px 0 2px}
+.ed-c h3 em{font-style:italic;color:var(--green-2)}
+.ed-c p{margin:0;color:var(--ink-2);font-size:1.04rem;line-height:1.62;max-width:34ch}
+.ed-c .ed-mood-link{margin-top:6px}
+/* 01 square, left, high */
+.ed-c--square{grid-column:1/6}
+.ed-c--square .ed-c-main{aspect-ratio:1}
+/* 02 wide, right, dropped, with a portrait accent */
+.ed-c--wide{grid-column:7/13;margin-top:clamp(120px,16vw,260px)}
+.ed-c--wide .ed-c-main{aspect-ratio:3/2}
+.ed-c--wide .ed-c-sup{width:34%;aspect-ratio:3/4;left:-14%;bottom:-18%}
+.ed-c--wide .ed-c-text{margin-left:30%}
+/* 03 tall, left, with a landscape accent */
+.ed-c--tall{grid-column:2/7}
+.ed-c--tall .ed-c-main{aspect-ratio:4/5}
+.ed-c--tall .ed-c-sup{width:52%;aspect-ratio:4/3;right:-26%;bottom:10%}
+/* 04 portrait, right, offset */
+.ed-c--portrait{grid-column:8/13;margin-top:clamp(160px,20vw,320px)}
+.ed-c--portrait .ed-c-main{aspect-ratio:4/5}
+.ed-c--portrait .ed-c-main img{object-position:46% 50%}
+/* closing composition */
+.ed-taste{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);align-items:center;margin-top:clamp(120px,14vw,220px)}
+.ed-taste-ph{grid-column:1/8;margin:0;aspect-ratio:3/2;overflow:hidden;background:var(--stone-2)}
+.ed-taste-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ed-taste-text{grid-column:9/13;display:grid;gap:14px}
+.ed-taste-lead{margin:0;font:700 .76rem var(--f-text);letter-spacing:.3em;text-transform:uppercase;color:var(--ink-3)}
+.ed-taste-word{position:relative;margin:0;height:1.05em;font:italic 300 clamp(3.2rem,1.8rem + 4vw,6.4rem)/1 var(--f-display);color:var(--green);letter-spacing:-.02em}
+.ed-taste-word span{position:absolute;left:0;top:0;white-space:nowrap;opacity:0;transform:translateY(.35em);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform 1.1s cubic-bezier(.22,1,.36,1)}
+.ed-taste-word span.on{opacity:1;transform:none}
+.ed-taste-word span.out{opacity:0;transform:translateY(-.3em)}
+.ed-taste-copy{margin:8px 0 0;font:400 clamp(1.1rem,1rem + .3vw,1.28rem)/1.6 var(--f-display);color:var(--ink-2);max-width:34ch}
 @media (max-width:1100px){
-  .ed-k-side{padding:56px 28px}
-  .ed-arch{height:min(calc(100svh - var(--hx-head) - 12vh),640px)}
+  .ed-c--square{grid-column:1/7}.ed-c--wide{grid-column:7/13}
+  .ed-c--tall{grid-column:1/7}.ed-c--portrait{grid-column:7/13}
+  .ed-c--wide .ed-c-text{margin-left:0}
+  .ed-c--wide .ed-c-sup{left:-10%;width:30%}
+  .ed-c--tall .ed-c-sup{right:-14%;width:46%}
+  .ed-taste-ph{grid-column:1/8}.ed-taste-text{grid-column:8/13}
 }
 @media (max-width:760px){
-  .ed-k-side{order:0;padding:8px 0 64px;background:var(--stone)}
-  .ed-arch{position:relative;top:auto;height:auto;width:84%;aspect-ratio:.7;padding:14px}
-  .ed-k-side .ed-arch .ph{aspect-ratio:auto}
+  .ed-moods2{padding:80px 0 90px}
+  .ed-intro{margin-bottom:56px}
+  .ed-i2{margin-left:clamp(40px,16vw,90px)}
+  .ed-coll{grid-template-columns:1fr;row-gap:76px}
+  .ed-c,.ed-c--square,.ed-c--wide,.ed-c--tall,.ed-c--portrait{grid-column:1/-1;margin-top:0}
+  .ed-c--wide .ed-c-sup{left:auto;right:-4px;bottom:-14%;width:36%}
+  .ed-c--tall .ed-c-sup{right:-4px;bottom:-10%;width:48%}
+  .ed-c--wide .ed-c-text,.ed-c--tall .ed-c-text{margin-top:28px}
+  .ed-c--tall .ed-c-main{width:86%}
+  .ed-c--portrait .ed-c-main{width:92%;margin-left:auto}
+  .ed-taste{grid-template-columns:1fr;margin-top:90px;gap:28px}
+  .ed-taste-ph,.ed-taste-text{grid-column:1/-1}
+  .ed-taste-ph{aspect-ratio:4/3}
+}
+@media (prefers-reduced-motion:reduce){
+  .ed-taste-word span,.ed-c-main img,.ed-c-sup img{transition:none}
+  .ed-xp-prog,.ed-xp-prog span{transition:none}
 }
