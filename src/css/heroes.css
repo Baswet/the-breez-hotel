@@ -408,25 +408,31 @@ main:has(.me-hero){--me-paper:#FBF8F2;--me-ink:#2A2722;--me-soft:#6A625A;--me-ru
 .js .me-vert b{opacity:0;transform:translateY(.5em);transition:opacity 1s var(--me-ease),transform 1.2s var(--me-ease);transition-delay:calc(var(--i) * 90ms + 120ms)}
 .js .me-vert.in b{opacity:1;transform:none}
 
-/* 00 opening, after the recording of Casa Angelina: a full-screen slideshow with a centred script title; as the
-   page scrolls, the photograph draws back into an inset window (--p, 0 to 1, set in effects.js) */
-.me-hero{position:relative;height:100svh;min-height:560px;overflow:hidden;color:#fff;background:var(--me-paper);--p:0}
-.me-hero-edge{position:absolute;left:0;top:0;width:1px;height:max(130px,20svh);pointer-events:none}   /* the header turns light once the window starts to draw back */
-.me-hero-win{position:absolute;inset:0;overflow:hidden;background:#1d1a16;
-  clip-path:inset(calc(var(--p) * 7%) 0 calc(var(--p) * 5%) calc(var(--p) * 13%));will-change:clip-path}
+/* 00 opening, after the Casa Angelina recording. A full-screen film of the hotel's own photographs with a centred
+   script title; then, held on screen while the page scrolls (a sticky stage, no scroll hijacking), the photograph
+   shrinks out of the full frame and settles as a wide image at the top right, a panoramic strip slides in from the
+   left edge, and very light capitals open around them. effects.js sets the eased progress values
+   (--o overlay, --k photograph, --s strip, --wa..--wd the four lines) and the window's box, taken from .me-slot. */
+.me-hero{position:relative;height:100svh;min-height:560px;overflow:clip;background:var(--me-paper);color:#fff;
+  --o:1;--k:0;--s:0;--wa:0;--wb:0;--wc:0;--wd:0;--travel:150svh}
+.js .me-hero{height:calc(100svh + var(--travel))}
+.me-hero-edge{position:absolute;left:0;top:0;width:1px;height:max(130px,20svh);pointer-events:none}   /* the header turns light once the photograph starts to move */
+.me-stage{position:sticky;top:0;height:100svh;min-height:560px;overflow:hidden}
+.me-hero-win{position:absolute;left:var(--bx,0px);top:var(--by,0px);width:var(--bw,100%);height:var(--bh,100%);overflow:hidden;background:#1d1a16;z-index:2}
 .me-hs{position:absolute;inset:0;opacity:0;transition:opacity 2.2s var(--me-ease)}
 .me-hs.on{opacity:1}
-.me-hs img{transform:scale(calc(1.08 - var(--p) * .05));transform-origin:60% 50%}
+.me-hs img{transform:scale(calc(1.07 - var(--k) * .07));transform-origin:50% 55%}
 .me-hs.run img{animation:me-drift 9s linear both}
 @keyframes me-drift{from{translate:0 0}to{translate:-1.2% -.8%}}
 .me-hs:first-child img{animation:me-settle 2.8s var(--me-ease) both}
 @keyframes me-settle{from{opacity:.4;filter:blur(2px)}to{opacity:1;filter:none}}
-.me-hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,12,9,.42),rgba(14,12,9,.08) 28%,rgba(14,12,9,.1) 60%,rgba(14,12,9,.5))}
-.me-hero-in{position:absolute;inset:0;padding:0 var(--pad) clamp(28px,3.4vw,48px);opacity:calc(1 - var(--p) * 1.6)}
+.me-hero-shade{position:absolute;inset:0;opacity:var(--o);background:linear-gradient(180deg,rgba(14,12,9,.42),rgba(14,12,9,.08) 28%,rgba(14,12,9,.1) 60%,rgba(14,12,9,.5))}
+.me-hero-in{position:absolute;left:0;top:0;width:100vw;height:100svh;min-height:560px;padding:0 var(--pad) clamp(28px,3.4vw,48px);opacity:var(--o)}
+.me-hero.is-set .me-hero-in{visibility:hidden}
 .me-hero-crumb{position:absolute;left:var(--pad);top:clamp(112px,11vh,140px)}
 .me-hero .crumb,.me-hero .crumb a{color:rgba(255,255,255,.86)}
 .me-hero-script{position:absolute;left:0;right:0;top:50%;margin:0;transform:translateY(-58%);text-align:center;
-  font:400 clamp(3.6rem,2rem + 6vw,8.4rem)/1.1 "Mrs Saint Delafield",var(--me-serif);letter-spacing:.01em;text-shadow:0 2px 24px rgba(0,0,0,.25);
+  font:400 clamp(3.6rem,2rem + 6vw,8.4rem)/1.1 "Mrs Saint Delafield",var(--me-serif);letter-spacing:.01em;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.25);
   animation:me-ink 2.6s var(--me-ease) .4s both}
 @keyframes me-ink{from{opacity:0;clip-path:inset(0 100% 0 0)}to{opacity:1;clip-path:inset(0 -5% 0 0)}}
 .me-hero-k{position:absolute;left:var(--pad);bottom:clamp(28px,3.4vw,48px);margin:0;font:400 .7rem/1 var(--me-sans);letter-spacing:.36em;text-transform:uppercase;animation:me-up 1.4s var(--me-ease) .9s both}
@@ -438,19 +444,30 @@ main:has(.me-hero){--me-paper:#FBF8F2;--me-ink:#2A2722;--me-soft:#6A625A;--me-ru
 @keyframes me-drop{to{top:100%}}
 @keyframes me-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-/* 01 the statement, as in the recording: very large, very light capitals with a smaller line laid across them,
-   photographs drifting past at their own pace (data-drift) */
-.me-state{position:relative;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,1.6vw,28px);padding:clamp(60px,7vw,120px) var(--pad) clamp(70px,8vw,120px);overflow:hidden}
-.me-h1{grid-column:1/-1;grid-row:1/4;margin:0;display:grid;grid-template-rows:auto auto auto;font-family:var(--me-sans);font-weight:200;text-transform:uppercase;color:var(--me-ink);position:relative;z-index:2;pointer-events:none}
-.me-big{display:block;font:200 clamp(3.6rem,1rem + 9.4vw,11.5rem)/.9 var(--me-sans);letter-spacing:.01em;white-space:nowrap}
-.me-ghost{color:#E2DCD2}
-.me-mid{display:block;margin:-.55em 0 0 clamp(80px,22vw,360px);font:300 clamp(1.3rem,.8rem + 1.6vw,2.6rem)/1 var(--me-sans);letter-spacing:.06em;color:#6E655C}
-.me-dark{margin-top:clamp(150px,17vw,300px);padding-left:clamp(0px,14vw,240px);font-weight:300;font-size:clamp(3rem,1rem + 6.6vw,8.6rem);color:#8E847A}
-.me-st-a{grid-column:9/13;grid-row:1;align-self:start;aspect-ratio:16/10;margin-top:clamp(20px,2vw,40px);z-index:1}
-.me-st-pano{grid-column:1/10;grid-row:2;margin:clamp(-40px,-2vw,-10px) 0 0 calc(-1 * var(--pad));aspect-ratio:4.6/1;z-index:1}
-.me-state-side{grid-column:7/12;grid-row:4;padding-top:clamp(40px,5vw,80px)}
+/* the composition the photograph settles into, proportioned after the recording's last frame */
+.me-slot{position:absolute;left:54%;top:max(108px,12%);width:38%;aspect-ratio:3.85/1;pointer-events:none}
+.me-strip-ph{position:absolute;left:0;top:37.5%;width:75%;height:10vw;z-index:1;
+  transform:translate3d(calc((var(--s) - 1) * 78vw),calc((1 - var(--s)) * 16vh),0)}
+.me-strip-ph img{transform:scale(1.16) translateX(calc((1 - var(--s)) * 7%));object-position:50% 62%}
+.me-say{position:absolute;inset:0;margin:0;font-family:var(--me-sans);text-transform:uppercase;pointer-events:none;z-index:1}
+.me-say span{position:absolute;white-space:nowrap;line-height:.8}
+.me-say-a{left:8%;top:max(100px,11.6%);font-weight:200;font-size:10.6vw;letter-spacing:.015em;color:#E7E1D8;
+  opacity:var(--wa);transform:translate3d(calc((1 - var(--wa)) * -5vw),0,0)}
+.me-say-b{left:23%;top:calc(max(100px,11.6%) + 6.5vw);font-weight:300;font-size:2.75vw;letter-spacing:.03em;color:#837A71;
+  opacity:var(--wb);transform:translate3d(calc((1 - var(--wb)) * 4vw),0,0)}
+.me-say-c{left:79.4%;top:50%;font-weight:200;font-size:5.6vw;letter-spacing:.02em;color:#E7E1D8;
+  opacity:var(--wc);transform:translate3d(calc((1 - var(--wc)) * 5vw),0,0)}
+.me-say-d{left:24.6%;top:64.5%;font-weight:200;font-size:6.9vw;letter-spacing:.02em;color:#7E756C;
+  opacity:var(--wd);transform:translate3d(0,calc((1 - var(--wd)) * 24vh),0)}
+.me-say,.me-strip-ph,.me-slot{display:none}
+.js .me-say,.js .me-strip-ph,.js .me-slot{display:block}
+
+/* 01 the welcome the composition opens onto */
+.me-state{position:relative;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,1.6vw,28px);align-items:end;padding:clamp(40px,5vw,90px) var(--pad) clamp(70px,8vw,120px)}
+.js .me-hero + .me-state{margin-top:-16svh}   /* the welcome rises into the empty foot of the held stage */
+.me-state-h{grid-column:2/8;font-size:clamp(2.2rem,1.3rem + 2.8vw,4.2rem)}
+.me-state-side{grid-column:8/12}
 .me-lead{margin:0;font:400 clamp(1.08rem,1rem + .35vw,1.3rem)/1.75 var(--me-serif);color:#6A625A;max-width:38ch}
-.js [data-drift]{will-change:transform}
 .me-words{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 0;margin:clamp(70px,8vw,120px) 0 0;padding-top:28px;border-top:1px solid var(--me-rule);
   font:400 .66rem/1 var(--me-sans);letter-spacing:.38em;text-transform:uppercase;color:var(--me-soft)}
 .me-words span:not(:last-child)::after{content:"\00b7";margin:0 clamp(12px,1.8vw,26px);letter-spacing:0}
@@ -580,15 +597,19 @@ main:has(.me-hero){--me-paper:#FBF8F2;--me-ink:#2A2722;--me-soft:#6A625A;--me-ru
 @media (max-width:760px){
   .me-hero-tag{display:none}
   .me-hero-k{bottom:96px}
-  .me-big{font-size:clamp(2.6rem,13vw,4.4rem)}
-  .me-ghost{white-space:normal}
-  .me-mid{margin:-.2em 0 0 18vw;font-size:1.15rem}
-  .me-h1{grid-row:1}
-  .me-dark{margin-top:.35em;padding:0;font-size:clamp(2.2rem,10.6vw,3.6rem)}
-  .me-st-a{grid-column:5/13;grid-row:2;margin-top:34px}
-  .me-st-pano{grid-column:1/13;grid-row:3;margin-top:-18px;aspect-ratio:3/1}
-  .me-state-side{grid-column:1/13}
   .me-hero-script{font-size:clamp(3rem,15vw,4.6rem)}
+  /* the phone composition: the photograph settles as a band bleeding off the right edge, the strip off the left */
+  .me-hero{--travel:115svh}
+  .me-stage{--T:max(78px,calc(46% - 52vw))}   /* one top line, so the stack keeps its rhythm on short and tall phones */
+  .me-say-a{left:var(--pad);top:var(--T);font-size:20vw}
+  .me-say-b{left:auto;right:var(--pad);top:calc(var(--T) + 13.5vw);font-size:5.2vw}
+  .me-slot{left:28%;top:calc(var(--T) + 22vw);width:72%;aspect-ratio:2/1}
+  .me-strip-ph{top:calc(var(--T) + 64vw);width:86%;height:24vw}
+  .me-say-c{left:auto;right:var(--pad);top:calc(var(--T) + 92vw);font-size:11vw}
+  .me-say-d{left:var(--pad);top:calc(var(--T) + 104vw);font-size:10.4vw;font-weight:300}
+  .me-state-h,.me-state-side{grid-column:1/-1}
+  .me-state-side{margin-top:28px}
+  .js .me-hero + .me-state{margin-top:-6svh}
   .me-words{font-size:.6rem;letter-spacing:.28em}
   .me-pano{width:100%;aspect-ratio:16/8}
   .me-set-text{width:auto;margin:40px var(--pad) 0}
@@ -608,7 +629,7 @@ main:has(.me-hero){--me-paper:#FBF8F2;--me-ink:#2A2722;--me-soft:#6A625A;--me-ru
   .me-fac-head{flex-direction:column;gap:18px}
   .me-vert--s{flex-direction:row;gap:.15em}
 }
-@media (prefers-reduced-motion:reduce){ .me-hs img,.me-hero-k,.me-hero-tag,.me-hero-script,.me-scroll i::after{animation:none} }
+@media (prefers-reduced-motion:reduce){ .me-hs img,.me-hero-k,.me-hero-tag,.me-hero-script,.me-scroll i::after{animation:none} .me-hero{--travel:70svh} }
 
 /* ==========================================================================
    HOME: stay experiences, recreated from the Bergen Harbour Hotel home page:

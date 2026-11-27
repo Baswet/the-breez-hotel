@@ -977,31 +977,35 @@ def meetings():
     strip = ''.join(f'<figure class="me-card">{img(k, "(max-width:760px) 70vw, 24vw")}<figcaption>{c}</figcaption></figure>' for i, (k, c) in enumerate(OUT))
     fac = ''.join(f'<li><span class="me-fn">0{i+1}</span><b>{t}</b><span class="me-fd">{d}</span></li>' for i, (t, d) in enumerate(FAC))
     words = ''.join(f'<span>{w}</span>' for w in ['Conferences', 'Weddings', 'Training', 'Ruracio', 'Workshops', 'Garden parties'])
-    HERO = ['hall-banquet-gold', 'garden-party-balloons', 'cottage-courtyard-swing']   # the hotel's own photographs
+    HERO = ['hall-banquet-gold', 'cottage-courtyard-swing']   # the hotel's own photographs; the hall leads and is the one that settles into the composition
     hero_slides = ''.join(f'<figure class="me-ph me-hs{" on" if i == 0 else ""}"{"" if i == 0 else " aria-hidden=\"true\""}>{img(k, "100vw", i == 0)}</figure>' for i, k in enumerate(HERO))
     return f'''<section class="me-hero" data-me-hero aria-label="Meetings and events at The Breez">
   <span class="me-hero-edge" data-hero-edge aria-hidden="true"></span>
-  <div class="me-hero-win">
-    {hero_slides}
-    <div class="me-hero-shade" aria-hidden="true"></div>
-    <div class="me-hero-in">
-      <div class="me-hero-crumb">{crumb('Meetings &amp; events')}</div>
-      <p class="me-hero-script">Meetings &amp; events</p>
-      <p class="me-hero-k">05 &middot; Meetings &amp; events</p>
-      <p class="me-hero-tag"><span>Halls &middot; Lawns &middot; Marquees</span>Projector and screen, Wi-Fi, full set-up and catering packages.</p>
-      <a class="me-scroll" href="#meet-h1" aria-label="Scroll to the introduction"><i></i></a>
+  <div class="me-stage">
+    <p class="me-say" aria-label="Gather beautifully. Every detail matters.">
+      <span class="me-say-a" aria-hidden="true">Gather</span>
+      <span class="me-say-b" aria-hidden="true">beautifully.</span>
+      <span class="me-say-c" aria-hidden="true">Every</span>
+      <span class="me-say-d" aria-hidden="true">detail matters.</span>
+    </p>
+    {pic('marquee-lawn', 'me-strip-ph', '(max-width:760px) 90vw, 75vw')}
+    <span class="me-slot" aria-hidden="true"></span>
+    <div class="me-hero-win">
+      {hero_slides}
+      <div class="me-hero-shade" aria-hidden="true"></div>
+      <div class="me-hero-in">
+        <div class="me-hero-crumb">{crumb('Meetings &amp; events')}</div>
+        <h1 class="me-hero-script">Meetings &amp; events</h1>
+        <p class="me-hero-k">05 &middot; Meetings &amp; events</p>
+        <p class="me-hero-tag"><span>Halls &middot; Lawns &middot; Marquees</span>Projector and screen, Wi-Fi, full set-up and catering packages.</p>
+        <a class="me-scroll" href="#meet-intro" aria-label="Scroll to the introduction"><i></i></a>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="me-state" aria-labelledby="meet-h1" data-me-state>
-  <h1 id="meet-h1" class="me-h1" aria-label="Make room for something remarkable.">
-    <span class="me-big me-ghost" aria-hidden="true" data-drift="x:70">Make room</span>
-    <span class="me-mid" aria-hidden="true" data-drift="x:-40">for something</span>
-    <span class="me-big me-dark" aria-hidden="true" data-drift="x:-60">remarkable.</span>
-  </h1>
-  {pic('tent-red-white', 'me-st-a', '(max-width:760px) 60vw, 26vw', extra=' data-drift="y:-90"')}
-  {pic('main-building-facade', 'me-st-pano', '(max-width:760px) 100vw, 75vw', extra=' data-drift="x:-160"')}
+<section class="me-state" aria-labelledby="meet-intro">
+  <h2 id="meet-intro" class="me-h2 me-state-h">Make room for <em>something remarkable.</em></h2>
   <div class="me-state-side rv">
     <p class="me-lead">From important business gatherings to unforgettable celebrations, discover a setting for occasions worth remembering.</p>
     <div class="me-acts"><a class="me-link" href="#enquire">Send an enquiry</a><a class="me-link" href="{TEL}">Call {PHONE_DISPLAY}</a></div>
@@ -1068,7 +1072,7 @@ def meetings():
     <p class="me-p">Family ceremonies on the open lawn, with marquees, seating and catering arranged around your guests.</p>
   </div>
   {pic('cottages-lawn', 'me-thumb me-rur-thumb', '(max-width:760px) 40vw, 16vw', extra=' data-reveal="up"')}
-  {pic('marquee-lawn', 'me-pano me-pano--r', '(max-width:760px) 100vw, 75vw', extra=' data-reveal="left"')}
+  {pic('garden-party-balloons', 'me-pano me-pano--r', '(max-width:760px) 100vw, 75vw', extra=' data-reveal="left"')}
 </section>
 
 <section class="me-out" aria-labelledby="out-h">
