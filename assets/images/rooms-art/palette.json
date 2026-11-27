@@ -1,38 +1,38 @@
 {
   "bed-detail": {
-    "green": "#607354",
-    "gold": "#CBA362",
-    "rose": "#CBA38F",
-    "amb": "#E3D2B6"
+    "green": "#516B4A",
+    "gold": "#CD9E4F",
+    "rose": "#D79D7C",
+    "amb": "#EAD9BF"
   },
   "room-four-poster-window": {
-    "green": "#476241",
-    "gold": "#C09D53",
-    "rose": "#B59F67",
-    "amb": "#D9DAC0"
+    "green": "#43603E",
+    "gold": "#C69747",
+    "rose": "#D29872",
+    "amb": "#E4DDC4"
   },
   "room-grey-bedding": {
-    "green": "#586853",
-    "gold": "#C99760",
-    "rose": "#BE8071",
-    "amb": "#E7D1C4"
+    "green": "#53664F",
+    "gold": "#C99357",
+    "rose": "#D8917A",
+    "amb": "#ECD6C8"
   },
   "room-fridge-tv": {
-    "green": "#314C34",
-    "gold": "#AE773B",
-    "rose": "#B67C57",
-    "amb": "#E0CFBB"
+    "green": "#364C33",
+    "gold": "#B77E3C",
+    "rose": "#C6875F",
+    "amb": "#E4D2BB"
   },
   "bedroom-sunlit-linen": {
-    "green": "#617756",
-    "gold": "#D0A654",
-    "rose": "#CEAC8E",
-    "amb": "#EDE3D2"
+    "green": "#5C7753",
+    "gold": "#D6A751",
+    "rose": "#E3A782",
+    "amb": "#F1E5D0"
   },
   "nightstand-honey-wood": {
-    "green": "#55694C",
-    "gold": "#CA914C",
-    "rose": "#CA9872",
-    "amb": "#E7D6C0"
+    "green": "#4D6144",
+    "gold": "#C78D45",
+    "rose": "#D4986E",
+    "amb": "#EAD8BE"
   }
 }

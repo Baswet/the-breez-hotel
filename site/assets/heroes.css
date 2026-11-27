@@ -1351,145 +1351,121 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
 .rm-ph figcaption{position:absolute;left:0;bottom:0;padding:10px 0 0;transform:translateY(100%);font:italic 400 1rem/1.3 var(--f-display);color:var(--ink-3)}
 .rm-note{margin:0;font:700 10px/1.2 var(--f-text);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
 
-/* 01 opening: an artistic slideshow. Torn ivory paper and watercolour washes (tools/make_rooms_art.py)
-   around a torn-edged photograph; the washes and the light around them take their colour from each photo. */
-.rh{--gilt:#BF9F66;--bronze:#8A6A3C;--rh-ease:cubic-bezier(.45,0,.2,1);background:var(--ivory);padding:clamp(14px,1.6vw,26px) 0 clamp(40px,4vw,64px)}
-.rh-top{width:min(100% - 2*var(--pad),1500px);margin:0 auto 12px}
-.rh-top .crumb{margin:0}
-.rh-stage{position:relative;width:min(100% - 2*var(--pad),1500px);height:clamp(600px,47vw,740px);margin:0 auto;isolation:isolate}
-.rh-amb{position:absolute;inset:0;border-radius:clamp(18px,2vw,30px);overflow:hidden;background:var(--amb);transition:background-color 1.8s var(--rh-ease)}
-.rh-amb-ph{position:absolute;inset:-8%;background-size:cover;background-position:center;opacity:0;transition:opacity 1.8s var(--rh-ease)}
-.rh-amb-ph.on{opacity:.72}
-.rh-veil{position:absolute;inset:0;background:
-  radial-gradient(60% 90% at 22% 52%,rgba(250,245,236,.78),rgba(250,245,236,0) 70%),
-  linear-gradient(90deg,rgba(248,242,232,.55),rgba(248,242,232,.12) 48%,rgba(248,242,232,.22))}
-.rh-grain{position:absolute;inset:0;background:url(../images/rooms-art/paper.webp) 0 0/360px;mix-blend-mode:multiply;opacity:.55}
+/* 01 opening, after the supplied reference: one painted composition (tools/make_rooms_art.py) on a 16:9 stage.
+   The slideshow shows through an organic opening edged with torn white paper; painted leaves, palm fronds and
+   watercolour washes surround it and overlap its edge. Every layer is a shape the page fills with the current
+   slide's colours (--green, --gold, --rose, --amb, set by effects.js), so the whole composition changes mood with
+   each photograph. Leaf layers carry their own painting (grey, laid over the colour in hard-light). */
+.rh{--gilt:#BF9F66;--bronze:#8A6A3C;--rh-ease:cubic-bezier(.45,0,.2,1);--rh-paper:#F7EEDC;background:var(--rh-paper)}
+.rh-stage{position:relative;width:100%;height:clamp(46vw,100svh - 84px,56.25vw);overflow:hidden;isolation:isolate;   /* the art is 16:9; a shorter screen trims it evenly top and bottom */
+  background:url(../images/rooms-art/paper.webp) 0 0/420px,var(--rh-paper);background-blend-mode:multiply}
+.rh-canvas{position:absolute;left:0;top:50%;width:100%;aspect-ratio:16/9;transform:translateY(-50%)}
+.rh-x,.rh-lf{position:absolute;inset:0;pointer-events:none;background-color:var(--c);transition:background-color 1.8s var(--rh-ease);
+  -webkit-mask:var(--m) center/100% 100% no-repeat;mask:var(--m) center/100% 100% no-repeat}
+.rh-x-page{--m:url(../images/rooms-art/wash-page.webp);--c:var(--amb);opacity:.5}
+.rh-x-sage{--m:url(../images/rooms-art/wash-sage.webp);--c:color-mix(in srgb,var(--green) 32%,#EFE6CF);opacity:.38}
+.rh-x-rim{--m:url(../images/rooms-art/stage-rim.webp);--c:#FBF7EE;filter:drop-shadow(0 1px 1px rgba(60,40,20,.16))}
+.rh-x-amber{--m:url(../images/rooms-art/wash-amber.webp);--c:var(--gold);opacity:.72}
+.rh-x-peach{--m:url(../images/rooms-art/wash-peach.webp);--c:var(--rose);opacity:.72}
+.rh-leaves{position:absolute;inset:0;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(45,35,15,.2))}
+.rh-lf i{position:absolute;inset:0;background:var(--m) center/100% 100% no-repeat;mix-blend-mode:hard-light}
+.rh-lf-deep{--m:url(../images/rooms-art/leaves-deep.webp);--c:var(--green)}
+.rh-lf-olive{--m:url(../images/rooms-art/leaves-olive.webp);--c:color-mix(in srgb,var(--green) 50%,#A9A55B)}
+.rh-lf-amber{--m:url(../images/rooms-art/leaves-amber.webp);--c:var(--gold)}
+.rh-lf-peach{--m:url(../images/rooms-art/leaves-peach.webp);--c:var(--rose)}
+.rh-lines,.rh-vine{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.rh-lines *,.rh-vine *{fill:none;stroke:var(--gilt);stroke-width:1;vector-effect:non-scaling-stroke}
+.rh-vine{opacity:.7}
 
-.rh-palm{position:absolute;left:-4%;top:-14%;width:46%;height:70%;background:url(../images/botanical/leaves-corner-640.webp) left top/contain no-repeat;
-  filter:blur(7px) brightness(.25) sepia(.6);opacity:.2;mix-blend-mode:multiply;transform:rotate(8deg)}
-.rh-tl{position:absolute;left:3%;top:0;width:13%;height:auto;fill:none;stroke:var(--gilt);stroke-width:1.2;opacity:.85}
-
-/* washes beside the panel: colour through a painted mask; the wrapper carries the shadow, the inner layer the paint */
-.rh-w,.rh-l{position:absolute;pointer-events:none}
-.rh-w i,.rh-l i{position:absolute;inset:0;background:url(../images/rooms-art/paper.webp) 0 0/300px,var(--c,var(--green));background-blend-mode:multiply;
-  -webkit-mask:var(--m) center/100% 100% no-repeat;mask:var(--m) center/100% 100% no-repeat;transition:background-color 1.8s var(--rh-ease)}
-.rh-w5{left:1%;top:26%;width:14%;height:66%;z-index:1;--m:url(../images/rooms-art/wash-left.webp);--c:color-mix(in srgb,var(--green) 55%,#E7E2CE);filter:drop-shadow(0 6px 10px rgba(40,30,15,.14))}
-.rh-block{position:absolute;left:0;bottom:0;width:7.5%;height:40%;z-index:1;border-radius:0 0 0 clamp(18px,2vw,30px);overflow:hidden}
-.rh-block i{position:absolute;inset:0;background:url(../images/rooms-art/paper.webp) 0 0/300px,var(--green);background-blend-mode:multiply;filter:brightness(.82);transition:background-color 1.8s var(--rh-ease)}
-
-/* the artwork around the photograph (tools/make_rooms_art.py, frame-*): one composition, painted per slide */
-.rh-art{position:absolute;left:34.8%;top:-.4%;width:67.5%;height:104.4%;z-index:2}
-.rh-l{inset:0}
-.rh-l-sage{--m:url(../images/rooms-art/frame-sage.webp);--c:color-mix(in srgb,var(--green) 45%,#ECE7D4);opacity:.85}
-.rh-l-gold{--m:url(../images/rooms-art/frame-gold.webp);--c:var(--gold);opacity:.92;z-index:2}
-.rh-l-rose{--m:url(../images/rooms-art/frame-rose.webp);--c:var(--rose);opacity:.88;z-index:2}
-.rh-l-paper{--m:url(../images/rooms-art/frame-paper.webp);--c:#F5EEDF;z-index:2;filter:drop-shadow(0 2px 3px rgba(60,40,20,.18))}
-.rh-l-green{--m:url(../images/rooms-art/frame-green.webp);z-index:2;filter:drop-shadow(0 8px 12px rgba(30,30,15,.22)) drop-shadow(0 1px 2px rgba(30,30,15,.2))}
-.rh-photo{position:absolute;inset:0;z-index:1;filter:drop-shadow(0 18px 26px rgba(60,40,20,.18))}
-.rh-frame{position:absolute;inset:0;-webkit-mask:url(../images/rooms-art/frame-hole.webp) center/100% 100% no-repeat;mask:url(../images/rooms-art/frame-hole.webp) center/100% 100% no-repeat;background:var(--amb)}
-.rh-slide{position:absolute;inset:0;margin:0;opacity:0;transition:opacity 1.8s var(--rh-ease)}
+/* the photographs, placed on the opening's box (HOLE in the generator) */
+.rh-photo{position:absolute;inset:0}
+.rh-frame{position:absolute;inset:0;background:var(--amb);
+  -webkit-mask:url(../images/rooms-art/stage-hole.webp) center/100% 100% no-repeat;mask:url(../images/rooms-art/stage-hole.webp) center/100% 100% no-repeat}
+.rh-slide{position:absolute;left:34%;top:10%;width:64.5%;height:80.5%;margin:0;opacity:0;transition:opacity 1.6s var(--rh-ease)}
 .rh-slide.on{opacity:1}
-.rh-slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 0s 1.9s}
-.rh-slide.on img{transform:scale(1);transition:transform 9.5s cubic-bezier(.25,.1,.25,1)}
+.rh-slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);transition:transform 0s 1.7s}
+.rh-slide.on img{transform:scale(1);transition:transform 7.5s cubic-bezier(.25,.1,.25,1)}
 
-/* fine champagne lines and a gilt tile */
-.rh-deco{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible}
-.rh-deco *{fill:none;stroke:var(--gilt);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.9}
-.rh-tile{position:absolute;left:-2.6%;bottom:-7%;width:8.5%;height:auto;z-index:6;filter:drop-shadow(0 8px 14px rgba(60,40,20,.2))}
-.rh-tile .f{fill:url(#rh-foil)}.rh-tile .g{fill:var(--green);transition:fill 1.8s var(--rh-ease)}
-.rh-tile path{fill:none;stroke:#8E6C38;stroke-width:1.1}
-
-/* the torn ivory panel */
-.rh-panel{position:absolute;left:7.4%;top:13.6%;width:32.6%;height:87%;z-index:5;filter:drop-shadow(0 22px 26px rgba(70,50,25,.17)) drop-shadow(0 2px 3px rgba(70,50,25,.12))}
-.rh-paper{position:absolute;inset:0;background:url(../images/rooms-art/paper.webp) 0 0/760px,#FDF9F1;background-blend-mode:multiply;
-  -webkit-mask:url(../images/rooms-art/mask-panel.webp) center/100% 100% no-repeat;mask:url(../images/rooms-art/mask-panel.webp) center/100% 100% no-repeat}
-.rh-paper::after{content:"";position:absolute;inset:0;background:#FFFDF8;-webkit-mask:url(../images/rooms-art/mask-rim.webp) center/100% 100% no-repeat;mask:url(../images/rooms-art/mask-rim.webp) center/100% 100% no-repeat}
-.rh-copy{position:relative;height:100%;display:flex;flex-direction:column;gap:clamp(8px,.8vw,12px);padding:clamp(30px,2.8vw,42px) clamp(26px,2.8vw,44px) clamp(22px,2.2vw,32px)}
-.rh-k{font:400 .74rem/1.2 var(--f-text);letter-spacing:.3em;text-transform:uppercase;color:#8C7656}
-.rh-title{margin:0;display:grid;font-weight:400}
-.rh-t1{font:500 clamp(3.4rem,2rem + 3.2vw,5.8rem)/.86 var(--f-display);letter-spacing:-.01em;
-  background:linear-gradient(172deg,#CDAA6C 8%,#A9864C 55%,#8A6A3C);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
-.rh-t2{font:italic 300 clamp(1.45rem,1.05rem + .9vw,2.05rem)/1 var(--f-display);color:var(--ink-2);margin:.08em 0 0 .3em;letter-spacing:.005em}
-.rh-lead{margin:2px 0 0;font:400 clamp(1rem,.94rem + .22vw,1.12rem)/1.5 var(--f-display);color:var(--ink-2);max-width:34ch}
-.rh-caps{display:grid;margin-top:auto;padding-top:clamp(10px,1.2vw,16px);border-top:1px solid rgba(138,106,60,.28)}
-.rh-cap{grid-area:1/1;display:grid;align-content:start;gap:6px;opacity:0;visibility:hidden;transition:opacity .7s var(--rh-ease),visibility 0s .7s}
-.rh-cap.on{opacity:1;visibility:visible;transition:opacity .9s var(--rh-ease) .35s,visibility 0s}
-.rh-cap > *{transform:translateY(6px);transition:transform .9s var(--rh-ease) .35s}
-.rh-cap.on > *{transform:none}
-.rh-cap.on .rh-cap-p{transition-delay:.47s}.rh-cap.on .rh-cap-a{transition-delay:.56s}
-.rh-cap-k{font:700 .6rem/1.2 var(--f-text);letter-spacing:.28em;text-transform:uppercase;color:var(--bronze)}
-.rh-cap-name{margin:0;font:400 clamp(1.3rem,1.1rem + .5vw,1.6rem)/1.1 var(--f-display);color:var(--ink)}
-.rh-cap-name em{font-style:italic;color:var(--green-2)}
-.rh-cap-p{margin:0;font-size:.86rem;line-height:1.55;color:var(--ink-2);max-width:38ch}
-.rh-cap-a,.rh-book{justify-self:start;align-self:flex-start;padding:10px 0;font:700 .62rem/1.2 var(--f-text);letter-spacing:.22em;text-transform:uppercase;color:var(--green);text-decoration:none;
-  background:linear-gradient(currentColor,currentColor) 0 calc(100% - 7px)/0 1px no-repeat;transition:background-size .45s}
-.rh-cap-a:hover,.rh-book:hover{background-size:100% 1px}
-.rh-index{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
-.rh-tab{display:flex;align-items:baseline;gap:10px;width:100%;min-height:34px;padding:5px 0;border:0;background:none;cursor:pointer;text-align:left;
-  font:400 clamp(1.05rem,.95rem + .25vw,1.22rem)/1.2 var(--f-display);color:var(--ink);transition:color .5s}
-.rh-tab span{font:400 .95rem var(--f-display);letter-spacing:.04em;color:#B08D55}
+/* the words, on the paper itself */
+.rh-top{position:absolute;left:9%;top:3.2%;z-index:3}
+.rh-top .crumb{margin:0}
+.rh-copy{position:absolute;left:5.8%;top:24%;width:25.5%;z-index:3;display:flex;flex-direction:column}
+.rh-k{margin-left:3.6vw;font:700 clamp(.62rem,.78vw,.86rem)/1.2 var(--f-text);letter-spacing:.3em;text-transform:uppercase;color:#A07E45}
+.rh-title{margin:.5vw 0 0;display:grid;font-weight:400}
+.rh-t1{font:500 clamp(3.4rem,7.4vw,8.4rem)/.9 var(--f-display);letter-spacing:-.012em;
+  background:linear-gradient(172deg,#C9A35F 8%,#A9824A 55%,#8A6A3C);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.05em}
+.rh-t2{font:italic 400 clamp(1.5rem,3.2vw,3.6rem)/1 var(--f-display);color:#2F2A22;margin:.05em 0 0 -.04em;letter-spacing:.005em}
+.rh-lead{margin:1.7vw 0 0 3.8vw;font:400 clamp(1rem,1.2vw,1.36rem)/1.55 var(--f-display);color:#3A3128;max-width:19.5em}
+.rh-index{list-style:none;margin:1.9vw 0 0 1.9vw;padding:0;display:grid;grid-template-columns:repeat(2,max-content);gap:0 2.6vw}
+.rh-tab{display:flex;align-items:baseline;gap:1.1vw;min-height:34px;padding:.25vw 0;border:0;background:none;cursor:pointer;text-align:left;
+  font:400 clamp(1rem,1.18vw,1.34rem)/1.2 var(--f-display);color:#2F2A22;transition:color .5s}
+.rh-tab span{font:italic 400 clamp(.95rem,1.1vw,1.25rem) var(--f-display);letter-spacing:.04em;color:#B08D55}
 .rh-tab:hover,.rh-tab.on{color:var(--green)}
-.rh-tab.on{background:linear-gradient(var(--gilt),var(--gilt)) 0 100%/34px 1px no-repeat}
-.rh-book{color:var(--bronze);margin-top:-6px}
+.rh-tab.on{background:linear-gradient(var(--gilt),var(--gilt)) 0 100%/2.2vw 1px no-repeat}
+.rh-caps{display:grid;margin:.45vw 0 0 1.9vw;max-width:22em}
+.rh-cap{grid-area:1/1;margin:0;font:italic 400 clamp(.92rem,1vw,1.12rem)/1.45 var(--f-display);color:#5B4E3E;opacity:0;visibility:hidden;transform:translateY(5px);
+  transition:opacity .7s var(--rh-ease),transform .7s var(--rh-ease),visibility 0s .7s}
+.rh-cap.on{opacity:1;visibility:visible;transform:none;transition:opacity .9s var(--rh-ease) .4s,transform .9s var(--rh-ease) .4s,visibility 0s}
+.rh-cap-name{font-style:normal;color:#2F2A22}
+.rh-cap-name em{color:var(--green)}
+.rh-book{align-self:flex-start;margin:1vw 0 0 1.9vw;padding:8px 0;font:700 clamp(.64rem,.78vw,.86rem)/1.2 var(--f-text);letter-spacing:.24em;text-transform:uppercase;color:#2F2A22;text-decoration:none;
+  background:linear-gradient(currentColor,currentColor) 0 calc(100% - 5px)/0 1px no-repeat;transition:background-size .45s}
+.rh-book span{display:inline-block;margin-left:.7em;transition:transform .45s}
+.rh-book:hover{background-size:100% 1px}.rh-book:hover span{transform:translateX(4px)}
 
-/* count, controls and note */
-.rh-count{position:absolute;right:5.5%;top:5.5%;z-index:6;margin:0;display:flex;align-items:baseline;gap:6px;font:300 clamp(1.5rem,1.2rem + .6vw,2rem)/1 var(--f-display);color:#4A3A25}
-.rh-count span{font:italic 300 .95rem var(--f-display);color:#6B5638}
-.rh-ctl{position:absolute;right:10%;bottom:9%;z-index:6;display:flex;align-items:center;gap:2px;padding:4px 6px;border:1px solid rgba(246,241,231,.65);border-radius:999px;
-  background:rgba(32,46,36,.32);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+/* count, controls and note, on the opening */
+.rh-count{position:absolute;right:5.6%;top:15%;z-index:3;margin:0;display:flex;align-items:baseline;gap:.35em;font:italic 400 clamp(1.3rem,2vw,2.3rem)/1 var(--f-display);color:#2F2A22}
+.rh-count span{font-size:.72em;color:#4A3A25}
+.rh-note{margin:1.5vw 0 0 1.9vw;font:700 clamp(.54rem,.6vw,.68rem)/1.3 var(--f-text);letter-spacing:.22em;text-transform:uppercase;color:var(--bronze);transition:opacity .6s}
+.rh-ctl{position:absolute;right:4.6%;bottom:12.5%;z-index:3;display:flex;align-items:center;gap:6px}
+.rh-pill{display:flex;align-items:center;gap:2px;padding:3px 8px;border:1px solid rgba(246,241,231,.7);border-radius:999px;background:rgba(30,26,18,.34);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .rh-btn{display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;border-radius:50%;background:none;color:#F6F1E7;cursor:pointer}
+.rh-play{width:46px;height:46px;border:1px solid rgba(246,241,231,.7);background:rgba(30,26,18,.34);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .rh-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.4}
 .rh-play .i-play{display:none}.rh-play[aria-pressed="true"] .i-pause{display:none}.rh-play[aria-pressed="true"] .i-play{display:block;fill:currentColor;stroke:none}
-.rh-btn:hover{background:rgba(246,241,231,.14)}
+.rh-btn:hover{background-color:rgba(246,241,231,.16)}
 .rh-dots{display:flex;align-items:center;gap:2px}
 .rh-dot{position:relative;width:16px;height:32px;padding:0;border:0;background:none;cursor:pointer;transition:width .7s var(--rh-ease)}
-.rh-dot::before,.rh-dot::after{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:3px;background:rgba(246,241,231,.55);transition:width .7s var(--rh-ease),margin .7s var(--rh-ease),background .5s}
+.rh-dot::before,.rh-dot::after{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:4px;box-sizing:border-box;border:1px solid rgba(246,241,231,.85);transition:width .7s var(--rh-ease),margin .7s var(--rh-ease),background .5s}
+.rh-dot::after{border:0}
 .rh-dot.on{width:40px}
-.rh-dot.on::before{width:28px;margin-left:-14px;background:rgba(246,241,231,.38)}
+.rh-dot.on::before{width:28px;margin-left:-14px;background:rgba(246,241,231,.3)}
 .rh-dot.on::after{width:28px;margin-left:-14px;background:#F6F1E7;transform-origin:left;transform:scaleX(1)}
-.rh-run .rh-dot.on::after{animation:rh-fill 8s linear both}
+.rh-run .rh-dot.on::after{animation:rh-fill 5.8s linear both}
 @keyframes rh-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.rh-note{position:absolute;left:11%;bottom:3.4%;max-width:44%;z-index:6;margin:0;font:700 .56rem/1.2 var(--f-text);letter-spacing:.2em;text-transform:uppercase;color:rgba(74,58,37,.82);transition:opacity .6s}
 .rh :focus-visible{outline-color:var(--bronze)}
-.rh-motto{display:flex;align-items:center;justify-content:center;gap:clamp(14px,2.4vw,30px);margin:clamp(22px,2.4vw,34px) auto 0;width:min(100% - 2*var(--pad),1100px);
-  font:400 .7rem/1 var(--f-text);letter-spacing:.55em;text-transform:uppercase;color:var(--ink-3)}
-.rh-motto::before,.rh-motto::after{content:"";flex:1;max-width:150px;height:1px;background:rgba(138,106,60,.45)}
-.rh-motto span:not(:last-child)::after{content:"\00b7";margin-left:clamp(14px,2.4vw,30px);letter-spacing:0}
+.rh-motto{position:absolute;left:0;right:0;bottom:2.4%;z-index:3;display:flex;align-items:center;justify-content:center;gap:clamp(14px,2.2vw,34px);margin:0;
+  font:400 clamp(.66rem,.86vw,.96rem)/1 var(--f-display);letter-spacing:.55em;text-transform:uppercase;color:#2F2A22;text-shadow:0 0 6px #F7EEDC,0 0 12px #F7EEDC}
+.rh-motto::before,.rh-motto::after{content:"";flex:0 1 20vw;height:1px;background:rgba(138,106,60,.5)}
+.rh-motto span:not(:last-child)::after{content:"\00b7";margin-left:clamp(14px,2.2vw,34px);letter-spacing:0}
 
-@media (min-width:1100px) and (max-width:1279px){ .rh-lead{display:none} }
-/* tablet: the artwork and photograph across the top, the torn panel laid over its lower edge */
-@media (max-width:1099px){
-  .rh-stage{height:auto;display:grid;padding:clamp(22px,4vw,40px) clamp(10px,3vw,30px) clamp(28px,5vw,44px)}
-  .rh-art{position:relative;left:auto;top:auto;width:104%;height:auto;aspect-ratio:886/610;margin:0 -2%}
-  .rh-panel{position:relative;left:auto;top:auto;width:min(86%,620px);height:auto;margin:-12% 0 0 3%}
-  .rh-copy{height:auto;padding:clamp(30px,5vw,44px) clamp(26px,5vw,44px) 30px}
-  .rh-caps{margin-top:6px}
-  .rh-w5{left:0;top:auto;bottom:4%;width:20%;height:40%}
-  .rh-block{display:none}
-  .rh-tile{left:auto;right:-1%;bottom:-6%;width:clamp(56px,11vw,96px)}
-  .rh-palm{width:70%;height:40%}
-  .rh-ctl{right:9%;bottom:8%}
-}
-/* phone: photograph first and large inside its artwork; text below it, never over it */
-@media (max-width:760px){
-  .rh-stage{width:calc(100% - 24px);padding:10px 0 22px}
-  .rh-art{width:100%;margin:0;aspect-ratio:886/700}
-  .rh-panel{width:auto;margin:-30px 10px 0}
-  .rh-copy{padding:30px 22px 22px;gap:12px}
-  .rh-t1{font-size:clamp(3rem,14vw,3.8rem)}
-  .rh-t2{font-size:1.4rem}
-  .rh-index{gap:0 12px}
-  .rh-tab{font-size:1rem}
-  .rh-ctl{right:6%;bottom:9%;padding:2px 4px}
-  .rh-btn{width:32px;height:32px}
+@media (min-width:1101px) and (max-width:1300px){ .rh-cap-p{display:none} }   /* a tight column: the room's name only */
+/* narrower screens: the painted opening first, cropped to the photograph and the leaves round it, then the words */
+@media (max-width:1100px){
+  .rh-stage{height:auto;display:flex;flex-direction:column}
+  .rh-canvas{position:relative;top:auto;transform:none;width:124%;margin-left:-22%}
+  .rh-top{position:relative;left:auto;top:auto;padding:16px var(--pad) 0}
+  .rh-top{order:-1}
+  .rh-copy{position:relative;left:auto;top:auto;width:auto;padding:4px var(--pad) 0;max-width:620px}
+  .rh-k,.rh-lead{margin-left:0}
+  .rh-t1{font-size:clamp(3.6rem,15vw,5.6rem)}
+  .rh-t2{font-size:clamp(1.6rem,6.4vw,2.4rem)}
+  .rh-lead{margin-top:18px;font-size:1.06rem}
+  .rh-index,.rh-caps,.rh-book{margin-left:0}
+  .rh-index{margin-top:20px;gap:0 28px}
+  .rh-tab{gap:10px;font-size:1.06rem}.rh-tab span{font-size:1rem}.rh-tab.on{background-size:24px 1px}
+  .rh-caps{margin-top:14px}
+  .rh-book{margin-top:14px}
+  .rh-count{right:6.5%;top:13%;font-size:1.3rem}
+  .rh-note{margin:16px 0 0;font-size:.6rem}
+  .rh-ctl{right:6%;bottom:12%}
+  .rh-btn{width:32px;height:32px}.rh-play{width:38px;height:38px}
   .rh-dot{width:12px}.rh-dot.on{width:30px}.rh-dot.on::before,.rh-dot.on::after{width:20px;margin-left:-10px}
-  .rh-count{top:6%;right:7%;font-size:1.3rem}
-  .rh-note{left:9%;bottom:3%;font-size:.5rem;max-width:60%}
-  .rh-tl,.rh-tile{display:none}
-  .rh-motto{letter-spacing:.38em;font-size:.62rem}
-  .rh-motto::before,.rh-motto::after{max-width:40px}
+  .rh-motto{position:relative;bottom:auto;margin:30px var(--pad) 26px;letter-spacing:.38em;font-size:.64rem}
+  .rh-motto::before,.rh-motto::after{flex-basis:40px}
 }
-@media (max-width:420px){ .rh-play{display:none} }
+@media (max-width:760px){ .rh-canvas{width:162%;margin-left:-56%} }
+@media (max-width:420px){ .rh-dot{width:10px} .rh-pill{padding:2px 4px} }
 
 /* 02 the art of staying */
 .rm-stay{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,1.6vw,28px);padding:clamp(80px,9vw,170px) var(--pad) clamp(90px,10vw,180px);background:var(--stone)}

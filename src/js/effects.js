@@ -709,18 +709,18 @@
   addEventListener('scroll',function chk(){ var r=sec.getBoundingClientRect(); if(r.top<innerHeight*.8){ sec.classList.add('in'); removeEventListener('scroll',chk); } },{passive:true});
 })();
 
-/* Rooms hero: crossfading photographs whose surrounding washes and light follow each photo's palette.
+/* Rooms hero: crossfading photographs; the painted leaves, washes and paper around them take each photo's palette.
    Pauses while the controls are hovered, on keyboard focus, a hidden tab or when scrolled away; manual choices restart the timer. */
 (function () {
   const root = document.querySelector('[data-rh]'); if (!root) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stage = root.querySelector('.rh-stage');
   const slides = [...root.querySelectorAll('.rh-slide')], n = slides.length; if (n < 2) return;
-  const caps = [...root.querySelectorAll('.rh-cap')], ambs = [...root.querySelectorAll('.rh-amb-ph')];
+  const caps = [...root.querySelectorAll('.rh-cap')];
   const dots = [...root.querySelectorAll('[data-rh-dot]')], tabs = [...root.querySelectorAll('[data-rh-go]')];
   const num = root.querySelector('[data-rh-num]'), note = root.querySelector('[data-rh-note]');
   const live = root.querySelector('[data-rh-live]'), play = root.querySelector('[data-rh-play]');
-  const DUR = 8000;
+  const DUR = 5800;                                        // about six seconds a slide
   let i = 0, t = 0, paused = reduce, hover = false, focus = false, vis = false, busy = false;
 
   const ready = (k) => { const im = slides[k].querySelector('img'); if (!im) return Promise.resolve();
@@ -734,7 +734,6 @@
     i = k; const d = slides[k].dataset;
     ['green', 'gold', 'rose', 'amb'].forEach((p) => stage.style.setProperty('--' + p, d[p]));
     set(slides, k); set(caps, k);
-    ambs.forEach((a, j) => a.classList.toggle('on', j === k));
     dots.forEach((b, j) => { b.classList.toggle('on', j === k); b.setAttribute('aria-current', String(j === k)); });
     tabs.forEach((b) => { const on = +b.dataset.rhGo === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
     num.textContent = String(k + 1).padStart(2, '0');

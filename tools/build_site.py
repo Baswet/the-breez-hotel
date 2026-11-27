@@ -686,65 +686,49 @@ def rooms_hero():
         f'{"" if i == 0 else " aria-hidden=\"true\""} data-green="{pal[k]["green"]}" data-gold="{pal[k]["gold"]}" data-rose="{pal[k]["rose"]}" data-amb="{pal[k]["amb"]}"'
         f' data-note="{note}" data-title="{html.escape(name.replace("<em>", "").replace("</em>", ""), quote=True)}">'
         f'{img(k, "(max-width:1100px) 92vw, 56vw", eager=(i == 0))}</figure>' for i, (k, a, name, line, note) in enumerate(RH))
-    ambient = ''.join(f'<span class="rh-amb-ph{" on" if i == 0 else ""}" style="background-image:url({RH_ART}/ambient-{k}.webp)"></span>' for i, (k, *_) in enumerate(RH))
     def cap(i, a, name, line):
-        kick = f'{i + 1:02d} &middot; The room' if a else f'{i + 1:02d} &middot; Atmosphere'
-        link = f'<a class="rh-cap-a" href="#{a}">Discover the room <span aria-hidden="true">&rarr;</span></a>' if a else ''
-        return (f'<div class="rh-cap{" on" if i == 0 else ""}"{"" if i == 0 else " aria-hidden=\"true\""}><span class="rh-cap-k">{kick}</span>'
-                f'<p class="rh-cap-name">{name}</p><p class="rh-cap-p">{line}</p>{link}</div>')
+        return (f'<p class="rh-cap{" on" if i == 0 else ""}"{"" if i == 0 else " aria-hidden=\"true\""}>'
+                f'<span class="rh-cap-name">{name}.</span> <span class="rh-cap-p">{line}</span></p>')
     caps = ''.join(cap(i, a, name, line) for i, (k, a, name, line, note) in enumerate(RH))
     tabs = ''.join(f'<li><button type="button" class="rh-tab{" on" if i == 0 else ""}" data-rh-go="{i}" aria-pressed="{"true" if i == 0 else "false"}"><span>{i + 1:02d}</span>{ROOMS[a]["Room"]}</button></li>'
                    for i, (k, a, *_) in enumerate(RH) if a)
     dots = ''.join(f'<button type="button" class="rh-dot{" on" if i == 0 else ""}" data-rh-dot="{i}" aria-label="Slide {i + 1}: {html.escape(name.replace("<em>", "").replace("</em>", ""), quote=True)}"'
                    f' aria-current="{"true" if i == 0 else "false"}"></button>' for i, (k, a, name, *_) in enumerate(RH))
     arrow = lambda d: f'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="{"M15 5l-7 7 7 7" if d < 0 else "M9 5l7 7-7 7"}"/></svg>'
-    # fine champagne lines, drawn on the same box as the frame artwork (.rh-art, 886 x 610 units)
-    deco = '''<svg class="rh-deco" viewBox="0 0 886 610" preserveAspectRatio="none" aria-hidden="true">
-      <rect x="66" y="74" width="740" height="528"/><rect x="88" y="52" width="740" height="514"/>
-      <path d="M650 0L862 212M690 0L866 176M30 52H88M88 18V52M828 566V606M806 602H862"/>
-      <path d="M66 506A96 96 0 0 1 162 602M66 538A64 64 0 0 1 130 602M66 570A32 32 0 0 1 98 602"/>
-      <path d="M566 548H700V610M600 528H724V606M724 528L770 482"/></svg>'''
-    tile = '''<svg class="rh-tile" viewBox="0 0 140 260" aria-hidden="true"><defs><linearGradient id="rh-foil" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#C9A766"/><stop offset=".45" stop-color="#E6CD95"/><stop offset=".7" stop-color="#B48F55"/><stop offset="1" stop-color="#D9BC80"/></linearGradient></defs>
-      <rect class="f" x="0" y="0" width="140" height="132"/><rect class="g" x="82" y="0" width="58" height="132"/><rect class="f" x="0" y="140" width="96" height="120"/>
-      <path d="M0 124A110 110 0 0 1 110 14M0 100A86 86 0 0 1 86 14M0 76A62 62 0 0 1 62 14M0 52A38 38 0 0 1 38 14M14 132V20H132M28 132V34H118"/>
-      <path d="M0 252L88 164M0 220L56 164M24 260L96 188M10 150H90V250"/></svg>'''
-    tl = '<svg class="rh-tl" viewBox="0 0 180 40" aria-hidden="true"><path d="M0 1H120L150 31H180M24 1V39M24 39H96L124 11M60 1V20H140"/></svg>'
+    lay = lambda cls, extra='': f'<span class="{cls}" aria-hidden="true">{extra}</span>'
+    # fine champagne lines on the stage's own units (1600 x 900): a double frame behind the opening, a rule down the left
+    lines = '''<svg class="rh-lines" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M28 0V700M552 192H1600M552 192V860M574 212H1600M574 212V880M1530 60L1600 130M1500 40L1600 140"/></svg>'''
+    vine = '''<svg class="rh-vine" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M455 900C490 850 530 830 560 780M1500 900C1530 860 1570 840 1600 820M600 0C630 40 680 60 712 96"/></svg>'''
     return f'''<section class="rh" data-rh aria-roledescription="carousel" aria-labelledby="rooms-h1">
-  <div class="rh-top">{crumb('Rooms')}</div>
   <div class="rh-stage" style="{vars_(RH[0][0])}">
-    <div class="rh-amb" aria-hidden="true">{ambient}<span class="rh-veil"></span><span class="rh-palm"></span><span class="rh-grain"></span>{tl}</div>
-    <span class="rh-w rh-w5" aria-hidden="true"><i></i></span><span class="rh-block" aria-hidden="true"><i></i></span>
-    <div class="rh-art">
-      <span class="rh-l rh-l-sage" aria-hidden="true"><i></i></span>
+    <div class="rh-canvas">
+      {lay('rh-x rh-x-page')}{lay('rh-x rh-x-sage')}
+      {lines}
       <div class="rh-photo"><div class="rh-frame">{slides}</div></div>
-      <span class="rh-l rh-l-gold" aria-hidden="true"><i></i></span><span class="rh-l rh-l-rose" aria-hidden="true"><i></i></span>
-      <span class="rh-l rh-l-paper" aria-hidden="true"><i></i></span><span class="rh-l rh-l-green" aria-hidden="true"><i></i></span>
-      {deco}
-      <p class="rh-count" aria-hidden="true"><b data-rh-num>01</b><span>/ {n:02d}</span></p>
+      {lay('rh-x rh-x-rim')}{lay('rh-x rh-x-amber')}{lay('rh-x rh-x-peach')}
+      <div class="rh-leaves" aria-hidden="true">{lay('rh-lf rh-lf-deep', '<i></i>')}{lay('rh-lf rh-lf-olive', '<i></i>')}{lay('rh-lf rh-lf-amber', '<i></i>')}{lay('rh-lf rh-lf-peach', '<i></i>')}</div>
+      {vine}
+      <p class="rh-count" aria-hidden="true"><b data-rh-num>01</b> <span>/ {n:02d}</span></p>
       <div class="rh-ctl">
-        <button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button>
-        <span class="rh-dots">{dots}</span>
-        <button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button>
+        <span class="rh-pill"><button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button><span class="rh-dots">{dots}</span><button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button></span>
         <button type="button" class="rh-btn rh-play" data-rh-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button>
       </div>
+    </div>
+    <div class="rh-top">{crumb('Rooms')}</div>
+    <div class="rh-copy">
+      <span class="rh-k">The Breez &middot; Busia</span>
+      <h1 id="rooms-h1" class="rh-title"><span class="rh-t1">Rooms</span> <em class="rh-t2">at The Breez</em></h1>
+      <p class="rh-lead">Four kinds of room around a garden of palms and pools &mdash; quiet, well kept and close to everything at the hotel.</p>
+      <ol class="rh-index" aria-label="Show a room">{tabs}</ol>
       <p class="rh-note" data-rh-note>{RH[0][4]}</p>
+      <div class="rh-caps">{caps}</div>
+      <a class="rh-book" href="#single">Explore our rooms <span aria-hidden="true">&rarr;</span></a>
     </div>
-    <div class="rh-panel">
-      <span class="rh-paper" aria-hidden="true"></span>
-      <div class="rh-copy">
-        <span class="rh-k">The Breez &middot; Busia</span>
-        <h1 id="rooms-h1" class="rh-title"><span class="rh-t1">Rooms</span> <em class="rh-t2">at The Breez</em></h1>
-        <p class="rh-lead">Four kinds of room around a garden of palms and pools: quiet, well kept and close to everything at the hotel.</p>
-        <div class="rh-caps">{caps}</div>
-        <ol class="rh-index" aria-label="Show a room">{tabs}</ol>
-        <a class="rh-book" href="book.html">Request a booking <span aria-hidden="true">&rarr;</span></a>
-      </div>
-    </div>
-    {tile}
+    <p class="rh-motto"><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></p>
     <p class="sr-only" aria-live="polite" data-rh-live></p>
   </div>
-  <p class="rh-motto"><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></p>
 </section>'''
 
 def rooms():
