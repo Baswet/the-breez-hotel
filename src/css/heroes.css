@@ -665,8 +665,8 @@
    3 The many moods: Passalacqua seasonal feature, retold as hours of a day
    ========================================================================== */
 .ed-kick{display:block;font:700 .72rem/1.2 var(--f-text);letter-spacing:.24em;text-transform:uppercase;color:var(--sand-ink)}
-.ed-karibu .ph,.ed-place .ph,.ed-moods .ph{margin:0;overflow:hidden;background:var(--stone-2)}
-.ed-karibu .ph img,.ed-place .ph img,.ed-moods .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.4s cubic-bezier(.22,1,.36,1)}
+.ed-karibu .ph,.ed-moods .ph{margin:0;overflow:hidden;background:var(--stone-2)}
+.ed-karibu .ph img,.ed-moods .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.4s cubic-bezier(.22,1,.36,1)}
 /* 1 karibu */
 .ed-karibu{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
 .ed-k-panel{background:var(--stone);display:grid;justify-items:center;align-content:start;text-align:center;gap:22px;padding:clamp(72px,9vw,130px) clamp(28px,6vw,96px)}
@@ -680,17 +680,6 @@
 .ed-k-ph:hover img{transform:scale(1.03)}
 .ed-k-side{position:relative;min-height:100%}
 .ed-k-side .ph{position:sticky;top:var(--hx-head);height:calc(100svh - var(--hx-head));max-height:1100px}
-/* 2 place */
-.ed-place{padding:clamp(88px,11vw,170px) 0 clamp(72px,9vw,140px)}
-.ed-place-st{font:300 clamp(1.9rem,1.1rem + 2vw,3.15rem)/1.22 var(--f-display);letter-spacing:-.012em;color:var(--ink);margin:18px 0 0;max-width:30em}
-.ed-place-st em{font-style:italic;color:var(--green-2)}
-.ed-place-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap);margin-top:clamp(48px,7vw,100px);align-items:start}
-.ed-place-big{grid-column:1/9;display:block}
-.ed-place-big .ph{aspect-ratio:3/2}
-.ed-place-big:hover img{transform:scale(1.025)}
-.ed-place-small{grid-column:10/13;margin:clamp(80px,14vw,220px) 0 0}
-.ed-place-small .ph{aspect-ratio:4/5}
-.ed-place-small figcaption{margin-top:12px;font:italic 400 1.05rem var(--f-display);color:var(--ink-3)}
 /* 3 moods */
 .ed-moods{background:var(--stone);padding:clamp(88px,11vw,170px) 0}
 .ed-moods-head{max-width:22em;margin-bottom:clamp(56px,8vw,120px)}
@@ -728,11 +717,6 @@
   .ed-k-side .ph{position:relative;top:0;height:auto;aspect-ratio:16/10}
   .ed-k-panel{padding:56px 22px 64px;gap:18px}
   .ed-k-ph{width:86%}
-  .ed-place{padding:72px 0 64px}
-  .ed-place-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
-  .ed-place-big{grid-column:1/-1}
-  .ed-place-big .ph{aspect-ratio:4/3}
-  .ed-place-small{grid-column:3/7;margin-top:-34px;position:relative;z-index:1}
   .ed-moods{padding:72px 0 80px}
   .ed-mood{grid-template-columns:1fr;gap:20px}
   .ed-mood>*{grid-column:1/-1!important;grid-row:auto!important}
@@ -745,7 +729,7 @@
   .ed-mood-no{font-size:3.4rem}
   .ed-mood+.ed-mood{margin-top:72px}
 }
-@media (prefers-reduced-motion:reduce){ .ed-karibu .ph img,.ed-place .ph img,.ed-moods .ph img{transition:none} }
+@media (prefers-reduced-motion:reduce){ .ed-karibu .ph img,.ed-moods .ph img{transition:none} }
 
 /* ==========================================================================
    HOME: "The best time to visit? Every hour of the day." Scroll-driven story.

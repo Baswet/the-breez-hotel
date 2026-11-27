@@ -426,16 +426,6 @@ def editorial():
   </div>
   <div class="ed-k-side" aria-hidden="true"><div class="ed-arch"><div class="ed-arch-in" data-reveal="arch">{ph('veranda-corridor', '', '(max-width:760px) 86vw, 520px')}</div></div></div>
 </section>'''
-    place = f'''<section class="ed-place" aria-labelledby="place-h">
-  <div class="wrap">
-    <span class="ed-kick rv">A place for your own moment</span>
-    <h2 class="ed-place-st rv" id="place-h">Some places are remembered for the moments they make possible: a slow afternoon beside the pool, a long lunch under the umbrellas, a quiet room after a long road, a gathering on the lawn that brings everyone together. <em>At The Breez there is room for all of them.</em></h2>
-    <div class="ed-place-grid">
-      <a class="ed-place-big rv" href="about.html" aria-label="The hotel and its grounds">{ph('building-palms-pool-court', '', '(max-width:760px) 100vw, 62vw')}</a>
-      <figure class="ed-place-small rv">{ph('poolside-tables', '', '(max-width:760px) 60vw, 26vw')}<figcaption>A table in the shade, by the pool.</figcaption></figure>
-    </div>
-  </div>
-</section>'''
     steps = ''.join(
         f'''<article class="ed-st-step" data-step data-tone="stone">
         <a class="ed-st-ph" href="{u}" tabindex="-1" aria-hidden="true">{ph(k, '', '100vw')}</a>
@@ -452,7 +442,7 @@ def editorial():
     </div>
   </div>
 </section>'''
-    return karibu + '\n' + story_sec + '\n' + place
+    return karibu + '\n' + story_sec
 
 EXP_TILES = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
              'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'bed-detail']
