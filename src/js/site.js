@@ -11,7 +11,7 @@
 
   /* homepage: the header belongs to the hero until the hero has passed under it,
      then turns into the light header (both directions, driven by the hero boundary) */
-  const heroEl = document.querySelector('.hb');
+  const heroEl = document.querySelector('.hb, [data-hero-edge]');
   if (hdr && heroEl && hdr.classList.contains('hdr--over')) {
     if ('IntersectionObserver' in window) {
       let io;

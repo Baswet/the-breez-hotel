@@ -239,6 +239,7 @@ NAV = [('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings'
        ('gallery', 'Gallery'), ('about', 'About'), ('contact', 'Contact')]
 
 BODONI_TEXT = {'index': 'ThartofmakingyoufeelHome.', 'rooms': 'Rooms'}   # Bodoni Moda is loaded as a subset of only these letters
+PAGE_FONTS = {'meetings': 'family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500'}   # the editorial Meetings page only
 def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
 def cur(slug, s): return ' aria-current="page"' if slug == s else ''
 
@@ -248,7 +249,7 @@ def header(slug):
     right = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[4:])
     ov = ''.join(f'<li><a href="{href(s)}"{cur(slug, s)}>{t}</a></li>' for s, t in [('index', 'Home')] + NAV + [('book', 'Book a stay')])
     return f'''<a class="skip" href="#main">Skip to content</a>
-<header class="hdr{' hdr--over' if slug == 'index' else ''}">
+<header class="hdr{' hdr--over' if slug in ('index', 'meetings') else ''}">
   <div class="hdr-in">
     <nav class="nav" aria-label="Primary">{left}</nav>
     {MARK}
@@ -317,6 +318,7 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
 {'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&display=swap&amp;text=' + BODONI_TEXT[slug] + '">' if slug in BODONI_TEXT else ''}
+{'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?' + PAGE_FONTS[slug] + '&amp;display=swap">' if slug in PAGE_FONTS else ''}
 <link rel="stylesheet" href="assets/site.css?v={ASSET_V["site.css"]}">
 <link rel="stylesheet" href="assets/heroes.css?v={ASSET_V["heroes.css"]}">
 <link rel="stylesheet" href="assets/motion.css?v={ASSET_V["motion.css"]}">
@@ -937,153 +939,165 @@ def status_box():
     return f'''<div class="form-status" role="status" aria-live="polite"><b>Your request is ready to send</b><p>Reference <strong data-ref></strong>. We opened WhatsApp with your details. Press send there. If it did not open, use one of these:</p><div class="btn-row"><a class="btn btn--wa" data-wa href="{WA}" target="_blank" rel="noopener">{ICON['wa']} Send on WhatsApp</a><a class="btn" data-mail href="mailto:{EMAIL}">{ICON['mail']} Send by email</a></div><p class="small">Nothing is booked yet. Reception confirms availability and rate by reply.</p></div>'''
 
 def meetings():
+    """Meetings & events: an editorial journey in the manner of Casa Angelina (full-screen opening, vertical
+    letter statements, panoramic strips, small-and-large photograph pairs, a strip of tall photographs on a
+    full-bleed chapter). Every word is the page's existing copy; the .mt2-* class names kept here are the
+    hooks of the hall gallery and layout tabs in effects.js."""
     def pic(k, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, extra=''):
-        return f'<figure class="mt2-ph {cls}"{extra}>{img(k, sizes, eager)}</figure>'
+        return f'<figure class="me-ph {cls}"{extra}>{img(k, sizes, eager)}</figure>'
+    def vert(word, cls=''):
+        return f'<span class="me-vert rv {cls}" aria-hidden="true">' + ''.join(f'<b style="--i:{i}">{c}</b>' for i, c in enumerate(word)) + '</span>'
+    def tier(low, up):
+        return f'<p class="me-tier"><span>{low}</span>{up}</p>'
     SPACES = ['hall-red-skirting', 'hall-screen', 'hall-projector']
     CONF = [('classroom', 'Classroom', 'hall-classroom-setup', 'Tables in rows facing the front, for training sessions and workshops where everyone takes notes.'),
             ('theatre', 'Theatre', 'hall-theatre-grey', 'Rows of chairs facing the screen, for talks, presentations and launches.'),
             ('banquet', 'Banquet', 'hall-banquet-red', 'Round tables dressed in your colours, for dinners, receptions and celebrations.')]
     OUT = [('courtyard-fountain-gazebos', 'The courtyard fountain'), ('courtyard-lawn-fountain', 'An open lawn for your guests'), ('fountain-lawn-swing', 'Afternoons by the fountain'),
            ('garden-gazebo-roof', 'Thatched gazebos in the garden'), ('gazebo-cypress', 'Gazebos framed by cypress'), ('walkway-cottages', 'Garden paths between the cottages')]
-    FAC = [('Meeting halls', 'Indoor halls dressed for your event', 'M4 20V9l8-5 8 5v11M9 20v-6h6v6'),
-           ('Projector & screen', 'Set up in the halls', 'M3 5h18v11H3zM12 16v4M8 20h8'),
-           ('Wi-Fi', 'For every delegate', 'M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01'),
-           ('Room set-ups', 'Classroom, theatre or banquet', 'M4 6h16M4 12h16M4 18h16'),
-           ('Food & drink', 'Tea breaks, lunch, buffets and the bar, in flexible packages', 'M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 2-3 5s1 4 3 4v9'),
-           ('Outdoor spaces', 'Lawns, gazebos, marquees and the courtyard fountain', 'M3 20h18M6 20V10l6-6 6 6v10'),
-           ('Rooms for delegates', 'Single, Double, Deluxe and King, subject to availability', 'M3 18V8M3 14h18v4M21 18v-6a3 3 0 0 0-3-3h-7v5'),
-           ('Capacity', 'Depends on the hall and set-up, confirmed on enquiry', 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 3')]
-    for k in SPACES + [c[2] for c in CONF] + [o[0] for o in OUT]: USED.add(k)
-    spaces = ''.join(f'<figure class="mt2-sp{" on" if i == 0 else ""}">{img(k, "(max-width:760px) 100vw, 60vw")}</figure>' for i, k in enumerate(SPACES))
-    conf_imgs = ''.join(f'<figure class="mt2-cf-img{" on" if i == 0 else ""}" data-conf="{key}">{img(k, "(max-width:760px) 100vw, 55vw")}</figure>' for i, (key, t, k, d) in enumerate(CONF))
+    FAC = [('Meeting halls', 'Indoor halls dressed for your event'), ('Projector &amp; screen', 'Set up in the halls'), ('Wi-Fi', 'For every delegate'),
+           ('Room set-ups', 'Classroom, theatre or banquet'), ('Food &amp; drink', 'Tea breaks, lunch, buffets and the bar, in flexible packages'),
+           ('Outdoor spaces', 'Lawns, gazebos, marquees and the courtyard fountain'), ('Rooms for delegates', 'Single, Double, Deluxe and King, subject to availability'),
+           ('Capacity', 'Depends on the hall and set-up, confirmed on enquiry')]
+    spaces = ''.join(f'<figure class="mt2-sp me-sp{" on" if i == 0 else ""}">{img(k, "(max-width:760px) 100vw, 52vw")}</figure>' for i, k in enumerate(SPACES))
+    conf_imgs = ''.join(f'<figure class="mt2-cf-img me-cf-img{" on" if i == 0 else ""}" data-conf="{key}">{img(k, "(max-width:760px) 100vw, 58vw")}</figure>' for i, (key, t, k, d) in enumerate(CONF))
     conf_tabs = ''.join(f'<button type="button" role="tab" aria-selected="{"true" if i == 0 else "false"}" data-conf="{key}" data-title="{t}" data-desc="{html.escape(d, quote=True)}"><span>0{i+1}</span>{t}</button>' for i, (key, t, k, d) in enumerate(CONF))
-    out_slides = ''.join(f'<figure class="mt2-os{" on" if i == 0 else ""}" data-cap="{html.escape(c, quote=True)}">{img(k, "100vw")}</figure>' for i, (k, c) in enumerate(OUT))
-    fac = ''.join(f'<li><span class="mt2-fn">0{i+1}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="{ic}"/></svg><b>{t}</b><span class="mt2-fd">{d}</span></li>' for i, (t, d, ic) in enumerate(FAC))
-    return f'''<section class="mt2-hero" aria-labelledby="meet-h1" data-spotlight>
-  <div class="mt2-hero-in wrap">
-    <div class="mt2-hero-text">
-      {crumb('Meetings &amp; events')}
-      <span class="hx-k hx-a1">05 · Meetings &amp; events</span>
-      <h1 id="meet-h1" data-split="lines">Make room for something remarkable.</h1>
-      <p class="mt2-lead hx-a3">From important business gatherings to unforgettable celebrations, discover a setting for occasions worth remembering.</p>
-      <div class="hx-actions hx-a4"><a class="btn btn--solid" data-magnetic href="#enquire">Send an enquiry</a><a class="btn" data-magnetic href="{TEL}">Call {PHONE_DISPLAY}</a></div>
+    strip = ''.join(f'<figure class="me-card">{img(k, "(max-width:760px) 70vw, 24vw")}<figcaption>{c}</figcaption></figure>' for i, (k, c) in enumerate(OUT))
+    fac = ''.join(f'<li><span class="me-fn">0{i+1}</span><b>{t}</b><span class="me-fd">{d}</span></li>' for i, (t, d) in enumerate(FAC))
+    words = ''.join(f'<span>{w}</span>' for w in ['Conferences', 'Weddings', 'Training', 'Ruracio', 'Workshops', 'Garden parties'])
+    return f'''<section class="me-hero" data-hero-edge aria-label="Meetings and events at The Breez">
+  {pic('hall-banquet-gold', 'me-hero-ph', '100vw', eager=True)}
+  <div class="me-hero-shade" aria-hidden="true"></div>
+  <div class="me-hero-in">
+    <div class="me-hero-crumb">{crumb('Meetings &amp; events')}</div>
+    <p class="me-hero-k">05 &middot; Meetings &amp; events</p>
+    <p class="me-hero-tag"><span>Halls &middot; Lawns &middot; Marquees</span>Projector and screen, Wi-Fi, full set-up and catering packages.</p>
+    <a class="me-scroll" href="#meet-h1" aria-label="Scroll to the introduction"><i></i></a>
+  </div>
+</section>
+
+<section class="me-state" aria-labelledby="meet-h1">
+  <h1 id="meet-h1" class="me-h1" aria-label="Make room for something remarkable.">
+    <span class="me-h1-a" aria-hidden="true">Make</span>
+    {vert('ROOM', 'me-vert--xl')}
+    <span class="me-h1-b" aria-hidden="true"><span>for something</span><span>remarkable.</span></span>
+  </h1>
+  <div class="me-state-side rv">
+    <p class="me-lead">From important business gatherings to unforgettable celebrations, discover a setting for occasions worth remembering.</p>
+    <div class="me-acts"><a class="me-link" href="#enquire">Send an enquiry</a><a class="me-link" href="{TEL}">Call {PHONE_DISPLAY}</a></div>
+  </div>
+  <p class="me-words" aria-label="Conferences, weddings, training, ruracio, workshops and garden parties.">{words}</p>
+</section>
+
+<section class="me-set" aria-labelledby="intro-h">
+  {pic('courtyard-fountain-tent', 'me-pano', '(max-width:760px) 100vw, 75vw', extra=' data-reveal="left"')}
+  <div class="me-set-text">
+    {tier('the setting', '01')}
+    <h2 id="intro-h" class="me-h2" data-split="lines">Business by day. <em>Celebrations</em> by evening.</h2>
+    <p class="me-p rv">The Breez Hotel hosts conferences, training and workshops in its meeting halls, and weddings, ruracio, birthdays and garden parties on its lawns and under marquees. Events come with a full set-up, Wi-Fi and food and drink packages arranged with the team.</p>
+  </div>
+</section>
+
+<section class="me-meet" aria-labelledby="spaces-h">
+  {pic('hall-banquet-2', 'me-thumb', '(max-width:760px) 44vw, 18vw', extra=' data-reveal="up"')}
+  <div class="me-sp-main" data-spaces tabindex="0" aria-roledescription="carousel" aria-label="Meeting hall photographs">{spaces}
+    <div class="me-sp-nav"><button type="button" data-prev aria-label="Previous photo">&larr;</button><span data-count>01 / 0{len(SPACES)}</span><button type="button" data-next aria-label="Next photo">&rarr;</button></div>
+  </div>
+  <div class="me-meet-text rv">
+    {tier('meetings &amp; conferences', '02')}
+    <h2 id="spaces-h" class="me-h2">A setting for</h2>
+    <ul class="me-list"><li>Conferences</li><li>Training</li><li>Workshops</li><li>Business gatherings</li></ul>
+    <p class="me-small">Projector and screen, Wi-Fi and a full set-up in every hall.</p>
+  </div>
+  {pic('hall-classroom-2', 'me-thumb me-thumb--b', '(max-width:760px) 44vw, 16vw', extra=' data-parallax="0.05"')}
+</section>
+
+<section class="me-conf" aria-labelledby="conf-h">
+  <div class="me-conf-grid" data-config>
+    <div class="me-cf-text">
+      {tier('room configurations', '03')}
+      <div class="mt2-cf-tabs me-tabs" role="tablist" aria-label="Choose a layout">{conf_tabs}</div>
+      <h2 id="conf-h" class="mt2-cf-title me-h2 me-cf-title" aria-live="polite">{CONF[0][1]}</h2>
+      <p class="mt2-cf-desc me-p">{CONF[0][3]}</p>
+      <p class="me-small">Capacity depends on the hall and is confirmed on enquiry.</p>
+      <a class="me-link" href="#enquire" data-setup="{CONF[0][1]}">Enquire about this layout</a>
     </div>
-    <div class="mt2-hero-art">
-      <svg class="mt2-ring" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="98"/></svg>
-      {pic('hall-banquet-gold', 'mt2-circle', '(max-width:760px) 90vw, 46vw', eager=True)}
-      {pic('tent-red-white', 'mt2-float', '(max-width:760px) 40vw, 18vw', extra=' data-parallax="0.06"')}
-      <div class="mt2-glass hx-a4"><span class="hx-k">Halls · Lawns · Marquees</span><p>Projector and screen, Wi-Fi, full set-up and catering packages.</p></div>
-    </div>
+    <div class="me-cf-media">{conf_imgs}</div>
   </div>
 </section>
 
-<div class="mq mt2-mq" data-marquee aria-label="Conferences, training, workshops, weddings, ruracio, birthdays and garden parties."><div class="mq-track"><span>Conferences</span><span>Weddings</span><span>Training</span><span>Ruracio</span><span>Workshops</span><span>Garden parties</span></div></div>
-
-<section class="sec mt2-intro" aria-labelledby="intro-h">
-  <div class="wrap mt2-intro-grid">
-    <span class="hx-v" aria-hidden="true">The setting</span>
-    <div class="mt2-intro-head"><span class="label">01 · The setting</span><h2 id="intro-h" data-split="words">Business by day. <em>Celebrations</em> by evening.</h2></div>
-    {pic('courtyard-fountain-tent', 'mt2-intro-img', '(max-width:760px) 100vw, 40vw', extra=' data-reveal="arch"')}
-    <p class="mt2-intro-p rv">The Breez Hotel hosts conferences, training and workshops in its meeting halls, and weddings, ruracio, birthdays and garden parties on its lawns and under marquees. Events come with a full set-up, Wi-Fi and food and drink packages arranged with the team.</p>
+<section class="me-wed" aria-labelledby="wed-h">
+  {vert('weddings', 'me-vert--side')}
+  <div class="me-wed-media">
+    {pic('tent-wedding-setup', 'me-wed-main', '(max-width:760px) 100vw, 58vw', extra=' data-reveal="up"')}
+    {pic('garden-party-setup', 'me-wed-side', '(max-width:760px) 50vw, 20vw', extra=' data-reveal="up" data-parallax="0.06"')}
+    <p class="me-cap">Under canvas, on the lawn</p>
+  </div>
+  <div class="me-wed-text rv">
+    {tier('weddings', '04')}
+    <h2 id="wed-h" class="me-h2">Weddings</h2>
+    <p class="me-p">Marquees on the lawn, tables dressed in your colours and a buffet line under canvas. Tell us your date and the team will help plan the day.</p>
+    <a class="me-link" href="#enquire">Plan a wedding</a>
   </div>
 </section>
 
-<section class="sec sec--stone mt2-spaces" aria-labelledby="spaces-h">
-  <div class="wrap mt2-spaces-grid">
-    <div class="mt2-sp-main" data-spaces tabindex="0" aria-roledescription="carousel" aria-label="Meeting hall photographs">{spaces}
-      <div class="mt2-sp-nav"><button type="button" data-prev aria-label="Previous photo">←</button><span data-count>01 / 0{len(SPACES)}</span><button type="button" data-next aria-label="Next photo">→</button></div>
-    </div>
-    {pic('hall-banquet-2', 'mt2-sp-a', '(max-width:760px) 50vw, 22vw', extra=' data-reveal="up" data-parallax="0.05"')}
-    {pic('hall-classroom-2', 'mt2-sp-b', '(max-width:760px) 50vw, 24vw', extra=' data-reveal="circle"')}
-    <div class="mt2-panel rv"><span class="label">02 · Meetings &amp; conferences</span><h2 id="spaces-h">A setting for</h2>
-      <ul><li>Conferences</li><li>Training</li><li>Workshops</li><li>Business gatherings</li></ul>
-      <p class="small">Projector and screen, Wi-Fi and a full set-up in every hall.</p></div>
+<section class="me-rur" aria-labelledby="rur-h">
+  <div class="me-rur-text rv">
+    {tier('ruracio &amp; ceremonies', '05')}
+    <h2 id="rur-h" class="me-h2" data-split="lines">Ruracio and family ceremonies</h2>
+    <p class="me-p">Family ceremonies on the open lawn, with marquees, seating and catering arranged around your guests.</p>
+  </div>
+  {pic('cottages-lawn', 'me-thumb me-rur-thumb', '(max-width:760px) 40vw, 16vw', extra=' data-reveal="up"')}
+  {pic('marquee-lawn', 'me-pano me-pano--r', '(max-width:760px) 100vw, 75vw', extra=' data-reveal="left"')}
+</section>
+
+<section class="me-out" aria-labelledby="out-h">
+  {pic('building-palms-pool-court', 'me-out-bg', '100vw')}
+  <div class="me-out-shade" aria-hidden="true"></div>
+  <div class="me-out-in">
+    <div class="me-out-text rv">{tier('outdoor events', '06')}<h2 id="out-h" class="me-h2">Birthdays and garden parties</h2></div>
+    <div class="me-strip hscroll" tabindex="0" aria-label="Garden and outdoor event photographs">{strip}</div>
   </div>
 </section>
 
-<section class="sec mt2-conf" aria-labelledby="conf-h">
-  <div class="wrap">
-    <div class="mt2-conf-grid" data-config>
-      <div class="mt2-cf-media">{conf_imgs}</div>
-      <div class="mt2-cf-text">
-        <span class="label">03 · Room configurations</span>
-        <div class="mt2-cf-tabs" role="tablist" aria-label="Choose a layout">{conf_tabs}</div>
-        <h2 id="conf-h" class="mt2-cf-title" aria-live="polite">{CONF[0][1]}</h2>
-        <p class="mt2-cf-desc">{CONF[0][3]}</p>
-        <p class="small">Capacity depends on the hall and is confirmed on enquiry.</p>
-        <a class="btn btn--book" data-magnetic href="#enquire" data-setup="{CONF[0][1]}">Enquire about this layout</a>
-      </div>
-    </div>
+<section class="me-cat" aria-labelledby="cat-h">
+  {vert('catering', 'me-vert--side me-vert--r')}
+  {pic('tent-buffet-line', 'me-cat-a', '(max-width:760px) 100vw, 56vw', extra=' data-reveal="up"')}
+  {pic('buffet-samosa-chapati', 'me-thumb me-cat-b', '(max-width:760px) 44vw, 18vw', extra=' data-reveal="up"')}
+  {pic('buffet-decor', 'me-thumb me-cat-c', '(max-width:760px) 44vw, 16vw', extra=' data-reveal="up" data-parallax="0.05"')}
+  <div class="me-cat-text rv">
+    {tier('catering', '07')}
+    <h2 id="cat-h" class="me-h2">From tea break to buffet</h2>
+    <p class="me-p">Tea breaks, lunch and buffets for meetings, and buffets and packages for weddings and parties. Menus are agreed with the kitchen.</p>
+    <p class="me-small">Photographed at The Breez.</p>
   </div>
 </section>
 
-<section class="mt2-wed" aria-labelledby="wed-h">
-  <div class="wrap mt2-wed-grid">
-    {pic('tent-wedding-setup', 'mt2-wed-main', '(max-width:760px) 100vw, 46vw', extra=' data-reveal="up"')}
-    <div class="mt2-wed-text"><span class="label label--light">04 · Weddings</span><h2 id="wed-h" data-split="chars">Weddings</h2>
-      <p>Marquees on the lawn, tables dressed in your colours and a buffet line under canvas. Tell us your date and the team will help plan the day.</p>
-      <a class="btn btn--light" data-magnetic href="#enquire">Plan a wedding</a></div>
-    {pic('garden-party-setup', 'mt2-wed-side mask-arch', '(max-width:760px) 60vw, 24vw', extra=' data-reveal="arch" data-parallax="0.07"')}
-    <p class="mt2-wed-cap">Under canvas, on the lawn</p>
-  </div>
+<section class="me-fac" aria-labelledby="fac-h">
+  <div class="me-fac-head">{vert('facilities', 'me-vert--s')}<div>{tier('facilities', '08')}<h2 id="fac-h" class="me-h2" data-split="lines">What every event can use</h2></div></div>
+  <ol class="me-fac-list" data-stagger>{fac}</ol>
 </section>
 
-<section class="sec mt2-rur" aria-labelledby="rur-h">
-  <svg width="0" height="0" aria-hidden="true" focusable="false"><defs><clipPath id="mt2-blob" clipPathUnits="objectBoundingBox"><path d="M.09.32C.14.1.36.02.56.04c.22.02.4.16.42.38.02.2-.06.38-.22.48C.6 1 .38 1 .22.9.06.8.03.52.09.32Z"><animate attributeName="d" dur="14s" repeatCount="indefinite" values="M.09.32C.14.1.36.02.56.04c.22.02.4.16.42.38.02.2-.06.38-.22.48C.6 1 .38 1 .22.9.06.8.03.52.09.32Z;M.06.4C.1.16.32.0.54.03c.24.03.42.2.42.42 0 .22-.12.38-.28.46C.52.99.3.98.17.86.04.74.02.6.06.4Z;M.09.32C.14.1.36.02.56.04c.22.02.4.16.42.38.02.2-.06.38-.22.48C.6 1 .38 1 .22.9.06.8.03.52.09.32Z"/></path></clipPath></defs></svg>
-  <div class="wrap mt2-rur-grid">
-    <div class="mt2-rur-art">
-      <svg class="mt2-rur-line" viewBox="0 0 400 300" aria-hidden="true"><path d="M10 250C90 120 180 300 260 160S380 40 390 20"/></svg>
-      {pic('marquee-lawn', 'mt2-blob', '(max-width:760px) 100vw, 50vw')}
-      {pic('cottages-lawn', 'mt2-rur-c mask-circle', '(max-width:760px) 40vw, 16vw', extra=' data-reveal="circle"')}
-    </div>
-    <div class="mt2-rur-text"><span class="label">05 · Ruracio &amp; ceremonies</span><h2 id="rur-h" data-split="words">Ruracio and family ceremonies</h2>
-      <p>Family ceremonies on the open lawn, with marquees, seating and catering arranged around your guests.</p></div>
+<section class="me-enq" aria-labelledby="enq-h">
+  <div class="me-enq-copy rv">
+    {tier('enquiry', '09')}
+    <h2 id="enq-h" class="me-h2" data-split="lines">Plan your event with us.</h2>
+    <p class="me-p">Share your date, guest numbers and layout. Reception replies with availability, set-up options and a quote.</p>
+    <ul class="me-contact"><li><span>Call</span><a href="{TEL}">{PHONE_DISPLAY}</a></li><li><span>WhatsApp</span><a href="{WA}" target="_blank" rel="noopener">{PHONE_DISPLAY}</a></li><li><span>Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></li></ul>
   </div>
+  <div class="me-enq-form">{event_form()}</div>
 </section>
 
-<section class="mt2-out" aria-labelledby="out-h">
-  <div class="mt2-os-stage" data-outdoor tabindex="0" aria-roledescription="carousel" aria-label="Garden and outdoor event photographs">{out_slides}
-    <div class="mt2-os-shade"></div>
-    <div class="wrap mt2-os-text"><span class="hx-k hx-k--light">06 · Outdoor events</span><h2 id="out-h">Birthdays and garden parties</h2><p class="mt2-os-cap" aria-live="polite">{OUT[0][1]}</p>
-      <div class="mt2-os-ctl"><button type="button" data-prev aria-label="Previous photo">←</button><span class="mt2-os-count"><b data-count>01</b> / 0{len(OUT)}<i class="mt2-os-prog"><i data-prog></i></i></span><button type="button" data-play aria-pressed="false" aria-label="Pause slideshow">❚❚</button><button type="button" data-next aria-label="Next photo">→</button></div>
-    </div>
-  </div>
-</section>
-
-<section class="sec mt2-cat" aria-labelledby="cat-h">
-  <div class="wrap mt2-cat-grid">
-    {pic('tent-buffet-line', 'mt2-cat-a', '(max-width:760px) 100vw, 40vw', extra=' data-reveal="up"')}
-    {pic('buffet-samosa-chapati', 'mt2-cat-b', '(max-width:760px) 50vw, 24vw', extra=' data-reveal="left"')}
-    {pic('buffet-decor', 'mt2-cat-c', '(max-width:760px) 50vw, 24vw', extra=' data-reveal="up"')}
-    <div class="mt2-cat-text rv"><span class="label">07 · Catering</span><h2 id="cat-h">From tea break to buffet</h2><p>Tea breaks, lunch and buffets for meetings, and buffets and packages for weddings and parties. Menus are agreed with the kitchen.</p><p class="small">Photographed at The Breez.</p></div>
-  </div>
-</section>
-
-<section class="sec sec--stone mt2-fac" aria-labelledby="fac-h">
-  <div class="wrap mt2-fac-grid">
-    <div class="mt2-fac-head"><span class="label">08 · Facilities</span><h2 id="fac-h" data-split="words">What every event can use</h2></div>
-    <ol class="mt2-fac-list" data-stagger>{fac}</ol>
-  </div>
-</section>
-
-<section class="mt2-enq" aria-labelledby="enq-h">
-  <div class="mt2-enq-left">
-    {pic('garden-party-balloons', 'mt2-enq-bg', '(max-width:760px) 100vw, 45vw')}
-    <div class="mt2-enq-copy"><span class="hx-k hx-k--light">09 · Enquiry</span><h2 id="enq-h" data-split="lines">Plan your event with us.</h2>
-      <p>Share your date, guest numbers and layout. Reception replies with availability, set-up options and a quote.</p>
-      <ul class="mt2-enq-contact"><li><span>Call</span><a href="{TEL}">{PHONE_DISPLAY}</a></li><li><span>WhatsApp</span><a href="{WA}" target="_blank" rel="noopener">{PHONE_DISPLAY}</a></li><li><span>Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></li></ul></div>
-  </div>
-  <div class="mt2-enq-right">{event_form()}</div>
-</section>
-
-<section class="mt2-close" aria-labelledby="close-h">
-  {pic('hall-gold-cloths', 'mt2-close-bg', '100vw', extra=' data-reveal="circle"')}
-  <div class="mt2-close-frame" aria-hidden="true"></div>
-  <div class="wrap mt2-close-in"><span class="hx-k hx-k--light">10 · The Breez</span><h2 id="close-h" data-split="lines">Let’s make it memorable.</h2>
+<section class="me-close" aria-labelledby="close-h">
+  {pic('hall-gold-cloths', 'me-close-bg', '100vw')}
+  <div class="me-close-shade" aria-hidden="true"></div>
+  <div class="me-close-in">
+    <p class="me-hero-k">10 &middot; The Breez</p>
+    <h2 id="close-h" class="me-close-h" data-split="lines">Let&rsquo;s make it memorable.</h2>
     <p>Tell us what you are planning. We would love to help bring your occasion together.</p>
-    <div class="hx-actions"><a class="btn btn--book" data-magnetic href="#enquire">Send an enquiry</a><a class="btn btn--wa" data-magnetic href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp</a></div></div>
+    <div class="me-acts"><a class="me-link me-link--light" href="#enquire">Send an enquiry</a><a class="me-link me-link--light" href="{WA}" target="_blank" rel="noopener">WhatsApp</a></div>
+  </div>
 </section>'''
-
 
 def gallery():
     cats = ['exterior', 'gardens', 'pools', 'rooms', 'interiors', 'dining', 'conference', 'events', 'people']
@@ -1216,7 +1230,7 @@ def book():
 def credits():
     rows = ''.join(f'<tr><td>{ALT[k]}</td><td>{STOCK[k][0]}</td><td><a href="{LICENSES[STOCK[k][1]]}" target="_blank" rel="noopener">{STOCK[k][1]} License</a></td></tr>' for k in sorted(USED) if IMAGES[k]['stock'])
     return f'''<section class="page-hero"><div class="wrap" style="max-width:960px"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Credits</span></nav><h1 class="h-xl">Photo credits</h1><p class="lead" style="margin-top:16px">Photographs of the hotel, its rooms, pools, gardens, food, halls, events and team are by The Breez Hotel and used with permission.</p></div></section>
-<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond and Karla (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
+<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond, Karla, Bodoni Moda, Old Standard TT and Jost (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
 
 def notfound():
     return f'''<section class="sec"><div class="wrap closing"><span class="label">404</span><h1 class="h-xl">This page has wandered off.</h1><p class="lead">The page you were looking for is not here. Try the home page or ask us on WhatsApp.</p><div class="btn-row" style="justify-content:center"><a class="btn btn--solid" href="index.html">Home</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>'''
