@@ -311,6 +311,7 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Karla:wght@400;500;700&display=swap">
+{'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&display=swap&amp;text=' + 'ThartofmakingyoufeelHome.' + '">' if slug == 'index' else ''}
 <link rel="stylesheet" href="assets/site.css?v={ASSET_V["site.css"]}">
 <link rel="stylesheet" href="assets/heroes.css?v={ASSET_V["heroes.css"]}">
 <link rel="stylesheet" href="assets/motion.css?v={ASSET_V["motion.css"]}">
@@ -555,17 +556,12 @@ def home():
 </section>'''
     return f'''<section class="hx-home hb" aria-label="Welcome to The Breez Hotel">
   {hx('pool-loungers', 'hb-ph', '100vw', eager=True).replace('<figure ', '<figure data-hero-pan ', 1)}
-  <div class="hb-in">
-    <span class="hb-k hb-a1">Karibu &middot; Busia, Kenya</span>
-    <h1 class="hb-title hb-a2">The Breez</h1>
-    <p class="hb-line hb-a3">Where the garden meets <em>the pool</em>.</p>
-    <div class="hb-actions hb-a4"><a class="hb-btn hb-btn--gold" href="book.html">Book your stay</a><a class="hb-btn hb-btn--light" href="about.html">Explore the hotel</a></div>
+  <div class="hb-in hs">
+    <h1 class="hs-h"><span class="hs-k"><span class="hs-orn">{BM.pavilion('hs-emb')}</span><span class="hs-w">The art of</span></span>
+      <span class="hs-m"><span class="hs-l"><span>making</span></span><span class="hs-l hs-l2"><span>you feel</span></span></span>
+      <span class="hs-a"><span class="hs-ai">at home</span><span class="hs-dot">.</span></span><span class="sr-only"> &mdash; The Breez Hotel, Busia</span></h1>
+    <div class="hs-actions"><a class="hb-btn hb-btn--gold" href="book.html">Book your stay</a><a class="hs-link" href="about.html">Explore the hotel <span aria-hidden="true">&rarr;</span></a></div>
   </div>
-  <dl class="hb-facts hb-a5">
-    <div><dt>2</dt><dd>swimming pools, one for children</dd></div>
-    <div><dt>4</dt><dd>room categories</dd></div>
-    <div><dt>Busia</dt><dd>on the Kisumu&ndash;Busia Road</dd></div>
-  </dl>
 </section>
 <div class="mq" data-marquee aria-label="Karibu. Stay, swim, dine, meet and celebrate at The Breez."><div class="mq-track"><span>Karibu</span><span>Stay</span><span>Swim</span><span>Dine</span><span>Meet</span><span>Celebrate</span></div></div>
 
