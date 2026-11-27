@@ -661,7 +661,7 @@ def rooms():
   <div class="rm-open-text">
     {crumb('Rooms')}
     <span class="rm-k">02 &middot; Rooms &amp; stays</span>
-    <h1 id="rooms-h1" class="rm-title"><span>Rooms</span><em>at The Breez</em></h1>
+    <h1 id="rooms-h1" class="rm-title"><span>Rooms</span> <em>at The Breez</em></h1>
     <p class="rm-lead">Four kinds of room around a garden of palms and pools &mdash; quiet, well kept and close to everything at the hotel.</p>
     <ol class="rm-index">{idx}</ol>
     <a class="btn btn--solid" href="book.html">Request a booking</a>
