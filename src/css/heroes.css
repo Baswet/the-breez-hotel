@@ -1162,3 +1162,9 @@ body:has(.lw-loc) .ftr-edge{background:var(--stone)}
   .mm-list{margin:28px 0 32px}
   .mm-next-ph{margin:0 calc(-1 * var(--pad));grid-column:auto}
 }
+@media (min-width:901px){
+  .mm-band{height:auto;min-height:var(--bandh)}
+  .mm-band-in{height:auto;min-height:var(--bandh);padding-bottom:clamp(22px,3vh,36px)}
+  .mm-text{position:relative;margin-left:calc(65.6vw - var(--l));padding-top:clamp(22px,4.2vh,40px);top:auto;left:auto}
+}
+@media (min-width:901px){ .mm-p{max-width:none;line-height:1.62} }
