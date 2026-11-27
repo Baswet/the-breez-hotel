@@ -440,8 +440,8 @@ def editorial():
   <div class="ed-k-side" aria-hidden="true">
     <div class="ed-xp" data-arrive>
       <div class="ed-arch"><div class="ed-arch-in">
-        <figure class="ed-xp-a">{img('building-palms-pool-court', '(max-width:760px) 86vw, 560px')}</figure>
-        <figure class="ed-xp-b">{img('entrance-lobby', '(max-width:760px) 86vw, 560px')}</figure>
+        <figure class="ed-xp-a">{img('building-palms-pool-court', '(max-width:760px) 86vw, 560px', eager=True).replace('fetchpriority="high"', 'loading="eager" fetchpriority="low"')}</figure>
+        <figure class="ed-xp-b">{img('entrance-lobby', '(max-width:760px) 86vw, 560px', eager=True).replace('fetchpriority="high"', 'loading="eager" fetchpriority="low"')}</figure>
       </div></div>
       <div class="ed-xp-prog"><span class="on">The exterior</span><i><b></b></i><span>The arrival</span></div>
     </div>
