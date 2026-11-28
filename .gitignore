@@ -37,3 +37,6 @@ coverage/
 .idea/
 .DS_Store
 Thumbs.db
+
+# design research: third-party references kept locally, not published
+design-references/

@@ -160,16 +160,6 @@
 .lq .sl-ctl button:hover{background:#F3ECE0;color:#141210}
 .lq .sl-count{color:#D9CFBF}
 
-.film{padding:clamp(64px,8vw,120px) 0;background:var(--ivory)}
-.film-strip{display:flex;gap:clamp(12px,1.6vw,22px);overflow-x:auto;scroll-snap-type:x proximity;padding:8px var(--pad) 20px;scroll-padding-inline:var(--pad);scrollbar-width:thin;cursor:grab}
-.film-strip.dragging{cursor:grabbing;scroll-snap-type:none}
-.film-strip figure{flex:0 0 auto;scroll-snap-align:start;margin:0;display:grid;gap:10px}
-.film-strip .hx-ph{height:clamp(300px,42vw,520px);aspect-ratio:var(--ar,3/4)}
-.film-strip figure:nth-child(even){padding-top:clamp(24px,5vw,72px)}
-.film-strip figcaption{display:flex;gap:12px;align-items:baseline;font:italic 1.1rem var(--f-display)}
-.film-strip figcaption b{font:700 .68rem var(--f-text);font-style:normal;letter-spacing:.18em;color:var(--sand-ink)}
-.film-strip img{pointer-events:none;user-select:none}
-.film-strip::before,.film-strip::after{content:"";flex:0 0 1px}
 
 
 .archive-head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:24px}
@@ -198,8 +188,6 @@
   .lq-stage{aspect-ratio:4/5}
   .lq-head{flex-direction:column;align-items:start}
   .lq-foot{grid-template-columns:1fr}
-  .film-strip .hx-ph{height:340px}
-  .film-strip figure:nth-child(even){padding-top:28px}
   .sl-stage{aspect-ratio:4/5}
   .sl-dots button{width:34px}
 }
@@ -280,7 +268,7 @@
    ========================================================================== */
 /* section & list dividers */
 .head,.ruled,.el,.facts,.spread,.every,.dirs div,.mc,.story-step,.mt2-intro-head,.mt2-cat-text,
-.mt2-fac-list,.mt2-enq-contact,.mt2-wed-cap,.hx-dining-meta,.ss-step,.ftr-base,.dock{border-top:0}
+.mt2-fac-list,.mt2-enq-contact,.mt2-wed-cap,.ss-step,.ftr-base,.dock{border-top:0}
 .ruled li,.facts div,.spec dl div,.every div,.ov-nav a,.ab-close li,.mt2-panel li,.mt2-fac-list li,
 .mt2-enq-contact li,.credits-none,.mt2-cf-tabs,.summary div,.ct-actions a{border-bottom:0}
 .summary div,.ct-actions a,.dock a{border-right:0}

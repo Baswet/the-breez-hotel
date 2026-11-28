@@ -166,15 +166,6 @@
     setUI(0);
   });
 
-  /* ---------------------------------------------------------------- film strip drag */
-  document.querySelectorAll('[data-filmstrip]').forEach((strip) => {
-    if (!fine) return;
-    let down = false, sx = 0, sl = 0, moved = false;
-    strip.addEventListener('pointerdown', (e) => { down = true; moved = false; sx = e.clientX; sl = strip.scrollLeft; strip.classList.add('dragging'); });
-    addEventListener('pointerup', () => { down = false; strip.classList.remove('dragging'); });
-    strip.addEventListener('pointermove', (e) => { if (!down) return; const d = e.clientX - sx; if (Math.abs(d) > 4) moved = true; strip.scrollLeft = sl - d; });
-    strip.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
-  });
 })();
 
 /* ==========================================================================

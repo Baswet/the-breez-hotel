@@ -62,11 +62,13 @@ STOCK = {  # key: (photographer, unsplash photo id or page)
     'food-lunch-by-water': ('Hameen Reynolds', 'Unsplash'),
     'bedroom-sunlit-linen': ('Isaac Martin', 'Unsplash'),               # unsplash.com/photos/wH2aFGo-Rt0
     'nightstand-honey-wood': ('Ronnarit Jirathanyakorn', 'Unsplash'),   # unsplash.com/photos/DeYym9Ji6LI
+    'food-plate-teal': ('Adriano Bragi', 'Pexels'),                    # pexels.com/photo/food-on-plate-24289165 (Dining opening)
 }
 
 LICENSES = {'Unsplash': 'https://unsplash.com/license', 'Pexels': 'https://www.pexels.com/license/'}
 
 ALT = {
+    'food-plate-teal': 'A plated shrimp starter on a teal plate, warm evening light (illustrative photograph, not The Breez)',
     'building-palms-pool-court': 'The Breez Hotel building rising behind palms and the pool court',
     'building-palms-umbrellas': 'Hotel building with palms and poolside umbrellas',
     'main-building-facade': 'Main building facade of The Breez Hotel',
@@ -223,7 +225,8 @@ def img(key, sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None):
     a = html.escape(alt if alt is not None else ALT.get(key, ''), quote=True)
     load = 'fetchpriority="high"' if eager else 'loading="lazy"'
     w1600 = 1600 if m['w'] >= 1600 else m['w']
-    return (f'<img src="{m["rel"]}-1600.webp" srcset="{m["rel"]}-800.webp 800w, {m["rel"]}-1600.webp {w1600}w" '
+    big = f', {m["rel"]}-2400.webp 2400w' if (ROOT / 'assets' / (m['rel'] + '-2400.webp')).exists() else ''
+    return (f'<img src="{m["rel"]}-1600.webp" srcset="{m["rel"]}-800.webp 800w, {m["rel"]}-1600.webp {w1600}w{big}" '
             f'sizes="{sizes}" width="{m["w"]}" height="{m["h"]}" alt="{a}" {load} decoding="async">')
 
 def ph(key, cls='', sizes='(max-width:760px) 100vw, 50vw', eager=False, cap=True, alt=None, extra=''):
@@ -851,14 +854,21 @@ def dining():
     strip = [('food-lunch-by-water', 'Lunch by the water'), ('food-salmon-plate', 'Colour on the plate'), ('drink-mocktails-sunlit', 'Mocktails'),
              ('food-burger-fries', 'Light bites'), ('food-breakfast-bowls', 'Morning'), ('food-table-set', 'Evening'), ('food-overhead-plate', 'Plated')]
     sf = ''.join(f'<figure>{hx(k, "", "(max-width:760px) 80vw, 30vw")}<figcaption>{c}</figcaption></figure>' for k, c in strip)
-    return f'''<section class="hx-dining" aria-labelledby="dine-h1">
-  <div class="hx-dining-text">
-    <div>{crumb('Dining')}<span class="hx-k hx-a1">04 · Taste &amp; atmosphere</span><h1 class="hx-title" id="dine-h1" data-split="words">Restaurant <em class="italic">&amp;</em> bar</h1><p class="hx-sub hx-a3" style="margin-top:20px">Kenyan and international food, drinks from the bar and tables by the pool.</p></div>
-    <div class="hx-a4"><div class="hx-dining-meta"><div><b>Breakfast</b>With stays, as listed</div><div><b>Poolside</b>Meals and juice</div><div><b>Events</b>Catering</div></div><a class="btn btn--light" style="margin-top:24px" href="{WA}" target="_blank" rel="noopener">Reserve a table on WhatsApp</a></div>
-  </div>
-  <div class="hx-dining-media">
-    {hx('food-fries-golden', 'main', '(max-width:760px) 100vw, 58vw', eager=True)}
-    <div class="detail glow-warm"><figure class="hx-ph mask-circle ring" style="margin:0">{img('drink-mango-juice', '250px')}</figure></div>
+    # the opening, after the chosen reference (a full-bleed atmospheric photograph, an editorial serif headline at the
+    # left, one small rectangular button): an illustrative Pexels photograph, credited on it and on the credits page
+    return f'''<section class="dn-hero" aria-labelledby="dine-h1">
+  <figure class="dn-hero-ph">{img('food-plate-teal', '100vw', eager=True)}</figure>
+  <div class="dn-hero-shade" aria-hidden="true"></div>
+  <div class="dn-hero-in">
+    <div class="dn-crumb">{crumb('Dining')}</div>
+    <div class="dn-hero-copy">
+      <p class="dn-k">04 &middot; The Breez &middot; Dining</p>
+      <h1 class="dn-h" id="dine-h1">Restaurant <em>&amp;</em> bar</h1>
+      <p class="dn-sub">Kenyan and international food, drinks from the bar and tables by the pool.</p>
+      <dl class="dn-meta"><div><dt>Breakfast</dt><dd>With stays, as listed</dd></div><div><dt>Poolside</dt><dd>Meals and juice</dd></div><div><dt>Events</dt><dd>Catering</dd></div></dl>
+      <a class="dn-btn" href="{WA}" target="_blank" rel="noopener">{ICON['wa']}Reserve a table on WhatsApp</a>
+    </div>
+    <p class="dn-credit">Illustrative photograph, not The Breez &middot; Adriano Bragi / Pexels</p>
   </div>
 </section>
 <section class="sec" aria-labelledby="plates-h">
@@ -866,13 +876,29 @@ def dining():
   <div class="strip" id="plates" tabindex="0" aria-label="Food photographs, scroll sideways" data-stagger>{sf}</div>
   <div class="wrap"><p class="note" style="margin-top:18px">These photographs set the mood and are not dishes from the Breez menu. Ask reception for today’s menu.</p></div>
 </section>
-<section class="sec sec--stone" aria-labelledby="real-h">
-  <div class="wrap real-food" data-layered>
-    {hx('poolside-meal-juice', 'rf-a ly-a', '(max-width:760px) 100vw, 55vw')}
-    {hx('buffet-decor', 'rf-b ly-b mask-arch', '(max-width:760px) 45vw, 22vw')}
-    {hx('buffet-samosa-chapati', 'rf-c ly-c', '(max-width:760px) 45vw, 22vw')}
-    <div class="rf-t ly-t"><span class="hx-k">Photographed at The Breez</span><h2 class="ab-h" id="real-h">Poolside lunch and event dining.</h2><p class="hx-sub">The hotel’s own photographs of food served by the pool and at events.</p></div>
-  </div>
+<section class="de" aria-labelledby="de-h">
+  <header class="de-intro">
+    <p class="de-k rv">The Breez experience</p>
+    <h2 class="de-h" id="de-h" data-split="lines">A taste of <em>the good life.</em></h2>
+    <p class="de-lead rv">Some moments are best remembered around a table. From leisurely afternoons beside the pool to beautifully prepared spreads shared at special gatherings, discover the pleasure of dining at The Breez.</p>
+  </header>
+  <article class="de-one" aria-labelledby="de1-h">
+    <figure class="de-ph de-one-ph" data-reveal="up">{img('poolside-meal-juice', '(max-width:760px) 100vw, 62vw')}</figure>
+    <div class="de-txt rv"><span class="de-n">01</span><p class="de-label">Beside the pool</p><h3 class="de-t" id="de1-h">A little sunshine, served.</h3><p>Fresh flavours, refreshing drinks and the pleasure of a leisurely meal beside the pool. Sometimes, the best part of the day is simply slowing down and enjoying the moment.</p></div>
+  </article>
+  <article class="de-two" aria-labelledby="de2-h">
+    <div class="de-in">
+      <figure class="de-ph de-two-ph" data-reveal="up">{img('buffet-decor', '(max-width:760px) 72vw, 30vw')}</figure>
+      <div class="de-txt rv"><span class="de-n">02</span><p class="de-label">Gather around</p><h3 class="de-t" id="de2-h">Made for moments worth gathering.</h3><p>Beautifully arranged dining spreads bring an extra touch of occasion to celebrations and special gatherings. A welcoming table makes every gathering feel a little more special.</p></div>
+    </div>
+  </article>
+  <article class="de-three" aria-labelledby="de3-h">
+    <div class="de-in">
+      <figure class="de-ph de-three-ph" data-reveal="up">{img('buffet-samosa-chapati', '(max-width:760px) 80vw, 32vw')}</figure>
+      <div class="de-card rv"><span class="de-n">03</span><p class="de-label">The art of hospitality</p><h3 class="de-t" id="de3-h">Something lovely to look forward to.</h3><p>An inviting selection of dishes, thoughtfully presented and ready to be enjoyed together. Because good food has a way of bringing people closer.</p></div>
+    </div>
+  </article>
+  <p class="de-close rv">Good food. Beautiful surroundings. <em>Moments worth remembering.</em></p>
 </section>
 <section class="sec sec--stone" aria-labelledby="menu-h">
   <div class="wrap">
@@ -1113,12 +1139,9 @@ def gallery():
     chips = '<button type="button" data-filter="all" aria-pressed="true">All</button>' + ''.join(f'<button type="button" data-filter="{c}" aria-pressed="false">{CAT_LABEL[c]}</button>' for c in cats if any(IMAGES[k]['cat'] == c for k in items))
     LQ = [('pool-garden-view', 'The pool court and the guest wing'), ('hall-banquet-gold', 'A banquet hall dressed in gold'), ('room-grey-bedding', 'A room made up for the night'),
           ('marquee-lawn', 'A marquee on the lawn'), ('pool-lawn-view', 'Water, lawn and shade'), ('main-building-facade', 'The main building')]
-    FILM = [('entrance-gate', 'Arrive at the gate', '1/1'), ('entrance-lobby', 'Step inside', '3/4'), ('room-four-poster-2', 'Settle in', '4/3'),
-            ('pool-lanes-2', 'Swim', '4/5'), ('poolside-tables', 'Lunch by the pool', '4/3'), ('gazebo-steps', 'The garden', '3/2'), ('courtyard-fountain-tent', 'Evening on the lawn', '3/2')]
-    for k, *_ in LQ + FILM: USED.add(k)
+    for k, *_ in LQ: USED.add(k)
     lq_imgs = ''.join(f'<img src="{IMAGES[k]["rel"]}-1600.webp" srcset="{IMAGES[k]["rel"]}-800.webp 800w, {IMAGES[k]["rel"]}-1600.webp 1600w" sizes="(max-width:760px) 100vw, 1320px" alt="{html.escape(ALT[k], quote=True)}" width="{IMAGES[k]["w"]}" height="{IMAGES[k]["h"]}" decoding="async"{"" if i == 0 else " loading=lazy"}>' for i, (k, c) in enumerate(LQ))
     lq_caps = ''.join(f'<p data-cap{" class=on" if i == 0 else ""}>{c}</p>' for i, (k, c) in enumerate(LQ))
-    film = ''.join(f'<figure>{hx(k, "", "(max-width:760px) 70vw, 30vw", extra=f" style=--ar:{ar}")}<figcaption><b>0{i+1}</b>{c}</figcaption></figure>' for i, (k, c, ar) in enumerate(FILM))
     # the opening, after the supplied 'Our Work' reference: a heading and a button on one strong colour (the Breez
     # forest green), then two rows of photographs drifting in opposite directions. Each row is written twice so the
     # loop is seamless; the second copy is hidden from assistive tech and opens the same photo in the viewer.
@@ -1153,11 +1176,6 @@ def gallery():
   </div>
 </section>
 
-<section class="film" aria-labelledby="film-h">
-  <div class="wrap">{head('Film strip', '<span id="film-h" data-split="words">A day, frame by frame</span>', '<p>Drag or scroll sideways.</p>')}</div>
-  <div class="film-strip" data-filmstrip tabindex="0" aria-label="A day at The Breez, scroll sideways">{film}</div>
-</section>
-
 <section class="gc" aria-labelledby="col-h">
   <div class="gc-head"><span class="gc-k">The garden</span><h2 id="col-h" class="gc-h">Gazebos, cypress and a fountain.</h2><p class="gc-sub">Between the guest wings, a lawn for slow afternoons and garden parties.</p></div>
   <div class="gc-view" data-curve tabindex="0" aria-roledescription="carousel" aria-label="Garden photographs. Drag, swipe or use the arrow keys."><div class="gc-ring">{curve}</div></div>
@@ -1167,7 +1185,6 @@ def gallery():
   <div class="wrap">
     <div class="archive-head"><div><span class="hx-k">The archive</span><h2 id="arc-h">Every photograph</h2></div><div class="chips" data-filters="grid" role="group" aria-label="Filter photographs">{chips}</div></div>
     <div class="gx" id="grid" data-gx aria-roledescription="carousel" aria-label="Photographs of The Breez, changing on their own"><div class="gx-in">{gx_frames}</div><script type="application/json" data-gx-list>{gx_list}</script></div>
-    <p class="note" style="margin-top:32px">All photographs on this page are of The Breez Hotel, shared by the hotel. Stock photographs used elsewhere on the site are credited on the <a href="credits.html">credits page</a>.</p>
   </div>
 </section>'''
 
@@ -1245,7 +1262,7 @@ def book():
 def credits():
     rows = ''.join(f'<tr><td>{ALT[k]}</td><td>{STOCK[k][0]}</td><td><a href="{LICENSES[STOCK[k][1]]}" target="_blank" rel="noopener">{STOCK[k][1]} License</a></td></tr>' for k in sorted(USED) if IMAGES[k]['stock'])
     return f'''<section class="page-hero"><div class="wrap" style="max-width:960px"><nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Credits</span></nav><h1 class="h-xl">Photo credits</h1><p class="lead" style="margin-top:16px">Photographs of the hotel, its rooms, pools, gardens, food, halls, events and team are by The Breez Hotel and used with permission.</p></div></section>
-<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond, Karla, Bodoni Moda, Old Standard TT, Jost and Mrs Saint Delafield (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
+<section class="sec credits" style="padding-top:0"><div class="wrap" style="max-width:960px"><h2 class="h-m" style="margin-bottom:16px">Stock photography</h2><p class="muted">These photographs are from Unsplash and Pexels. They are not of The Breez Hotel, and the people in them are not hotel guests. Each is credited where it appears.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Licence</th></tr></thead><tbody>{rows}</tbody></table><p class="small" style="margin-top:24px">Typefaces: Cormorant Garamond, Karla, Bodoni Moda, Old Standard TT, Jost and Mrs Saint Delafield (SIL Open Font License), served by Google Fonts. Map © Google.</p></div></section>'''
 
 def notfound():
     return f'''<section class="sec"><div class="wrap closing"><span class="label">404</span><h1 class="h-xl">This page has wandered off.</h1><p class="lead">The page you were looking for is not here. Try the home page or ask us on WhatsApp.</p><div class="btn-row" style="justify-content:center"><a class="btn btn--solid" href="index.html">Home</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>'''
@@ -1303,8 +1320,9 @@ def main():
     # copy all images used anywhere
     for k in USED:
         m = IMAGES[k]
-        for w in (800, 1600):
+        for w in (800, 1600, 2400):
             s = ROOT / ('assets/' + m['rel'] + f'-{w}.webp'); dst = OUT / (m['rel'] + f'-{w}.webp')
+            if w == 2400 and not s.exists(): continue
             dst.parent.mkdir(parents=True, exist_ok=True); shutil.copy(s, dst)
     shutil.copytree(ROOT / 'assets/images/botanical', OUT / 'images/botanical')   # original renders, tools/make_botanical.py
     og_image()
