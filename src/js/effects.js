@@ -538,67 +538,6 @@
   });
 })();
 
-/* ==========================================================================
-   Rooms: shape-changing editorial slideshow. Each slide sets the frame's
-   composition (data-style) and enters with one of eight reveals in turn.
-   ========================================================================== */
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  document.querySelectorAll('[data-rx]').forEach((root) => {
-    const s = [...root.querySelectorAll('.rx-slide')]; const n = s.length; if (!n) return;
-    const capEl = root.querySelector('.rx-cap span'), cnt = root.querySelector('[data-count]'), num = root.querySelector('[data-num]');
-    const prog = root.querySelector('[data-prog]'), play = root.querySelector('[data-play]');
-    const E = 'cubic-bezier(.77,0,.18,1)', OUT = 'cubic-bezier(.22,1,.36,1)';
-    /* eight reveals: incoming keyframes, outgoing keyframes */
-    const T = [
-      { i: [{ clipPath: 'ellipse(0% 0% at 18% 82%)' }, { clipPath: 'ellipse(150% 150% at 18% 82%)' }] },                                   // organic expansion
-      { i: [{ clipPath: 'polygon(0 0,0 0,0 0,0 0)' }, { clipPath: 'polygon(0 0,240% 0,0 240%,0 0)' }] },                                    // diagonal curtain
-      { i: [{ clipPath: 'inset(0 50% 0 50%)' }, { clipPath: 'inset(0 0% 0 0%)' }], o: [{ transform: 'scale(1)' }, { transform: 'scale(.94)' }] }, // split frame
-      { i: [{ clipPath: 'circle(0% at 50% 50%)' }, { clipPath: 'circle(75% at 50% 50%)' }] },                                                 // iris
-      { i: [{ transform: 'translateX(60%) rotate(2deg) scale(.9)', opacity: 0 }, { transform: 'none', opacity: 1 }], o: [{ transform: 'none', opacity: 1 }, { transform: 'translateX(-14%) scale(.86)', opacity: .2 }] }, // shuffle
-      { i: [{ filter: 'blur(14px) saturate(1.3)', transform: 'scale(1.12) skewX(-3deg)', opacity: 0 }, { filter: 'none', transform: 'none', opacity: 1 }] }, // liquid
-      { i: [{ clipPath: 'polygon(100% 0,130% 0,130% 100%,120% 100%)' }, { clipPath: 'polygon(-30% 0,130% 0,130% 100%,-40% 100%)' }] },         // architectural wipe
-      { i: [{ transform: 'scale(1.18)', opacity: 0 }, { transform: 'none', opacity: 1 }], o: [{ transform: 'none', opacity: 1 }, { transform: 'scale(.88)', opacity: 0 }] } // depth
-    ];
-    let i = 0, step = 0, t = 0, pa = null, busy = false, paused = reduce, hover = false, vis = false;
-    const fmt = (k) => String(k + 1).padStart(2, '0');
-    const show = (k) => {
-      if (busy) return; k = (k + n) % n; if (k === i) return;
-      const from = s[i], to = s[k]; busy = true; i = k;
-      root.dataset.style = to.dataset.style;
-      to.classList.add('on');
-      const fin = () => { from.classList.remove('on'); from.style.zIndex = ''; to.style.zIndex = ''; busy = false; };
-      if (reduce || !to.animate) fin();
-      else {
-        const tr = T[step++ % T.length]; to.style.zIndex = 2;
-        const a = to.animate(tr.i, { duration: 1400, easing: E });
-        if (tr.o) from.animate(tr.o, { duration: 1400, easing: OUT });
-        a.onfinish = fin; setTimeout(() => { if (busy) fin(); }, 1900);
-      }
-      num.textContent = fmt(i); cnt.textContent = fmt(i);
-      capEl.parentElement.style.opacity = 0;
-      setTimeout(() => { capEl.textContent = to.dataset.cap; capEl.parentElement.style.opacity = 1; }, reduce ? 0 : 450);
-    };
-    const stop = () => { clearTimeout(t); if (pa) { pa.cancel(); pa = null; } };
-    const start = () => { stop(); if (paused || hover || !vis || document.hidden) return; if (prog.animate) pa = prog.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 7000, easing: 'linear', fill: 'forwards' }); t = setTimeout(() => { show(i + 1); start(); }, 7000); };
-    const man = (d) => { show(i + d); start(); };
-    root.querySelector('[data-next]').addEventListener('click', () => man(1));
-    root.querySelector('[data-prev]').addEventListener('click', () => man(-1));
-    play.addEventListener('click', () => { paused = !paused; play.setAttribute('aria-pressed', String(paused)); play.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow'); paused ? stop() : start(); });
-    if (reduce) { play.setAttribute('aria-pressed', 'true'); play.setAttribute('aria-label', 'Play slideshow'); }
-    root.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') man(1); if (e.key === 'ArrowLeft') man(-1); });
-    const frame = root.querySelector('.rx-frame');
-    frame.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; stop(); } });
-    frame.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; root.style.removeProperty('--mx'); root.style.removeProperty('--my'); start(); } });
-    if (fine && !reduce) frame.addEventListener('pointermove', (e) => { const r = frame.getBoundingClientRect(); root.style.setProperty('--mx', `${((e.clientX - r.left) / r.width - 0.5) * -14}px`); root.style.setProperty('--my', `${((e.clientY - r.top) / r.height - 0.5) * -10}px`); });
-    let sx = null; frame.addEventListener('pointerdown', (e) => { sx = e.clientX; });
-    frame.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) man(e.clientX < sx ? 1 : -1); sx = null; });
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-    if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { vis = e.isIntersecting; vis ? start() : stop(); }, { threshold: 0.4 }).observe(root); else { vis = true; start(); }
-  });
-})();
-
 /* Gallery archive tilt */
 (() => {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -709,14 +648,13 @@
   addEventListener('scroll',function chk(){ var r=sec.getBoundingClientRect(); if(r.top<innerHeight*.8){ sec.classList.add('in'); removeEventListener('scroll',chk); } },{passive:true});
 })();
 
-/* Rooms hero: crossfading photographs; the painted leaves, washes and paper around them take each photo's palette.
+/* Rooms opening: full-screen photographs cross-fading about every six seconds, with the room list, counter and dots.
    Pauses while the controls are hovered, on keyboard focus, a hidden tab or when scrolled away; manual choices restart the timer. */
 (function () {
   const root = document.querySelector('[data-rh]'); if (!root) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const stage = root.querySelector('.rh-stage');
+  const stage = root;
   const slides = [...root.querySelectorAll('.rh-slide')], n = slides.length; if (n < 2) return;
-  const caps = [...root.querySelectorAll('.rh-cap')];
   const dots = [...root.querySelectorAll('[data-rh-dot]')], tabs = [...root.querySelectorAll('[data-rh-go]')];
   const num = root.querySelector('[data-rh-num]'), note = root.querySelector('[data-rh-note]');
   const live = root.querySelector('[data-rh-live]'), play = root.querySelector('[data-rh-play]');
@@ -732,8 +670,7 @@
     k = (k + n) % n; if (k === i || busy) return;
     busy = true; await ready(k); busy = false;            // never fade towards an unloaded photo
     i = k; const d = slides[k].dataset;
-    ['green', 'gold', 'rose', 'amb'].forEach((p) => stage.style.setProperty('--' + p, d[p]));
-    set(slides, k); set(caps, k);
+    set(slides, k);
     dots.forEach((b, j) => { b.classList.toggle('on', j === k); b.setAttribute('aria-current', String(j === k)); });
     tabs.forEach((b) => { const on = +b.dataset.rhGo === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
     num.textContent = String(k + 1).padStart(2, '0');
@@ -757,12 +694,12 @@
   play.addEventListener('click', () => { paused = !paused; syncPlay(); paused ? stop() : start(); });
   syncPlay();
   stage.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(i - 1); } });
-  const ctl = root.querySelector('.rh-ctl');                // hovering the controls holds the slide; the photo keeps playing
+  const ctl = root.querySelector('.rp-ctl');                // hovering the controls holds the slide; the photo keeps playing
   ctl.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; stop(); } });
   ctl.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
   stage.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) { focus = true; stop(); } });
   stage.addEventListener('focusout', (e) => { if (!stage.contains(e.relatedTarget)) { focus = false; start(); } });
-  const photo = root.querySelector('.rh-photo'); let sx = null;
+  const photo = root.querySelector('.rp-hero-in'); let sx = null;
   photo.addEventListener('pointerdown', (e) => { sx = e.clientX; });
   photo.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(e.clientX < sx ? i + 1 : i - 1); sx = null; });
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
