@@ -873,12 +873,21 @@
     return null;
   };
   const size = (f) => (f.classList.contains('gx-a') ? '1600' : '800');
-  const load = (f, it) => new Promise((res) => {
+  const load = (f, it, quick) => new Promise((res) => {
     const im = new Image(); im.alt = it.a; im.dataset.k = it.s; im.decoding = 'async';
     im.onload = () => (im.decode ? im.decode().catch(() => {}) : Promise.resolve()).then(() => res(im));
     im.onerror = () => res(null);
-    im.src = `${it.s}-${size(f)}.webp`;
+    im.src = `${it.s}-${quick ? '800' : size(f)}.webp`;
   });
+  const sharpen = (f, im) => {   // the large frame opens on the lighter file, then takes the full-size one once it is here
+    if (size(f) !== '1600' || im.src.endsWith('-1600.webp')) return;
+    const hi = new Image(); hi.onload = () => { if (im.isConnected) im.src = hi.src; }; hi.src = `${im.dataset.k}-1600.webp`;
+  };
+  const warm = (c) => {   // a category button under the pointer or in focus starts fetching its first photographs
+    const q = queues[c] || (queues[c] = { list: [], last: null });
+    if (!q.list.length) q.list = shuffle(pool(c));
+    q.list.slice(0, 3).forEach((it) => { const im = new Image(); im.src = `${it.s}-800.webp`; });
+  };
   const swap = async (f, c) => {
     if (f.dataset.busy) return; f.dataset.busy = '1';
     let im = null;
@@ -893,17 +902,25 @@
   const active = () => frames.slice(0, Math.min(frames.length, pool(cat).length));
   const tick = () => { const fs = active(); if (!fs.length) return; swap(fs[turn % fs.length], cat); turn++; };
   const play = () => { clearInterval(timer); if (!reduce && vis && !document.hidden) timer = setInterval(tick, STEP); };
-  const setCat = async (c) => {
+  const setCat = (c) => {
     if (c === cat) return; cat = c; clearInterval(timer); turn = 0;
     const n = Math.min(frames.length, pool(c).length); gx.dataset.n = String(n);
-    const fs = frames.slice(0, n);
-    const ready = await Promise.all(fs.map((f) => { const it = nextItem(c); return it ? load(f, it) : null; }));   // prepare first
-    if (c !== cat) return;
-    fs.forEach((f, i) => setTimeout(() => { const im = ready[i]; if (!im) return; const old = [...f.querySelectorAll('img')];
-      f.appendChild(im); void im.offsetWidth; im.classList.add('on'); setTimeout(() => old.forEach((o) => o.remove()), 1800); }, i * 240));
+    const t0 = performance.now();
+    frames.slice(0, n).forEach((f, i) => {   // each frame turns over as soon as its own photograph is ready
+      const it = nextItem(c); if (!it) return;
+      load(f, it, true).then((im) => {
+        if (!im || c !== cat) return;
+        setTimeout(() => { if (c !== cat) return; const old = [...f.querySelectorAll('img')];
+          f.appendChild(im); void im.offsetWidth; im.classList.add('on'); sharpen(f, im);
+          setTimeout(() => old.forEach((o) => o.remove()), 1800); }, Math.max(0, i * 240 - (performance.now() - t0)));
+      });
+    });
     play();
   };
-  if (bar) bar.addEventListener('click', (e) => { const b = e.target.closest('button[data-filter]'); if (b) setCat(b.dataset.filter); });
+  if (bar) {
+    bar.addEventListener('click', (e) => { const b = e.target.closest('button[data-filter]'); if (b) setCat(b.dataset.filter); });
+    ['pointerover', 'focusin'].forEach((ev) => bar.addEventListener(ev, (e) => { const b = e.target.closest('button[data-filter]'); if (b && b.dataset.filter !== cat) warm(b.dataset.filter); }));
+  }
   // the first three photographs are in the page; keep them out of the opening queue
   frames.forEach((f) => { const im = f.querySelector('img'); if (im) im.dataset.k = im.dataset.k || ''; });
   document.addEventListener('visibilitychange', play);
