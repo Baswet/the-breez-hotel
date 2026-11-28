@@ -857,21 +857,22 @@
   const frames = [...gx.querySelectorAll('.gx-f')];
   const SPANS = frames.map((f) => +getComputedStyle(f).getPropertyValue('--s') || 4);
   const bar = document.querySelector('[data-filters="grid"]');
-  const STEP = 1150;   // one frame every 1.15 s: with twelve frames, each holds its photograph for about 14 s
-  let cat = 'all', order = [], timer = 0, vis = false;
+  let cat = 'all', vis = false;
   const queues = {};
   const pool = (c) => (c === 'all' ? all : all.filter((x) => x.c === c));
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const active = () => frames.filter((f) => !f.hidden);
-  const showing = () => active().map((f) => (f.querySelector('img:last-child') || {}).dataset?.k);
-  const nextItem = (c) => {
+  const pending = new Set();   // pictures on their way into a frame
+  const grp = Object.fromEntries(all.map((x) => [x.s, x.g || x.s]));   // near-identical photographs share a group
+  const showing = () => active().map((f) => { const k = (f.querySelector('img:last-child') || {}).dataset?.k; return grp[k] || k; });
+  const nextItem = (c, taken = []) => {
     const q = queues[c] || (queues[c] = { list: [], last: null });
-    const busyKeys = showing();
+    const busyKeys = showing().concat(taken, [...pending]);
     for (let tries = 0; tries < 2; tries++) {
       if (!q.list.length) { q.list = shuffle(pool(c)); if (q.list.length > 1 && q.list[0].s === q.last) q.list.push(q.list.shift()); }
-      const i = q.list.findIndex((x) => !busyKeys.includes(x.s));
+      const i = q.list.findIndex((x) => !busyKeys.includes(x.g || x.s));
       if (i >= 0) { const [it] = q.list.splice(i, 1); q.last = it.s; return it; }
-      if (pool(c).length <= busyKeys.filter(Boolean).length) return null;   // every photograph of the category is already up
+      if (new Set(pool(c).map((x) => x.g || x.s)).size <= busyKeys.filter(Boolean).length) return null;   // every picture of the category is already up
       q.list = [];
     }
     return null;
@@ -882,24 +883,39 @@
     im.onerror = () => res(null);
     im.src = `${it.s}-800.webp`;
   });
-  const put = (f, im) => {
+  const put = (f, im) => {   // each photograph arrives from its own small drift and settles; the outgoing one stays until covered
     const old = [...f.querySelectorAll('img')];
+    im.style.setProperty('--dx', ((Math.random() - .5) * 2.4).toFixed(2) + '%');
+    im.style.setProperty('--dy', ((Math.random() - .5) * 2.4).toFixed(2) + '%');
+    im.style.setProperty('--z', (1.04 + Math.random() * .04).toFixed(3));
     f.appendChild(im); void im.offsetWidth; im.classList.add('on');
-    setTimeout(() => old.forEach((o) => o.remove()), 1900);   // the outgoing photograph stays until it is covered
+    setTimeout(() => old.forEach((o) => o.remove()), 2000);
   };
   const swap = async (f, c) => {
     if (f.dataset.busy) return; f.dataset.busy = '1';
     let im = null;
-    for (let tries = 0; tries < 3 && !im; tries++) { const it = nextItem(c); if (!it) break; im = await load(it); }
+    for (let tries = 0; tries < 3 && !im; tries++) {
+      const it = nextItem(c); if (!it) break; const k = it.g || it.s;
+      pending.add(k); im = await load(it); pending.delete(k);
+    }
     if (im && c === cat && !f.hidden) put(f, im);
     delete f.dataset.busy;
   };
-  const tick = () => {
-    const fs = active(); if (!fs.length) return;
-    if (!order.length) order = shuffle(fs);
-    swap(order.shift(), cat);
+  // every frame keeps its own clock (8 to 16 s, re-drawn each time), and no two changes begin within 0.6 s of each
+  // other, so the mosaic is never still and never changes all at once
+  const clocks = new Map(); let lastStart = 0;
+  const due = (f) => {
+    if (f.hidden || !vis || document.hidden || reduce) return;
+    const now = performance.now();
+    if (now - lastStart < 600 || f.dataset.busy) { clocks.set(f, setTimeout(() => due(f), 450 + Math.random() * 700)); return; }
+    lastStart = now; swap(f, cat);
+    clocks.set(f, setTimeout(() => due(f), 8000 + Math.random() * 8000));
   };
-  const play = () => { clearInterval(timer); if (!reduce && vis && !document.hidden) timer = setInterval(tick, STEP); };
+  const stopAll = () => { clocks.forEach((t) => clearTimeout(t)); clocks.clear(); };
+  const play = () => {
+    stopAll(); if (reduce || !vis || document.hidden) return;
+    active().forEach((f) => clocks.set(f, setTimeout(() => due(f), 1200 + Math.random() * 12000)));
+  };
   const layout = (n) => {   // the first n frames, rows of three on the reference spans; a short last row is widened
     frames.forEach((f, i) => { f.hidden = i >= n; f.style.setProperty('--s', SPANS[i]); });
     const rem = n % 3, start = n - rem;
@@ -913,12 +929,13 @@
     q.list.slice(0, 6).forEach((it) => { const im = new Image(); im.src = `${it.s}-800.webp`; });
   };
   const setCat = (c) => {
-    if (c === cat) return; cat = c; clearInterval(timer); order = [];
-    const n = Math.min(frames.length, pool(c).length);
+    if (c === cat) return; cat = c; stopAll();
+    const n = Math.min(frames.length, new Set(pool(c).map((x) => x.g || x.s)).size);
     const fs = frames.slice(0, n);
-    fs.forEach((f) => { f.querySelectorAll('img').forEach((im) => { im.dataset.k = ''; }); });   // the previous category no longer counts as showing
+    frames.forEach((f) => { f.querySelectorAll('img').forEach((im) => { im.dataset.k = ''; }); });   // nothing of the previous category counts as showing
     const t0 = performance.now();
-    const picks = fs.map(() => nextItem(c));
+    const taken = [];   // pictures already chosen in this change, so a pair of twins is never chosen together
+    const picks = fs.map(() => { const it = nextItem(c, taken); if (it) taken.push(it.g || it.s); return it; });
     let laid = false;
     fs.forEach((f, i) => {
       const it = picks[i]; if (!it) return;
@@ -939,4 +956,52 @@
   }
   document.addEventListener('visibilitychange', play);
   new IntersectionObserver(([e]) => { vis = e.isIntersecting; play(); }, { threshold: 0.15 }).observe(gx);
+})();
+
+/* Meetings, the garden strip: three frames stay in place while the six garden photographs dissolve through them,
+   each frame on its own unhurried clock so they never change together. A photograph is loaded and decoded before it
+   appears; none shows in two frames at once; the sequence is shuffled and every photograph takes its turn. Pauses off
+   screen and in a hidden tab; with reduced motion the first three simply stay. */
+(function () {
+  const strip = document.querySelector('[data-live-strip]'); if (!strip) return;
+  let list = []; try { list = JSON.parse(strip.querySelector('[data-live-list]').textContent); } catch (e) { return; }
+  const frames = [...strip.querySelectorAll('.me-card')];
+  frames.forEach((f) => { const im = f.querySelector('img'); if (im) { im.classList.add('on'); im.dataset.k = (im.getAttribute('src') || '').replace(/-(800|1600)\.webp$/, ''); } });
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || list.length <= frames.length) return;
+  let queue = [], vis = false, lastStart = 0; const clocks = new Map();
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const grp = Object.fromEntries(list.map((x) => [x.s, x.g || x.s]));   // near-identical photographs count as one
+  const showing = () => frames.filter((f) => f.offsetParent).map((f) => { const k = (f.querySelector('img:last-child') || {}).dataset?.k; return grp[k] || k; });
+  const next = () => {
+    const on = showing();
+    for (let tries = 0; tries < 2; tries++) {
+      if (!queue.length) queue = shuffle(list);
+      const i = queue.findIndex((x) => !on.includes(x.g || x.s));
+      if (i >= 0) return queue.splice(i, 1)[0];
+      queue = [];
+    }
+    return null;
+  };
+  const swap = (f) => {
+    const it = next(); if (!it || f.dataset.busy) return; f.dataset.busy = '1';
+    const im = new Image(); im.alt = it.a; im.dataset.k = it.s; im.decoding = 'async';
+    im.onload = () => (im.decode ? im.decode().catch(() => {}) : Promise.resolve()).then(() => {
+      const old = [...f.querySelectorAll('img')];
+      f.appendChild(im); void im.offsetWidth; im.classList.add('on');
+      setTimeout(() => { old.forEach((o) => o.remove()); delete f.dataset.busy; }, 2000);
+    });
+    im.onerror = () => { delete f.dataset.busy; };
+    im.src = `${it.s}-800.webp`;
+  };
+  const due = (f) => {
+    if (!vis || document.hidden || !f.offsetParent) return;
+    const now = performance.now();
+    if (now - lastStart < 1400) { clocks.set(f, setTimeout(() => due(f), 900 + Math.random() * 900)); return; }
+    lastStart = now; swap(f);
+    clocks.set(f, setTimeout(() => due(f), 6500 + Math.random() * 4500));
+  };
+  const play = () => { clocks.forEach((t) => clearTimeout(t)); clocks.clear(); if (!vis || document.hidden) return;
+    frames.forEach((f, i) => clocks.set(f, setTimeout(() => due(f), 1800 + i * 1700 + Math.random() * 1500))); };
+  document.addEventListener('visibilitychange', play);
+  new IntersectionObserver(([e]) => { const was = vis; vis = e.isIntersecting; if (vis !== was) play(); }, { threshold: 0.2 }).observe(strip);
 })();

@@ -563,12 +563,20 @@ main:has(.me-hero){--me-paper:#FBF8F2;--me-ink:#2A2722;--me-soft:#6A625A;--me-ru
 .me-out{position:relative;color:#fff;padding:clamp(100px,11vw,180px) 0 clamp(80px,8vw,130px);overflow:hidden}
 .me-out-bg{position:absolute;inset:0;background:none}
 .me-out-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(18,16,12,.72),rgba(18,16,12,.42) 45%,rgba(18,16,12,.5))}
-.me-out-in{position:relative;display:grid;grid-template-columns:minmax(0,30vw) minmax(0,1fr);align-items:end;column-gap:4vw;padding-left:var(--pad)}
+.me-out-in{position:relative;display:grid;grid-template-columns:minmax(0,30vw) minmax(0,1fr);align-items:center;column-gap:4vw;padding-left:var(--pad)}
 .me-out .me-tier,.me-out .me-tier span,.me-out .me-h2{color:#fff}
-.me-strip{display:flex;gap:clamp(14px,1.6vw,26px);overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--pad) 18px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.5) transparent}
-.me-card{flex:0 0 clamp(220px,21vw,330px);margin:0;scroll-snap-align:start}
-.me-card img{width:100%;aspect-ratio:3/4.2;object-fit:cover;display:block}
-.me-card figcaption{margin-top:12px;font:italic 400 1rem/1.3 var(--me-serif);color:rgba(255,255,255,.9)}
+/* the garden strip: three frames that stay in place while the six garden photographs dissolve through them */
+.me-strip{display:flex;gap:clamp(14px,1.6vw,26px);padding:0 var(--pad) 0 0}
+.me-card{position:relative;flex:1 1 0;max-width:330px;margin:0;aspect-ratio:3/4.2;overflow:hidden;background:#2E322D}
+.me-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.js .me-card img{opacity:0;scale:1.06;transition:opacity 1.8s cubic-bezier(.4,0,.2,1),scale 11s cubic-bezier(.25,.1,.25,1)}
+.js .me-card img.on{opacity:1;scale:1}
+.me-out-sub{margin:16px 0 0;font:500 .7rem/1.4 var(--me-sans);letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.me-out-p{margin:22px 0 0;max-width:34ch;font:italic 400 clamp(1.08rem,1rem + .35vw,1.32rem)/1.7 var(--me-serif);color:rgba(255,255,255,.9)}
+.me-out-wa{display:inline-flex;align-items:center;gap:10px;margin-top:30px;padding:12px 22px;border:1px solid rgba(255,255,255,.6);color:#fff;text-decoration:none;
+  font:500 .68rem/1 var(--me-sans);letter-spacing:.26em;text-transform:uppercase;transition:background .4s,color .4s,border-color .4s}
+.me-out-wa svg{width:15px;height:15px;fill:currentColor}
+.me-out-wa:hover,.me-out-wa:focus-visible{background:#fff;color:var(--green);border-color:#fff}
 
 /* 08 catering: the large photograph left, the small ones answering at the right */
 .me-cat{display:grid;grid-template-columns:var(--pad) minmax(0,52vw) 4vw minmax(0,1fr) 5vw var(--pad);align-items:start;padding:clamp(90px,10vw,170px) 0}
@@ -660,51 +668,13 @@ main:has(.me-hero){--me-paper:#FBF8F2;--me-ink:#2A2722;--me-soft:#6A625A;--me-ru
   .me-rur-text{grid-column:2}
   .me-rur-thumb{display:none}
   .me-rur .me-pano--r{grid-column:1/-1;grid-row:2}
-  .me-card{flex-basis:70vw}
+  .me-strip{padding-right:var(--pad)}.me-card{flex:1 1 0}.me-card:nth-child(3){display:none}
   .me-fac-list{grid-template-columns:1fr}
   .me-fac-head{flex-direction:column;gap:18px}
   .me-vert--s{flex-direction:row;gap:.15em}
 }
 @media (prefers-reduced-motion:reduce){ .me-hs img,.me-hero-k,.me-hero-tag,.me-hero-script,.me-scroll i::after{animation:none} .me-hero{--travel:70svh} }
 
-/* ==========================================================================
-   HOME: stay experiences, recreated from the Bergen Harbour Hotel home page:
-   a dark full-width photo mosaic (rows of three, 5:3:4 rhythm, 260px rows,
-   20px gutters, 1140px container) followed by a 2x2 icon feature list.
-   ========================================================================== */
-.bx-wrap{max-width:1140px;margin:0 auto}
-.bx-band{background:var(--charcoal);padding:72px 45px}
-.bx-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:260px;gap:20px}
-.bx-t{grid-column:span var(--s);display:block;overflow:hidden;background:#3A3E38;outline-offset:3px}
-.bx-t img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s cubic-bezier(.22,1,.36,1),opacity .6s}
-.bx-t:hover img,.bx-t:focus-visible img{transform:scale(1.035)}
-.bx-t:focus-visible{outline:2px solid var(--sand-soft)}
-.bx-feats{padding:108px 45px}
-.bx-fgrid{display:grid;grid-template-columns:1fr 1fr;gap:68px 64px}
-.bx-f{display:grid;grid-template-columns:54px minmax(0,1fr);gap:30px;align-items:start}
-.bx-i{width:54px;height:54px;fill:var(--sand);margin-top:4px}
-.bx-f h3{font:500 clamp(1.7rem,1.2rem + 1vw,2.1rem)/1.15 var(--f-display);letter-spacing:-.01em;color:var(--ink);margin:0 0 18px}
-.bx-f p{margin:0;font-size:1.12rem;line-height:1.5;color:var(--ink);max-width:34ch}
-.bx-f p a{color:var(--sand-ink);text-decoration:none;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .4s;display:inline-block;padding:10px 0;margin:-10px 0}
-.bx-f p a:hover{background-size:100% 1px}
-@media (max-width:1100px){
-  .bx-grid{grid-auto-rows:clamp(170px,22vw,240px)}
-  .bx-fgrid{gap:56px 40px}
-}
-/* phones: two per row, 3:2 then 2:3, as the reference does */
-@media (max-width:760px){
-  .bx-band{padding:27px}
-  .bx-grid{grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:clamp(110px,33vw,170px)}
-  .bx-t{grid-column:span 3}
-  .bx-t:nth-child(4n+2),.bx-t:nth-child(4n+3){grid-column:span 2}
-  .bx-feats{padding:64px 27px 72px}
-  .bx-fgrid{grid-template-columns:1fr;gap:44px}
-  .bx-f{grid-template-columns:54px minmax(0,1fr);gap:24px}
-  .bx-i{width:46px;height:46px}
-  .bx-f h3{font-size:1.75rem;margin-bottom:12px}
-}
-@media (max-width:380px){ .bx-band{padding:20px} .bx-grid{gap:14px} .bx-feats{padding-left:20px;padding-right:20px} .bx-f{gap:18px} }
-@media (prefers-reduced-motion:reduce){ .bx-t img{transition:none} }
 
 /* ==========================================================================
    HOME HERO: one photograph, Bergen Harbour structure (cream header bar over a
@@ -1682,9 +1652,9 @@ main:has(.rp-hero) > section{font-family:var(--rp-sans);overflow-x:clip}
 .gx-in{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:260px;gap:20px}
 .gx-f{grid-column:span var(--s,4);position:relative;margin:0;overflow:hidden;background:#3A3E38}
 .gx-f[hidden]{display:none}
-.gx-f img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;scale:1.05;
-  transition:opacity 1.7s cubic-bezier(.4,0,.2,1),scale 10s cubic-bezier(.25,.1,.25,1)}
-.gx-f img.on{opacity:1;scale:1}
+.gx-f img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;scale:var(--z,1.05);translate:var(--dx,0) var(--dy,0);
+  transition:opacity 1.9s cubic-bezier(.4,0,.2,1),scale 11s cubic-bezier(.25,.1,.25,1),translate 11s cubic-bezier(.25,.1,.25,1)}
+.gx-f img.on{opacity:1;scale:1;translate:0 0}
 @media (max-width:1100px){ .gx-in{grid-auto-rows:clamp(170px,22vw,240px)} }
 @media (max-width:760px){
   .gx{padding:27px}
@@ -1696,4 +1666,4 @@ main:has(.rp-hero) > section{font-family:var(--rp-sans);overflow-x:clip}
   .archive-head .chips button{flex:0 0 auto}
 }
 @media (max-width:380px){ .gx{padding:20px} .gx-in{gap:14px} }
-@media (prefers-reduced-motion:reduce){ .gx-f img{transition:opacity .4s;scale:1} }
+@media (prefers-reduced-motion:reduce){ .gx-f img{transition:opacity .4s;scale:1;translate:none} .js .me-card img{transition:none;scale:1} }

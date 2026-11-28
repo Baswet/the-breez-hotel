@@ -202,6 +202,22 @@ def scan():
         IMAGES[key] = dict(cat='stock', stock=True, w=w, h=h, rel=f'images/stock/{key}')
 USED = set()
 
+def twins(keys):
+    """Near-identical photographs (a few in the library are the same shot saved twice): key -> the key of its group.
+    The living galleries treat a pair as one photograph, so the same picture never shows twice side by side."""
+    import numpy as np
+    sig = {}
+    for k in keys:
+        with Image.open(ROOT / 'assets' / (IMAGES[k]['rel'] + '-1600.webp')) as im:
+            sig[k] = np.asarray(im.convert('L').resize((32, 24)), np.float32)
+    group = {}
+    for i, a in enumerate(keys):
+        group.setdefault(a, a)
+        for b in keys[i + 1:]:
+            if b not in group and float(np.abs(sig[a] - sig[b]).mean()) < 2.0:
+                group[b] = group[a]
+    return group
+
 def img(key, sizes='(max-width:760px) 100vw, 50vw', eager=False, alt=None):
     m = IMAGES[key]; USED.add(key)
     a = html.escape(alt if alt is not None else ALT.get(key, ''), quote=True)
@@ -534,34 +550,13 @@ def editorial():
 </section>'''
     return karibu + '\n' + story_sec
 
-EXP_TILES = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
-             'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'bed-detail']
-EXP_SPANS = [5, 3, 4, 3, 4, 5, 4, 5, 3, 5, 3, 4]          # 12-column rhythm of the reference mosaic
+EXP_SPANS = [5, 3, 4, 3, 4, 5, 4, 5, 3, 5, 3, 4]          # 12-column mosaic rhythm (rows 5-3-4, 3-4-5, 4-5-3, 5-3-4), used by the gallery archive
 EXP_ICONS = {
     'pin': '<path d="M12 2a7 7 0 0 0-7 7c0 5.3 7 13 7 13s7-7.7 7-13a7 7 0 0 0-7-7zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2z"/>',
     'wave': '<path d="M1 7.6c2 0 3-1.6 5.5-1.6S9.8 7.6 12 7.6 15 6 17.5 6 21 7.6 23 7.6v3c-2 0-3-1.6-5.5-1.6S14.2 10.6 12 10.6 9 9 6.5 9 3 10.6 1 10.6zm0 6.4c2 0 3-1.6 5.5-1.6s3.3 1.6 5.5 1.6 3-1.6 5.5-1.6S21 14 23 14v3c-2 0-3-1.6-5.5-1.6S14.2 17 12 17s-3-1.6-5.5-1.6S3 17 1 17z"/>',
     'cup': '<path d="M3 8h14v5a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zm14 1.5h1.5a3 3 0 0 1 0 6H17v-2.4h1.5a.6.6 0 0 0 0-1.2H17zM2 20.5h17V23H2zM7 1.5c1 1 1 2.2 0 3.3s-1 2 0 2.7H5c-1-1-1-2 0-3s1-2 0-3zm4.5 0c1 1 1 2.2 0 3.3s-1 2 0 2.7h-2c-1-1-1-2 0-3s1-2 0-3z"/>',
     'star': '<path d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5L7 14.3l-5.3-5 7.2-.9z"/>',
 }
-EXP_FEATS = [
-    ('pin', 'On the Kisumu–Busia Road', 'A garden hotel in Busia, easy to reach by road and with secure parking for your stay.', 'contact.html', 'Find us'),
-    ('wave', 'Pools and gardens', 'A swimming pool and a children&rsquo;s pool, with umbrellas, loungers and green lawns all around.', 'pools.html', 'See the pools'),
-    ('cup', 'Food and drink', 'Kenyan and international dishes, a full bar, and meals with fresh juice served at the pool.', 'dining.html', 'Eat and drink'),
-    ('star', 'Meetings and celebrations', 'Halls, lawns and marquees for conferences, weddings, ruracio and birthdays.', 'meetings.html', 'Plan an event'),
-]
-
-def experiences():
-    tiles = ''.join(
-        f'<a class="bx-t" style="--s:{EXP_SPANS[i]};transition-delay:{(i % 3) * 0.12 + (i // 3) * 0.06:.2f}s" data-reveal="{("up", "left", "up")[i % 3]}" href="{IMAGES[k]["rel"]}-1600.webp" data-alt="{html.escape(ALT[k], quote=True)}" data-caption="{html.escape(ALT[k], quote=True)}">'
-        f'{img(k, "(max-width:760px) 50vw, 40vw")}</a>' for i, k in enumerate(EXP_TILES))
-    feats = ''.join(
-        f'<div class="bx-f rv"><svg class="bx-i" viewBox="0 0 24 24" aria-hidden="true">{EXP_ICONS[ic]}</svg>'
-        f'<div><h3>{h}</h3><p>{t} <a href="{u}">{lt}</a></p></div></div>' for ic, h, t, u, lt in EXP_FEATS)
-    return f'''<section class="bx" aria-labelledby="bx-h">
-  <h2 class="sr-only" id="bx-h">Your stay at The Breez</h2>
-  <div class="bx-band"><div class="bx-wrap bx-grid" data-lightbox>{tiles}</div></div>
-</section>'''
-
 def home():
     stay = f'''<section class="sec" aria-labelledby="stay-h">
   <div class="wrap">
@@ -588,8 +583,6 @@ def home():
 {signature_sec()}
 
 {editorial()}
-
-{experiences()}
 
 {lower_home()}'''
 
@@ -941,8 +934,7 @@ def meetings():
     CONF = [('classroom', 'Classroom', 'hall-classroom-setup', 'Tables in rows facing the front, for training sessions and workshops where everyone takes notes.'),
             ('theatre', 'Theatre', 'hall-theatre-grey', 'Rows of chairs facing the screen, for talks, presentations and launches.'),
             ('banquet', 'Banquet', 'hall-banquet-red', 'Round tables dressed in your colours, for dinners, receptions and celebrations.')]
-    OUT = [('courtyard-fountain-gazebos', 'The courtyard fountain'), ('courtyard-lawn-fountain', 'An open lawn for your guests'), ('fountain-lawn-swing', 'Afternoons by the fountain'),
-           ('garden-gazebo-roof', 'Thatched gazebos in the garden'), ('gazebo-cypress', 'Gazebos framed by cypress'), ('walkway-cottages', 'Garden paths between the cottages')]
+    OUT = ['courtyard-fountain-gazebos', 'courtyard-lawn-fountain', 'fountain-lawn-swing', 'garden-gazebo-roof', 'gazebo-cypress', 'walkway-cottages']   # the garden, played in place
     FAC = [('Meeting halls', 'Indoor halls dressed for your event'), ('Projector &amp; screen', 'Set up in the halls'), ('Wi-Fi', 'For every delegate'),
            ('Room set-ups', 'Classroom, theatre or banquet'), ('Food &amp; drink', 'Tea breaks, lunch, buffets and the bar, in flexible packages'),
            ('Outdoor spaces', 'Lawns, gazebos, marquees and the courtyard fountain'), ('Rooms for delegates', 'Single, Double, Deluxe and King, subject to availability'),
@@ -950,7 +942,11 @@ def meetings():
     spaces = ''.join(f'<figure class="mt2-sp me-sp{" on" if i == 0 else ""}">{img(k, "(max-width:760px) 100vw, 52vw")}</figure>' for i, k in enumerate(SPACES))
     conf_imgs = ''.join(f'<figure class="mt2-cf-img me-cf-img{" on" if i == 0 else ""}" data-conf="{key}">{img(k, "(max-width:760px) 100vw, 58vw")}</figure>' for i, (key, t, k, d) in enumerate(CONF))
     conf_tabs = ''.join(f'<button type="button" role="tab" aria-selected="{"true" if i == 0 else "false"}" data-conf="{key}" data-title="{t}" data-desc="{html.escape(d, quote=True)}"><span>0{i+1}</span>{t}</button>' for i, (key, t, k, d) in enumerate(CONF))
-    strip = ''.join(f'<figure class="me-card">{img(k, "(max-width:760px) 70vw, 24vw")}<figcaption>{c}</figcaption></figure>' for i, (k, c) in enumerate(OUT))
+    # three frames hold the six garden photographs and change on their own (effects.js, [data-live-strip]); no captions
+    tw = twins(OUT)
+    first = [k for i, k in enumerate(OUT) if tw[k] == k][:3]   # open on three different scenes
+    strip = ''.join(f'<figure class="me-card">{img(k, "(max-width:760px) 44vw, 24vw")}</figure>' for k in first)
+    strip_list = json.dumps([{'s': IMAGES[k]['rel'], 'a': ALT.get(k, ''), 'g': IMAGES[tw[k]]['rel']} for k in OUT], ensure_ascii=False)
     fac = ''.join(f'<li><span class="me-fn">0{i+1}</span><b>{t}</b><span class="me-fd">{d}</span></li>' for i, (t, d) in enumerate(FAC))
     words = ''.join(f'<span>{w}</span>' for w in ['Conferences', 'Weddings', 'Training', 'Ruracio', 'Workshops', 'Garden parties'])
     HERO = ['hall-banquet-gold', 'cottage-courtyard-swing']   # the hotel's own photographs; the hall leads and is the one that settles into the composition
@@ -1055,8 +1051,11 @@ def meetings():
   {pic('building-palms-pool-court', 'me-out-bg', '100vw')}
   <div class="me-out-shade" aria-hidden="true"></div>
   <div class="me-out-in">
-    <div class="me-out-text rv">{tier('outdoor events', '06')}<h2 id="out-h" class="me-h2">Birthdays and garden parties</h2></div>
-    <div class="me-strip hscroll" tabindex="0" aria-label="Garden and outdoor event photographs">{strip}</div>
+    <div class="me-out-text rv">{tier('outdoor celebrations', '06')}<h2 id="out-h" class="me-h2">A garden made for gathering.</h2>
+      <p class="me-out-sub">Birthdays and garden parties</p>
+      <p class="me-out-p">Some moments deserve a beautiful setting. Beneath the palms, beside the fountain and surrounded by the calm of our gardens, The Breez offers a welcoming setting for birthdays, garden parties and moments worth sharing.</p>
+      <a class="me-out-wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']}WhatsApp</a></div>
+    <div class="me-strip" data-live-strip aria-label="Photographs of the garden, changing on their own">{strip}<script type="application/json" data-live-list>{strip_list}</script></div>
   </div>
 </section>
 
@@ -1104,7 +1103,8 @@ def gallery():
     items = [k for c in cats for k, m in IMAGES.items() if m['cat'] == c]
     for k in items: USED.add(k)
     # the living archive: the same photographs, played as an exhibition in three frames (effects.js, [data-gx])
-    gx_list = json.dumps([{'s': IMAGES[k]['rel'], 'a': ALT.get(k, ''), 'c': IMAGES[k]['cat']} for k in items], ensure_ascii=False).replace('</', '<\\/')
+    tw = twins(items)
+    gx_list = json.dumps([{'s': IMAGES[k]['rel'], 'a': ALT.get(k, ''), 'c': IMAGES[k]['cat'], 'g': IMAGES[tw[k]]['rel']} for k in items], ensure_ascii=False).replace('</', '<\\/')
     # the opening twelve, in the homepage mosaic's format: rows of three, column spans 5-3-4, 3-4-5, 4-5-3, 5-3-4
     GX0 = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
            'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'gazebo-cypress']
