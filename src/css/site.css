@@ -131,6 +131,17 @@ p{margin:0 0 1em}p:last-child{margin-bottom:0}
 
 /* ---- mobile dock ----------------------------------------------------------- */
 .dock{display:none}
+.hdr-book{display:none}
+/* ---- next step: the closing action band on pages that would otherwise end without one ---- */
+.nx{background:var(--green-2);color:var(--green-ink)}
+body:has(main .nx) .ftr-edge{background:var(--green-2)}
+.nx-in{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:28px 48px;width:min(100% - 2*var(--pad),1480px);margin-inline:auto;padding:clamp(56px,6vw,96px) 0}
+.nx-k{margin:0 0 14px;font:700 .72rem/1.2 var(--f-text);letter-spacing:.28em;text-transform:uppercase;color:var(--sand-soft)}
+.nx-h{margin:0;font:400 clamp(2.1rem,1.3rem + 2.6vw,3.8rem)/1.02 var(--f-display);letter-spacing:-.01em;color:#fff}
+.nx-h em{color:var(--sand-soft)}
+.nx-acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+.nx .btn--ghost{color:#fff;border-color:rgba(255,255,255,.55)}
+.nx .btn--ghost:hover{background:#fff;color:var(--ink);border-color:#fff}
 
 /* ---- footer ---------------------------------------------------------------- */
 .ftr{background:var(--green);color:var(--green-ink);padding:clamp(56px,8vw,110px) 0 28px;margin-top:0;overflow:hidden}
@@ -373,7 +384,8 @@ p{margin:0 0 1em}p:last-child{margin-bottom:0}
   .nav{display:none}
   .hdr-in{grid-template-columns:auto 1fr auto}
   .mark{justify-items:start}
-  .hdr .btn--book{display:none}
+  .hdr .nav .btn--book{display:none}
+  .hdr-book{display:inline-flex;justify-self:end}
   .menu-btn{display:inline-flex}
   .ftr-grid{grid-template-columns:1fr 1fr}
   .el,.el:nth-child(even){grid-template-columns:80px 1fr}
@@ -423,6 +435,8 @@ p{margin:0 0 1em}p:last-child{margin-bottom:0}
   .dock a:last-child{border:0;background:var(--sand);color:#1B1209}
   .dock svg{width:18px;height:18px}
   body{padding-bottom:58px}
+  .hdr-book{display:none}
+  .nx-in{grid-template-columns:1fr}.nx-acts{display:grid;justify-content:stretch}
 }
 @media print{.hdr,.dock,.overlay{display:none}}
 

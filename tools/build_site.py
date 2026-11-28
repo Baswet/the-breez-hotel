@@ -21,6 +21,10 @@ TODAY = datetime.date.today().isoformat()
 PHONE_DISPLAY = '0707 461 665'
 TEL = 'tel:+254707461665'
 WA = 'https://wa.me/254707461665'
+from urllib.parse import quote as _q
+def wa(msg):
+    """A WhatsApp link to reception with the opening line already written, so the visitor only presses send."""
+    return f'{WA}?text={_q(msg)}'
 EMAIL = 'thebreezhotel@gmail.com'
 FB = 'https://www.facebook.com/TheBreezhotelofficial'
 TT = 'https://www.tiktok.com/@thebreezhotelbusia'
@@ -273,14 +277,15 @@ def header(slug):
   <div class="hdr-in">
     <nav class="nav" aria-label="Primary">{left}</nav>
     {MARK}
-    <nav class="nav nav--r" aria-label="Secondary">{right}<a class="btn btn--book" href="book.html"{cur(slug, 'book')}>Book</a></nav>
+    <nav class="nav nav--r" aria-label="Secondary">{right}<a class="btn btn--book" href="book.html"{cur(slug, 'book')}>Book now</a></nav>
+    <a class="btn btn--book hdr-book" href="book.html">Book now</a>
     <button class="menu-btn" type="button" data-open-menu aria-controls="menu" aria-expanded="false"><i></i>Menu</button>
   </div>
 </header>
 <div class="overlay" id="menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu">
   <div class="ov-top">{MARK}<button class="ov-close" type="button">Close</button></div>
   <ul class="ov-nav">{ov}</ul>
-  <div class="ov-foot"><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp {PHONE_DISPLAY}</a><a class="btn btn--light" href="{TEL}">{ICON['phone']} Call reception</a></div>
+  <div class="ov-foot"><a class="btn btn--book" href="book.html">{ICON['cal']} Book now</a><a class="btn btn--wa" href="{WA}" target="_blank" rel="noopener">{ICON['wa']} WhatsApp {PHONE_DISPLAY}</a><a class="btn btn--light" href="{TEL}">{ICON['phone']} Call reception</a></div>
 </div>'''
 
 MARK_HTML = ('<a class="mark" href="index.html" aria-label="The Breez Hotel, home">' + BM.pavilion('mark-emb') +
@@ -314,6 +319,24 @@ def jsonld():
                             ["Swimming pools", "Kids' pool", "Restaurant", "Bar", "Meeting rooms", "Free Wi-Fi", "Secure parking", "Gardens"]]}
     return f'<script type="application/ld+json">{json.dumps(d, ensure_ascii=False)}</script>'
 
+NEXT = {
+    'index': ('Plan your visit', 'Stay, swim, dine or gather at <em>The Breez.</em>',
+              [('book.html', 'Book your stay', 'btn--book', ''), ('meetings.html#enquire', 'Plan your event', 'btn--ghost', ''),
+               (wa('Hello The Breez Hotel, I would like to ask about a stay.'), 'WhatsApp the hotel', 'btn--wa', 'wa')]),
+    'dining': ('Dining at The Breez', 'Hungry, or <em>planning ahead?</em>',
+               [(wa('Hello The Breez Hotel, I would like to ask about the restaurant.'), 'Make an enquiry', 'btn--wa', 'wa'),
+                ('book.html', 'Book your stay', 'btn--book', ''), ('{TEL}', 'Call the hotel', 'btn--ghost', 'phone')]),
+    'gallery': ('Seen enough?', 'Come and see it <em>for yourself.</em>',
+                [('book.html', 'Book your stay', 'btn--book', ''), ('meetings.html#enquire', 'Plan your event', 'btn--ghost', ''),
+                 ('contact.html', 'Contact the hotel', 'btn--ghost', '')]),
+}
+
+def next_band(slug):
+    if slug not in NEXT: return ''
+    k, h, acts = NEXT[slug]
+    btns = ''.join(f'<a class="btn {c}" href="{u.replace("{TEL}", TEL)}"{" target=\"_blank\" rel=\"noopener\"" if u.startswith("https://wa.me") else ""}>{ICON[i] if i else ""}{l}</a>' for u, l, c, i in acts)
+    return f'<section class="nx" aria-label="Next step"><div class="nx-in"><div><p class="nx-k">{k}</p><h2 class="nx-h">{h}</h2></div><div class="nx-acts">{btns}</div></div></section>'
+
 def page(slug, title, desc, body, og_img='images/og-image.jpg'):
     url = BASE_URL + ('' if slug == 'index' else f'{slug}.html')
     full = title if slug == 'index' else f'{title} · The Breez Hotel, Busia'
@@ -346,6 +369,7 @@ def page(slug, title, desc, body, og_img='images/og-image.jpg'):
 {header(slug)}
 <main id="main">
 {body}
+{next_band(slug)}
 </main>
 {footer()}
 <script src="assets/site.js?v={ASSET_V["site.js"]}" defer></script>
