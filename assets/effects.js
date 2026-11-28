@@ -538,14 +538,6 @@
   });
 })();
 
-/* Gallery archive tilt */
-(() => {
-  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  document.querySelectorAll('.gl-grid a').forEach((a) => {
-    a.addEventListener('pointermove', (e) => { const r = a.getBoundingClientRect(); a.style.setProperty('--tx', `${((e.clientX - r.left) / r.width - 0.5) * 8}deg`); a.style.setProperty('--ty', `${((e.clientY - r.top) / r.height - 0.5) * -8}deg`); });
-    a.addEventListener('pointerleave', () => { a.style.removeProperty('--tx'); a.style.removeProperty('--ty'); });
-  });
-})();
 
 /* Location map: the Breez marker label sits on the hotel's coordinates; once the
    visitor starts moving the map (focus enters the iframe) the label steps aside. */
@@ -699,7 +691,7 @@
   ctl.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
   stage.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) { focus = true; stop(); } });
   stage.addEventListener('focusout', (e) => { if (!stage.contains(e.relatedTarget)) { focus = false; start(); } });
-  const photo = root.querySelector('.rp-slides'); let sx = null;
+  const photo = root.querySelector('.rp-hero-in'); let sx = null;
   photo.addEventListener('pointerdown', (e) => { sx = e.clientX; });
   photo.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(e.clientX < sx ? i + 1 : i - 1); sx = null; });
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
@@ -816,29 +808,104 @@
   else { vis = true; start(); }
 })();
 
-/* Rooms: as in the supplied recording, headings, words and photographs slide into place from their own side while
-   their row scrolls in (data-glide="l" from the left, "r" from the right; data-amt scales the travel), and the
-   outlined lettering down the edge of "About the hotel" rises a little slower than the page ([data-rise]). The
-   movement is tied to the scroll position, so it reverses when the page scrolls back. Reduced motion: none. */
+/* Rooms, below the opening: entrances that play once. Each element waits just out of place (a little lower, or a
+   little to its own side for data-glide="l"/"r") and settles when it comes into view; photographs open from their
+   lower edge while easing from 1.025 to their own scale. Elements arriving together are staggered in reading
+   order, so a section unfolds as a sequence rather than all at once. Once shown, an element stays shown.
+   No JavaScript, no IntersectionObserver or reduced motion: everything is simply visible. */
 (function () {
-  const els = [...document.querySelectorAll('[data-glide]')], rise = [...document.querySelectorAll('[data-rise]')];
-  if (!els.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let ticking = false;
-  const frame = () => {
-    ticking = false;
-    const vh = innerHeight, small = innerWidth <= 760, base = innerWidth * (small ? 0.04 : 0.075);
-    const start = vh * (small ? 0.96 : 0.92), span = vh * (small ? 0.24 : 0.5);   // settled by the time it is well in view
-    els.forEach((el) => {
-      const r = el.getBoundingClientRect(), top = r.top;
-      if (top > vh * 1.3 || r.bottom < -vh * 0.3) return;
-      const p = Math.min(1, Math.max(0, (start - top) / span));
-      const e = 1 - Math.pow(1 - p, 3);
-      const x = (1 - e) * base * (+el.dataset.amt || 1) * (el.dataset.glide === 'l' ? -1 : 1);
-      el.style.translate = `${x.toFixed(1)}px 0`;
+  const root = document.querySelector('main:has(.rp-hero)'); if (!root) return;
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const sections = [...root.querySelectorAll(':scope > section:not(.rp-hero)')];
+  const els = [];
+  sections.forEach((sec) => {
+    sec.querySelectorAll('[data-glide], .rp-ph, .rp-n, .rp-frame, .rp-p-frame, .rp-a-frame, .rp-vert, .rp-port-note, .rp-close-foot').forEach((el) => {
+      if (el.closest('[data-glide]') && el.closest('[data-glide]') !== el && !el.matches('.rp-ph')) return;   // moves with its parent
+      el.classList.add(el.matches('.rp-ph') ? 'rv-img' : 'rv-el'); els.push(el);
     });
-    rise.forEach((el) => { const r = el.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
-      el.style.translate = `0 ${((r.top - vh * 0.3) * 0.18).toFixed(1)}px`; });
+  });
+  const show = (batch) => {
+    batch.sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+    batch.forEach((el, i) => { el.style.setProperty('--rd', Math.min(i * 110, 660) + 'ms'); el.classList.add('rv-in'); });
   };
-  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
-  addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); frame();
+  const io = new IntersectionObserver((entries) => {
+    const batch = entries.filter((e) => e.isIntersecting).map((e) => e.target);
+    batch.forEach((el) => io.unobserve(el));
+    if (batch.length) show(batch);
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  els.forEach((el) => io.observe(el));
+  // anything the visitor has already scrolled past (a jump link, a fast flick) is shown at once
+  let t = 0;
+  addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(() => {
+    const past = els.filter((el) => !el.classList.contains('rv-in') && el.getBoundingClientRect().bottom < 0);
+    past.forEach((el) => { io.unobserve(el); el.style.setProperty('--rd', '0ms'); el.classList.add('rv-in'); });
+  }, 120); }, { passive: true });
+})();
+
+/* Gallery, the archive: every photograph played as an exhibition in three frames. Each category keeps its own
+   shuffled queue, so no photograph returns until all of that category's have appeared, and none shows in two frames
+   at once. A change waits until the incoming photograph has loaded and decoded, then dissolves over the outgoing
+   one (which stays until it is covered), easing slowly in scale. The frames take turns, one every few seconds.
+   Choosing a category prepares its first photographs, then turns the frames over in sequence and carries on with
+   that category. Playback pauses off screen and in a hidden tab, and resumes where it was. */
+(function () {
+  const gx = document.querySelector('[data-gx]'); if (!gx) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let all = []; try { all = JSON.parse(gx.querySelector('[data-gx-list]').textContent); } catch (e) { return; }
+  const frames = [...gx.querySelectorAll('.gx-f')];
+  const bar = document.querySelector('[data-filters="grid"]');
+  const STEP = 2600;   // one frame changes every 2.6 s, so each frame holds a photograph for about 8 s
+  let cat = 'all', turn = 0, timer = 0, vis = false, busy = 0;
+  const queues = {};
+  const pool = (c) => (c === 'all' ? all : all.filter((x) => x.c === c));
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const showing = () => frames.map((f) => (f.querySelector('img:last-child') || {}).dataset?.k);
+  const nextItem = (c) => {
+    const q = queues[c] || (queues[c] = { list: [], last: null });
+    const busyKeys = showing();
+    for (let tries = 0; tries < 2; tries++) {
+      if (!q.list.length) { q.list = shuffle(pool(c)); if (q.list.length > 1 && q.list[0].s === q.last) q.list.push(q.list.shift()); }
+      const i = q.list.findIndex((x) => !busyKeys.includes(x.s));
+      if (i >= 0) { const [it] = q.list.splice(i, 1); q.last = it.s; return it; }
+      if (pool(c).length <= busyKeys.filter(Boolean).length) return null;   // fewer photographs than frames
+      q.list = [];
+    }
+    return null;
+  };
+  const size = (f) => (f.classList.contains('gx-a') ? '1600' : '800');
+  const load = (f, it) => new Promise((res) => {
+    const im = new Image(); im.alt = it.a; im.dataset.k = it.s; im.decoding = 'async';
+    im.onload = () => (im.decode ? im.decode().catch(() => {}) : Promise.resolve()).then(() => res(im));
+    im.onerror = () => res(null);
+    im.src = `${it.s}-${size(f)}.webp`;
+  });
+  const swap = async (f, c) => {
+    if (f.dataset.busy) return; f.dataset.busy = '1';
+    let im = null;
+    for (let tries = 0; tries < 3 && !im; tries++) { const it = nextItem(c); if (!it) break; im = await load(f, it); }
+    if (im && c === cat) {
+      const old = [...f.querySelectorAll('img')];
+      f.appendChild(im); void im.offsetWidth; im.classList.add('on');
+      setTimeout(() => old.forEach((o) => o.remove()), 1800);   // the outgoing photograph stays until it is covered
+    }
+    delete f.dataset.busy;
+  };
+  const active = () => frames.slice(0, Math.min(frames.length, pool(cat).length));
+  const tick = () => { const fs = active(); if (!fs.length) return; swap(fs[turn % fs.length], cat); turn++; };
+  const play = () => { clearInterval(timer); if (!reduce && vis && !document.hidden) timer = setInterval(tick, STEP); };
+  const setCat = async (c) => {
+    if (c === cat) return; cat = c; clearInterval(timer); turn = 0;
+    const n = Math.min(frames.length, pool(c).length); gx.dataset.n = String(n);
+    const fs = frames.slice(0, n);
+    const ready = await Promise.all(fs.map((f) => { const it = nextItem(c); return it ? load(f, it) : null; }));   // prepare first
+    if (c !== cat) return;
+    fs.forEach((f, i) => setTimeout(() => { const im = ready[i]; if (!im) return; const old = [...f.querySelectorAll('img')];
+      f.appendChild(im); void im.offsetWidth; im.classList.add('on'); setTimeout(() => old.forEach((o) => o.remove()), 1800); }, i * 240));
+    play();
+  };
+  if (bar) bar.addEventListener('click', (e) => { const b = e.target.closest('button[data-filter]'); if (b) setCat(b.dataset.filter); });
+  // the first three photographs are in the page; keep them out of the opening queue
+  frames.forEach((f) => { const im = f.querySelector('img'); if (im) im.dataset.k = im.dataset.k || ''; });
+  document.addEventListener('visibilitychange', play);
+  new IntersectionObserver(([e]) => { vis = e.isIntersecting; play(); }, { threshold: 0.2 }).observe(gx);
 })();
