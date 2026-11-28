@@ -656,7 +656,7 @@
   const stage = root;
   const slides = [...root.querySelectorAll('.rh-slide')], n = slides.length; if (n < 2) return;
   const dots = [...root.querySelectorAll('[data-rh-dot]')], tabs = [...root.querySelectorAll('[data-rh-go]')];
-  const num = root.querySelector('[data-rh-num]'), note = root.querySelector('[data-rh-note]');
+  const nums = [...root.querySelectorAll('[data-rh-num]')], note = root.querySelector('[data-rh-note]');
   const live = root.querySelector('[data-rh-live]'), play = root.querySelector('[data-rh-play]');
   const DUR = 5800;                                        // about six seconds a slide
   let i = 0, t = 0, paused = reduce, hover = false, focus = false, vis = false, busy = false;
@@ -673,7 +673,7 @@
     set(slides, k);
     dots.forEach((b, j) => { b.classList.toggle('on', j === k); b.setAttribute('aria-current', String(j === k)); });
     tabs.forEach((b) => { const on = +b.dataset.rhGo === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
-    num.textContent = String(k + 1).padStart(2, '0');
+    nums.forEach((el) => { el.textContent = String(k + 1).padStart(2, '0'); });
     note.innerHTML = d.note;
     if (user) live.textContent = `Slide ${k + 1} of ${n}: ${d.title}`;
     ready((k + 1) % n);                                    // have the next one waiting
@@ -699,7 +699,7 @@
   ctl.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; start(); } });
   stage.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) { focus = true; stop(); } });
   stage.addEventListener('focusout', (e) => { if (!stage.contains(e.relatedTarget)) { focus = false; start(); } });
-  const photo = root.querySelector('.rp-hero-in'); let sx = null;
+  const photo = root.querySelector('.rp-slides'); let sx = null;
   photo.addEventListener('pointerdown', (e) => { sx = e.clientX; });
   photo.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(e.clientX < sx ? i + 1 : i - 1); sx = null; });
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
@@ -814,4 +814,31 @@
   measure(); place();
   if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { const was = vis; vis = e.isIntersecting; if (vis && !was) start(); }).observe(view);
   else { vis = true; start(); }
+})();
+
+/* Rooms: as in the supplied recording, headings, words and photographs slide into place from their own side while
+   their row scrolls in (data-glide="l" from the left, "r" from the right; data-amt scales the travel), and the
+   outlined lettering down the edge of "About the hotel" rises a little slower than the page ([data-rise]). The
+   movement is tied to the scroll position, so it reverses when the page scrolls back. Reduced motion: none. */
+(function () {
+  const els = [...document.querySelectorAll('[data-glide]')], rise = [...document.querySelectorAll('[data-rise]')];
+  if (!els.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let ticking = false;
+  const frame = () => {
+    ticking = false;
+    const vh = innerHeight, small = innerWidth <= 760, base = innerWidth * (small ? 0.04 : 0.075);
+    const start = vh * (small ? 0.96 : 0.92), span = vh * (small ? 0.24 : 0.5);   // settled by the time it is well in view
+    els.forEach((el) => {
+      const r = el.getBoundingClientRect(), top = r.top;
+      if (top > vh * 1.3 || r.bottom < -vh * 0.3) return;
+      const p = Math.min(1, Math.max(0, (start - top) / span));
+      const e = 1 - Math.pow(1 - p, 3);
+      const x = (1 - e) * base * (+el.dataset.amt || 1) * (el.dataset.glide === 'l' ? -1 : 1);
+      el.style.translate = `${x.toFixed(1)}px 0`;
+    });
+    rise.forEach((el) => { const r = el.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
+      el.style.translate = `0 ${((r.top - vh * 0.3) * 0.18).toFixed(1)}px`; });
+  };
+  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+  addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); frame();
 })();

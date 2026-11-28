@@ -240,7 +240,7 @@ NAV = [('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings'
 
 BODONI_TEXT = {'index': 'ThartofmakingyoufeelHome.'}   # Bodoni Moda is loaded as a subset of only these letters
 PAGE_FONTS = {'meetings': 'family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Jost:wght@200;300;400;500&family=Mrs+Saint+Delafield',   # the editorial Meetings page
-              'rooms': 'family=Jost:wght@200;300;400;500'}   # the Rooms page, after the Dev.UN reference
+              'rooms': 'family=Inter+Tight:wght@300;400;500'}   # the Rooms page: a plain grotesque, as in the Dev.UN reference
 def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
 def cur(slug, s): return ' aria-current="page"' if slug == s else ''
 
@@ -250,7 +250,7 @@ def header(slug):
     right = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[4:])
     ov = ''.join(f'<li><a href="{href(s)}"{cur(slug, s)}>{t}</a></li>' for s, t in [('index', 'Home')] + NAV + [('book', 'Book a stay')])
     return f'''<a class="skip" href="#main">Skip to content</a>
-<header class="hdr{' hdr--over' if slug in ('index', 'meetings', 'rooms') else ''}">
+<header class="hdr{' hdr--over' if slug in ('index', 'meetings') else ''}">
   <div class="hdr-in">
     <nav class="nav" aria-label="Primary">{left}</nav>
     {MARK}
@@ -268,16 +268,14 @@ MARK_HTML = ('<a class="mark" href="index.html" aria-label="The Breez Hotel, hom
              '<span class="mark-txt">' + BM.wordmark('mark-word') + '<span>Hotel · Busia</span></span></a>')
 
 def footer():
-    MARK = MARK_HTML
     g1 = [('index', 'Home'), ('about', 'About'), ('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining')]
     g2 = [('meetings', 'Meetings &amp; Events'), ('gallery', 'Gallery'), ('contact', 'Contact'), ('book', 'Book a stay')]
     ul = lambda g: ''.join(f'<li><a href="{href(s)}">{t}</a></li>' for s, t in g)
     return f'''<footer class="ftr">
   <svg class="ftr-edge" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 120V78L330 104L640 40L800 82L1010 58L1440 96V120Z"/></svg>
   <div class="wrap ftr-body">
-    <div class="ftr-word" aria-hidden="true">{BM.signature()}</div>
     <div class="ftr-grid">
-      <div class="ftr-brand">{MARK}<p>Karibu. We look forward to welcoming you.</p></div>
+      <div class="ftr-brand"><a class="ftr-mark" href="index.html" aria-label="The Breez Hotel, home"><b>The Breez</b><span>Hotel &middot; Busia</span></a><p>Karibu. We look forward to welcoming you.</p></div>
       <nav class="ftr-nav" aria-label="Footer"><span class="label">Explore</span><ul>{ul(g1)}</ul></nav>
       <nav class="ftr-nav" aria-label="Footer, more"><span class="label">&nbsp;</span><ul>{ul(g2)}</ul></nav>
       <div class="ftr-contact"><span class="label">Contact</span><ul><li><a href="{TEL}">{PHONE_DISPLAY}</a></li><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ADDRESS}</li></ul>
@@ -662,18 +660,19 @@ def about():
 </section>"""
 
 # ---------------------------------------------------------------------------- rooms
-# The Rooms page follows the supplied Dev.UN reference from top to bottom, in the Breez's own colours: a full-screen
-# photographic opening with a very large thin title; "The art of staying" as the reference's services (text and
-# photograph alternating, an offset outline frame and an outlined number); the four rooms as its portfolio (a
-# numbered project: name, words and label/value pairs beside a tight mosaic of touching photographs); "About the
-# hotel" as its company figures (large numbers beside photographs, outlined letters standing down the left edge);
-# and its closing (a warm full-bleed photograph, right-aligned capitals, the phone number and one button).
+# The Rooms page reproduces the construction of the supplied Dev.UN recording, section by section, with the Breez's
+# own content: the opening composition (a small three-line label at the upper left, a two-line heading whose second
+# line steps in, the brand at the upper right, a large photograph under a fine offset outline with a faint number,
+# descriptive text at the lower left); "Our rooms" as its numbered services (image and text alternating sides);
+# "About the hotel" as its company figures; "Inside the rooms" as its portfolio (a dominant tall photograph, the
+# name and words, label/value pairs by a fine rule, a large faint number, touching photographs); and its closing.
+# Elements slide into place from their own side as they scroll in ([data-glide], effects.js), as in the recording.
 # Room facts come from ROOMS only. Photographs are rooms at The Breez, not tied to a specific category.
 
 # Opening slides: (photo, room anchor or None, name, note). The last two are Unsplash photographs shown for
 # atmosphere, labelled as such and credited on the slide and on the credits page.
 RH = [
-    ('room-four-poster-window', 'double', 'Double Room', 'Photographed at The Breez'),
+    ('room-four-poster-2', 'double', 'Double Room', 'Photographed at The Breez'),
     ('bed-detail', 'single', 'Standard Single', 'Photographed at The Breez'),
     ('room-grey-bedding', 'deluxe', 'Deluxe Room', 'Photographed at The Breez'),
     ('room-fridge-tv', 'king', 'King Room', 'Photographed at The Breez'),
@@ -681,18 +680,19 @@ RH = [
     ('nightstand-honey-wood', None, 'Evening calm', 'Illustration, not The Breez &middot; Photo: Ronnarit Jirathanyakorn / Unsplash'),
 ]
 ARROW_NE = '<svg class="rp-ne" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 10L10 2M4 2h6v6"/></svg>'
+RP_MARK = '<span class="rp-mark" aria-hidden="true">' + BM.pavilion('rp-mark-emb') + '<span>The Breez</span></span>'
 
 
 def rp_btn(href_, label, extra=''):
     return f'<a class="rp-btn" href="{href_}"{extra}>{label} {ARROW_NE}</a>'
 
 
-def rp_head(cls, hid, aside, l1, l2, right=''):
-    """The reference's section opening: a small three-line label at the left, a large two-line heading whose second
-    line steps in, and a small mark at the right."""
-    return (f'<header class="rp-head {cls}"><p class="rp-aside rv">{aside}</p>'
-            f'<h2 id="{hid}" class="rp-h"><span class="rp-h1">{l1}</span> <span class="rp-h2">{l2}</span></h2>'
-            f'<span class="rp-mark" aria-hidden="true">{right}</span></header>')
+def rp_head(hid, aside, l1, l2, tag='h2'):
+    """The reference's section opening: a small three-line label at the upper left, a large two-line heading whose
+    lines arrive from opposite sides and settle with the second stepped in, the brand at the upper right."""
+    return (f'<header class="rp-head"><p class="rp-aside" data-glide="l">{aside}</p>'
+            f'<{tag} id="{hid}" class="rp-h"><span class="rp-h1" data-glide="l" data-amt="1.6">{l1}</span> <span class="rp-h2" data-glide="r" data-amt="1.6">{l2}</span></{tag}>'
+            f'{RP_MARK}</header>')
 
 
 def rooms_hero():
@@ -700,29 +700,33 @@ def rooms_hero():
     slides = ''.join(
         f'<figure class="rh-slide{" on" if i == 0 else ""}" role="group" aria-roledescription="slide" aria-label="{i + 1} of {n}"'
         f'{"" if i == 0 else " aria-hidden=\"true\""} data-note="{note}" data-title="{name}">'
-        f'{img(k, "100vw", eager=(i == 0))}</figure>' for i, (k, a, name, note) in enumerate(RH))
+        f'{img(k, "(max-width:760px) 100vw, 56vw", eager=(i == 0))}</figure>' for i, (k, a, name, note) in enumerate(RH))
     index = {a: i for i, (k, a, *_) in enumerate(RH) if a}
-    tabs = ''.join(f'<li><button type="button" class="rh-tab{" on" if index[a] == 0 else ""}" data-rh-go="{index[a]}" aria-pressed="{"true" if index[a] == 0 else "false"}">{ROOMS[a]["Room"]}</button></li>'
-                   for a in ('single', 'double', 'deluxe', 'king'))
+    tabs = ''.join(f'<li><button type="button" class="rh-tab{" on" if index[a] == 0 else ""}" data-rh-go="{index[a]}" aria-pressed="{"true" if index[a] == 0 else "false"}"><span>{j + 1:02d}</span>{ROOMS[a]["Room"]}</button></li>'
+                   for j, a in enumerate(('single', 'double', 'deluxe', 'king')))
     dots = ''.join(f'<button type="button" class="rh-dot{" on" if i == 0 else ""}" data-rh-dot="{i}" aria-label="Slide {i + 1}: {name}" aria-current="{"true" if i == 0 else "false"}"></button>'
                    for i, (k, a, name, note) in enumerate(RH))
     arrow = lambda d: f'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="{"M15 5l-7 7 7 7" if d < 0 else "M9 5l7 7-7 7"}"/></svg>'
     return f'''<section class="rp-hero" data-rh aria-roledescription="carousel" aria-labelledby="rooms-h1">
-  <span class="rp-edge" data-hero-edge aria-hidden="true"></span>
-  <div class="rp-slides">{slides}</div>
-  <div class="rp-shade" aria-hidden="true"></div>
-  <div class="rp-hero-in">
-    <div class="rp-crumb">{crumb('Rooms')}</div>
-    <div class="rp-copy"><h1 id="rooms-h1" class="rp-title"><span class="rp-t1">Rooms</span><span class="rp-t2">Four kinds of room<br>around a garden of palms</span></h1>
-    {rp_btn('book.html', 'Request a booking')}</div>
-    <ol class="rp-list" aria-label="Show a room">{tabs}</ol>
-    <p class="rp-script">at The Breez</p>
-    <div class="rp-ctl">
-      <span class="rp-count" aria-hidden="true"><b data-rh-num>01</b> / {n:02d}</span>
-      <button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button><span class="rh-dots">{dots}</span><button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button>
-      <button type="button" class="rh-btn rh-play" data-rh-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button>
+  <div class="rp-crumb">{crumb('Rooms')}</div>
+  {rp_head('rooms-h1', 'Four kinds of room<br>around a garden of<br>palms and pools', 'Rooms &amp;', 'stays', 'h1')}
+  <div class="rp-hero-body">
+    <div class="rp-hero-text" data-glide="l">
+      <p class="rp-label">The Breez, Busia</p>
+      <p class="rp-lead">Four kinds of room around a garden of palms and pools &mdash; quiet, well kept and close to everything at the hotel.</p>
+      <ol class="rp-tabs" aria-label="Show a room">{tabs}</ol>
+      {rp_btn('book.html', 'Request a booking')}
     </div>
-    <p class="rp-note" data-rh-note>{RH[0][3]}</p>
+    <div class="rp-hero-media" data-glide="r">
+      <span class="rp-frame" aria-hidden="true"></span><span class="rp-n rp-n--hero" aria-hidden="true" data-rh-num>01</span>
+      <div class="rp-slides">{slides}</div>
+      <div class="rp-ctl">
+        <p class="rp-note" data-rh-note>{RH[0][3]}</p>
+        <span class="rp-count" aria-hidden="true"><b data-rh-num>01</b> / {n:02d}</span>
+        <button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button><span class="rh-dots">{dots}</span><button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button>
+        <button type="button" class="rh-btn rh-play" data-rh-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button>
+      </div>
+    </div>
   </div>
   <p class="sr-only" aria-live="polite" data-rh-live></p>
 </section>'''
@@ -731,28 +735,12 @@ def rooms_hero():
 def rooms():
     def req(k):
         return f'<a class="rp-req" href="book.html?room={ROOMS[k]["Room"].replace(" ", "+")}">Request this room {ARROW_NE}</a>'
-    def tile(key, cls, sizes):
-        return f'<figure class="rp-ph {cls}" data-reveal="up">{img(key, sizes)}</figure>'
-
-    # 01 the art of staying, as the reference's services
-    SVC = [('A bed made for the night', 'Fresh linen on every bed, a mosquito net where the bed has a frame, and daily housekeeping.', 'bed-detail'),
-           ('A desk to sit at', 'A desk and a chair in the room, and free Wi-Fi across the hotel.', 'room-desk-armchair'),
-           ('Your own bathroom', 'An en-suite bathroom with a shower in every room.', 'bathroom-shower')]
-    svc_rows = ''.join(f'''<article class="rp-svc-r rp-svc-r--{"a" if i % 2 == 0 else "b"}">
-    <div class="rp-svc-text rv"><h3 class="rp-svc-name">{t}</h3><p>{d}</p></div>
-    <div class="rp-svc-media"><span class="rp-frame" aria-hidden="true"></span><span class="rp-n" aria-hidden="true">{i + 1:02d}</span>{tile(k, "rp-svc-ph", "(max-width:760px) 100vw, 40vw")}</div>
-  </article>''' for i, (t, d, k) in enumerate(SVC))
-    staying = f'''<section class="rp-svc" aria-labelledby="svc-h">
-  {rp_head('', 'svc-h', 'A room at<br>The Breez is simple<br>and cared for', 'The art', 'of staying', 'The Breez &middot; Busia')}
-  {svc_rows}
-  <div class="rp-svc-cta">{rp_btn('book.html', 'Request a booking')}</div>
-</section>'''
-
-    # 02 the four rooms, as the reference's portfolio
-    RD = [('single', 'a', 'For one guest: a single bed, its own balcony as listed, and the pool in view.', ('single-room', 'room-desk', 'bathroom-toilet-basin')),
-          ('double', 'b', 'A double bed for two, often under a four-poster frame and a mosquito net, with the pool in view.', ('room-portrait', 'room-four-poster-window', 'room-double')),
-          ('deluxe', 'a', 'A double room with air conditioning, a balcony and a city view, as listed.', ('bed-towel-art-2', 'room-grey-bedding', 'room-tv-fridge')),
-          ('king', 'b', 'The largest bed in the hotel, with air conditioning and a view over the pool.', ('room-vanity', 'room-fridge-tv', 'room-net-portrait'))]
+    def ph(key, cls, sizes):
+        return f'<figure class="rp-ph {cls}">{img(key, sizes)}</figure>'
+    SAY = {'single': 'For one guest: a single bed, its own balcony as listed, and the pool in view.',
+           'double': 'A double bed for two, often under a four-poster frame and a mosquito net, with the pool in view.',
+           'deluxe': 'A double room with air conditioning, a balcony and a city view, as listed.',
+           'king': 'The largest bed in the hotel, with air conditioning and a view over the pool.'}
     def facts(k):
         d = ROOMS[k]; f = []
         if d['Balcony'] == 'Listed': f.append('Balcony')
@@ -760,47 +748,69 @@ def rooms():
         f.append(d['View'])
         if d['Breakfast'].startswith('Included'): f.append('Breakfast included')
         return ' &middot; '.join(f)
+    ORDER = ('single', 'double', 'deluxe', 'king')
+
+    # 02 our rooms, as the reference's numbered services
+    SVC = {'single': 'bed-detail', 'double': 'room-four-poster-2', 'deluxe': 'room-grey-bedding', 'king': 'room-fridge-tv'}
+    svc = ''.join(f'''<article class="rp-s rp-s--{"a" if i % 2 == 0 else "b"}" aria-labelledby="s-{k}-h">
+    <div class="rp-s-text" data-glide="{"l" if i % 2 == 0 else "r"}"><h3 id="s-{k}-h" class="rp-s-name">{ROOMS[k]["Room"]}</h3><p>{SAY[k]}</p><a class="rp-more" href="#{k}">The room in detail</a></div>
+    <div class="rp-s-media" data-glide="{"r" if i % 2 == 0 else "l"}"><span class="rp-frame" aria-hidden="true"></span><span class="rp-n" aria-hidden="true">{i + 1:02d}</span>{ph(SVC[k], "rp-s-ph", "(max-width:760px) 100vw, 38vw")}</div>
+  </article>''' for i, k in enumerate(ORDER))
+    our = f'''<section class="rp-our" aria-labelledby="our-h">
+  {rp_head('our-h', 'Room details as listed<br>on Booking.com; reception<br>confirms room and rate', 'Our', 'rooms')}
+  {svc}
+  <div class="rp-our-cta" data-glide="l">{rp_btn('book.html', 'Request a booking')}</div>
+</section>'''
+
+    # 04 about the hotel, as the reference's company figures (verified only: four categories as listed, two pools in
+    # the photographs and listings, and 50 m from the Breez petrol station in the hotel's 2021 brochure)
+    NUM = [('4', 'Room categories', 'Standard Single, Double, Deluxe and King, each with an en-suite bathroom, free Wi-Fi and breakfast included as listed.', 'entrance-lobby'),
+           ('2', 'Pools', 'A main pool and a kids&rsquo; pool in the palm court, for every guest.', 'pool-umbrellas-above'),
+           ('50 m', 'From the Breez petrol station', 'On the Busia&ndash;Kisumu road in a calm part of Busia town, with secure parking on site.', 'entrance-gate')]
+    nums = ''.join(f'''<div class="rp-a-r">{ph(k, "rp-a-ph", "(max-width:760px) 44vw, 30vw")}<div class="rp-a-t" data-glide="r"><b>{v}</b><span>{lab}</span><p>{d}</p></div></div>''' for v, lab, d, k in NUM)
+    about = f'''<section class="rp-about" aria-labelledby="about-h">
+  <p class="rp-vert" aria-hidden="true" data-rise>The Breez</p>
+  {rp_head('about-h', 'Learn more<br>about the hotel<br>around the rooms', 'About', 'the hotel')}
+  <div class="rp-a-list"><span class="rp-a-frame" aria-hidden="true"></span>{nums}</div>
+</section>'''
+
+    # 05 inside the rooms, as the reference's portfolio
+    PF = {'single': ('single-room', 'bathroom-toilet-basin', 'room-desk'),
+          'double': ('room-double', 'room-portrait', 'room-four-poster-window'),
+          'deluxe': ('room-net-portrait', 'room-desk-armchair', 'bed-towel-art-2'),
+          'king': ('room-vanity', 'room-tv-fridge', 'bathroom-shower')}
     def rate(k):   # from ROOMS; until a verified price is entered there it reads "On request"
         r = ROOMS[k]['Rate']
         return f'{r}<small>{"confirmed by reception" if r == "On request" else "per night, as listed"}</small>'
-    def room(i, k, v, say, ph):
-        a, b, c = ph
-        return f'''<article class="rp-r rp-r--{v}" id="{k}" aria-labelledby="{k}-h">
-    <div class="rp-r-text rv"><h3 id="{k}-h" class="rp-r-name">{ROOMS[k]["Room"]}</h3><p class="rp-r-say">{say}</p><p class="rp-r-facts">{facts(k)}</p>{req(k)}</div>
-    <dl class="rp-meta rv"><div><dt>bed</dt><dd>{ROOMS[k]["Bed"]}</dd></div><div><dt>sleeps</dt><dd>{ROOMS[k]["Sleeps"]}</dd></div><div class="rp-rate"><dt>rate</dt><dd>{rate(k)}</dd></div></dl>
-    <div class="rp-r-num"><span class="rp-frame" aria-hidden="true"></span><span class="rp-n" aria-hidden="true">{i + 1:02d}</span></div>
-    {tile(a, "rp-ta", "(max-width:760px) 100vw, 30vw")}{tile(b, "rp-tb", "(max-width:760px) 100vw, 42vw")}{tile(c, "rp-tc", "(max-width:760px) 50vw, 26vw")}
+    def project(i, k):
+        a, b, c = PF[k]; v = 'a' if i % 2 == 0 else 'b'
+        return f'''<article class="rp-p rp-p--{v}" id="{k}" aria-labelledby="{k}-h">
+    <span class="rp-p-frame rp-p-frame--1" aria-hidden="true"></span><span class="rp-p-frame rp-p-frame--2" aria-hidden="true"></span>
+    <div class="rp-p-text" data-glide="{"r" if v == "a" else "l"}"><h3 id="{k}-h" class="rp-p-name">{ROOMS[k]["Room"]}</h3><p class="rp-p-say">{SAY[k]}</p><p class="rp-p-facts">{facts(k)}</p>{req(k)}</div>
+    <dl class="rp-meta" data-glide="r"><div><dt>bed</dt><dd>{ROOMS[k]["Bed"]}</dd></div><div><dt>sleeps</dt><dd>{ROOMS[k]["Sleeps"]}</dd></div><div class="rp-rate"><dt>rate</dt><dd>{rate(k)}</dd></div></dl>
+    <span class="rp-n rp-n--p" aria-hidden="true" data-glide="r">{i + 1:02d}</span>
+    <div class="rp-p-a" data-glide="{"l" if v == "a" else "r"}">{ph(a, "", "(max-width:760px) 100vw, 28vw")}</div>
+    <div class="rp-p-b" data-glide="{"r" if v == "a" else "l"}">{ph(b, "", "(max-width:760px) 60vw, 36vw")}</div>
+    <div class="rp-p-c" data-glide="r">{ph(c, "", "(max-width:760px) 40vw, 30vw")}</div>
   </article>'''
-    discover = f'''<section class="rp-rooms" aria-labelledby="rd-h">
-  {rp_head('', 'rd-h', 'Room details as listed<br>on Booking.com; reception<br>confirms room and rate', 'Four rooms,', 'one garden.', 'The Breez &middot; Busia')}
-  {''.join(room(i, *r) for i, r in enumerate(RD))}
-  <p class="rp-note-rooms">Photographs show rooms at The Breez; furniture and layout vary by category.</p>
+    portfolio = f'''<section class="rp-port" aria-labelledby="port-h">
+  {rp_head('port-h', 'Every room<br>photographed<br>at The Breez', 'Inside', 'the rooms')}
+  {''.join(project(i, k) for i, k in enumerate(ORDER))}
+  <p class="rp-port-note">Photographs show rooms at The Breez; furniture and layout vary by category.</p>
 </section>'''
 
-    # 03 about the hotel, as the reference's company figures
-    NUM = [('4', 'Room categories', 'Standard Single, Double, Deluxe and King, with breakfast included as listed.', 'entrance-lobby'),
-           ('2', 'Pools', 'A main pool and a kids&rsquo; pool in the palm court.', 'pool-umbrellas-above'),
-           ('50 m', 'From the Breez petrol station', 'On the Busia&ndash;Kisumu road, in a calm residential part of Busia town.', 'entrance-gate')]
-    nums = ''.join(f'''<div class="rp-num-r">{tile(k, "rp-num-ph", "(max-width:760px) 44vw, 22vw")}<div class="rp-num-t rv"><b>{v}</b><span>{lab}</span><p>{d}</p></div></div>''' for v, lab, d, k in NUM)
-    details = f'''<section class="rp-about" aria-labelledby="about-h">
-  <p class="rp-vert" aria-hidden="true">The Breez</p>
-  {rp_head('', 'about-h', 'Learn more<br>about the hotel<br>around the rooms', 'About', 'the hotel', 'The Breez &middot; Busia')}
-  <div class="rp-nums">{nums}</div>
-  <ul class="rp-every" aria-label="Included with every room"><li><b>Free Wi-Fi</b><span>Across the hotel</span></li><li><b>Secure parking</b><span>On site</span></li><li><b>Housekeeping</b><span>Daily</span></li><li><b>Pool access</b><span>Main and kids&rsquo; pools</span></li></ul>
-</section>'''
-
-    # 04 the closing
+    # 06 the closing, as the reference's final photograph
     closing = f'''<section class="rp-close" aria-labelledby="close-h">
-  <figure class="rp-close-ph">{img('room-four-poster-2', '100vw')}</figure>
+  <figure class="rp-close-ph">{img('room-four-poster-window', '100vw')}</figure>
   <div class="rp-close-in">
-    <p class="rp-close-aside">Tell reception<br>your dates and the<br>room you would like</p>
-    <h2 id="close-h" class="rp-close-h"><span>Stay</span><span>a little</span><span>longer.</span></h2>
-    <a class="rp-close-tel" href="{TEL}">{PHONE_DISPLAY}</a>
-    {rp_btn('book.html', 'Request a booking')}
-    <p class="rp-close-foot">Reception confirms availability and the rate. <a href="{WA}" target="_blank" rel="noopener">Ask on WhatsApp</a></p>
+    <p class="rp-close-aside" data-glide="l">Tell reception<br>your dates and the<br>room you would like</p>
+    <h2 id="close-h" class="rp-close-h" data-glide="r"><span>Stay</span><span>a little</span><span>longer</span></h2>
+    <a class="rp-close-tel" href="{TEL}" data-glide="r">{PHONE_DISPLAY}</a>
+    <div class="rp-close-btn" data-glide="r">{rp_btn('book.html', 'Request a booking')}</div>
+    <p class="rp-close-foot">Reception confirms<br>availability and the rate.<br><a href="{WA}" target="_blank" rel="noopener">Ask on WhatsApp</a></p>
   </div>
 </section>'''
-    return rooms_hero() + '\n' + staying + '\n' + discover + '\n' + details + '\n' + closing
+    return rooms_hero() + '\n' + our + '\n' + about + '\n' + portfolio + '\n' + closing
 
 
 def pools():
