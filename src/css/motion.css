@@ -174,8 +174,6 @@
 
 .archive-head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:24px}
 .archive-head h2{font:500 clamp(2.2rem,1.3rem + 3vw,4.2rem)/.95 var(--f-display);margin:10px 0 0}
-.gl-grid a{transform:translateY(0)}
-.gl-grid a[hidden]{display:none}
 
 /* lightbox open/close */
 .lb:not([hidden]){animation:mo-in .45s var(--ease)}
@@ -273,13 +271,6 @@
 @media (prefers-reduced-motion:reduce){.pd-card,.pd-word,.pd-meta,.pd-ctl,.pd-mat{transition:none!important}}
 .strip .hx-ph{aspect-ratio:4/5}
 
-/* Gallery archive: perspective tilt + faint chromatic edge on hover (fine pointers only) */
-@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-  .gl-grid{perspective:1200px}
-  .gl-grid a{transform:rotateX(var(--ty,0deg)) rotateY(var(--tx,0deg));transition:transform .5s cubic-bezier(.22,1,.36,1);transform-style:preserve-3d}
-  .gl-grid a img{transition:filter .5s,transform .8s cubic-bezier(.22,1,.36,1)}
-  .gl-grid a:hover img{filter:drop-shadow(3px 0 0 rgba(200,40,40,.28)) drop-shadow(-3px 0 0 rgba(30,120,220,.28));transform:scale(1.04)}
-}
 
 /* ==========================================================================
    LINE CLEAN-UP (26 Nov 2026)

@@ -240,7 +240,7 @@ NAV = [('rooms', 'Rooms'), ('pools', 'Pools'), ('dining', 'Dining'), ('meetings'
 
 BODONI_TEXT = {'index': 'ThartofmakingyoufeelHome.'}   # Bodoni Moda is loaded as a subset of only these letters
 PAGE_FONTS = {'meetings': 'family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Jost:wght@200;300;400;500&family=Mrs+Saint+Delafield',   # the editorial Meetings page
-              'rooms': 'family=Inter+Tight:wght@300;400;500'}   # the Rooms page: a plain grotesque, as in the Dev.UN reference
+              'rooms': 'family=Inter+Tight:wght@300;400;500&family=Jost:wght@200;400;500'}   # the Rooms page: a plain grotesque, as in the Dev.UN reference
 def href(slug): return 'index.html' if slug == 'index' else f'{slug}.html'
 def cur(slug, s): return ' aria-current="page"' if slug == s else ''
 
@@ -250,7 +250,7 @@ def header(slug):
     right = ''.join(f'<a href="{href(s)}"{cur(slug, s)}>{t}</a>' for s, t in NAV[4:])
     ov = ''.join(f'<li><a href="{href(s)}"{cur(slug, s)}>{t}</a></li>' for s, t in [('index', 'Home')] + NAV + [('book', 'Book a stay')])
     return f'''<a class="skip" href="#main">Skip to content</a>
-<header class="hdr{' hdr--over' if slug in ('index', 'meetings') else ''}">
+<header class="hdr{' hdr--over' if slug in ('index', 'meetings', 'rooms') else ''}">
   <div class="hdr-in">
     <nav class="nav" aria-label="Primary">{left}</nav>
     {MARK}
@@ -672,7 +672,7 @@ def about():
 # Opening slides: (photo, room anchor or None, name, note). The last two are Unsplash photographs shown for
 # atmosphere, labelled as such and credited on the slide and on the credits page.
 RH = [
-    ('room-four-poster-2', 'double', 'Double Room', 'Photographed at The Breez'),
+    ('room-four-poster-window', 'double', 'Double Room', 'Photographed at The Breez'),
     ('bed-detail', 'single', 'Standard Single', 'Photographed at The Breez'),
     ('room-grey-bedding', 'deluxe', 'Deluxe Room', 'Photographed at The Breez'),
     ('room-fridge-tv', 'king', 'King Room', 'Photographed at The Breez'),
@@ -696,37 +696,34 @@ def rp_head(hid, aside, l1, l2, tag='h2'):
 
 
 def rooms_hero():
+    """The opening, restored from the 27 Nov recording (as built in ddda72b)."""
     n = len(RH)
     slides = ''.join(
         f'<figure class="rh-slide{" on" if i == 0 else ""}" role="group" aria-roledescription="slide" aria-label="{i + 1} of {n}"'
         f'{"" if i == 0 else " aria-hidden=\"true\""} data-note="{note}" data-title="{name}">'
-        f'{img(k, "(max-width:760px) 100vw, 56vw", eager=(i == 0))}</figure>' for i, (k, a, name, note) in enumerate(RH))
+        f'{img(k, "100vw", eager=(i == 0))}</figure>' for i, (k, a, name, note) in enumerate(RH))
     index = {a: i for i, (k, a, *_) in enumerate(RH) if a}
-    tabs = ''.join(f'<li><button type="button" class="rh-tab{" on" if index[a] == 0 else ""}" data-rh-go="{index[a]}" aria-pressed="{"true" if index[a] == 0 else "false"}"><span>{j + 1:02d}</span>{ROOMS[a]["Room"]}</button></li>'
-                   for j, a in enumerate(('single', 'double', 'deluxe', 'king')))
+    tabs = ''.join(f'<li><button type="button" class="rh-tab{" on" if index[a] == 0 else ""}" data-rh-go="{index[a]}" aria-pressed="{"true" if index[a] == 0 else "false"}">{ROOMS[a]["Room"]}</button></li>'
+                   for a in ('single', 'double', 'deluxe', 'king'))
     dots = ''.join(f'<button type="button" class="rh-dot{" on" if i == 0 else ""}" data-rh-dot="{i}" aria-label="Slide {i + 1}: {name}" aria-current="{"true" if i == 0 else "false"}"></button>'
                    for i, (k, a, name, note) in enumerate(RH))
     arrow = lambda d: f'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="{"M15 5l-7 7 7 7" if d < 0 else "M9 5l7 7-7 7"}"/></svg>'
     return f'''<section class="rp-hero" data-rh aria-roledescription="carousel" aria-labelledby="rooms-h1">
-  <div class="rp-crumb">{crumb('Rooms')}</div>
-  {rp_head('rooms-h1', 'Four kinds of room<br>around a garden of<br>palms and pools', 'Rooms &amp;', 'stays', 'h1')}
-  <div class="rp-hero-body">
-    <div class="rp-hero-text" data-glide="l">
-      <p class="rp-label">The Breez, Busia</p>
-      <p class="rp-lead">Four kinds of room around a garden of palms and pools &mdash; quiet, well kept and close to everything at the hotel.</p>
-      <ol class="rp-tabs" aria-label="Show a room">{tabs}</ol>
-      {rp_btn('book.html', 'Request a booking')}
+  <span class="rp-edge" data-hero-edge aria-hidden="true"></span>
+  <div class="rp-slides">{slides}</div>
+  <div class="rp-shade" aria-hidden="true"></div>
+  <div class="rp-hero-in">
+    <div class="rp-crumb">{crumb('Rooms')}</div>
+    <div class="rp-copy"><h1 id="rooms-h1" class="rp-title"><span class="rp-t1">Rooms</span><span class="rp-t2">Four kinds of room<br>around a garden of palms</span></h1>
+    {rp_btn('book.html', 'Request a booking')}</div>
+    <ol class="rp-list" aria-label="Show a room">{tabs}</ol>
+    <p class="rp-script">at The Breez</p>
+    <div class="rp-ctl">
+      <span class="rp-count" aria-hidden="true"><b data-rh-num>01</b> / {n:02d}</span>
+      <button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button><span class="rh-dots">{dots}</span><button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button>
+      <button type="button" class="rh-btn rh-play" data-rh-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button>
     </div>
-    <div class="rp-hero-media" data-glide="r">
-      <span class="rp-frame" aria-hidden="true"></span><span class="rp-n rp-n--hero" aria-hidden="true" data-rh-num>01</span>
-      <div class="rp-slides">{slides}</div>
-      <div class="rp-ctl">
-        <p class="rp-note" data-rh-note>{RH[0][3]}</p>
-        <span class="rp-count" aria-hidden="true"><b data-rh-num>01</b> / {n:02d}</span>
-        <button type="button" class="rh-btn" data-rh-prev aria-label="Previous slide">{arrow(-1)}</button><span class="rh-dots">{dots}</span><button type="button" class="rh-btn" data-rh-next aria-label="Next slide">{arrow(1)}</button>
-        <button type="button" class="rh-btn rh-play" data-rh-play aria-pressed="false" aria-label="Pause slideshow"><svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5l11 7-11 7z"/></svg></button>
-      </div>
-    </div>
+    <p class="rp-note" data-rh-note>{RH[0][3]}</p>
   </div>
   <p class="sr-only" aria-live="polite" data-rh-live></p>
 </section>'''
@@ -1105,13 +1102,12 @@ def meetings():
 def gallery():
     cats = ['exterior', 'gardens', 'pools', 'rooms', 'interiors', 'dining', 'conference', 'events', 'people']
     items = [k for c in cats for k, m in IMAGES.items() if m['cat'] == c]
-    pattern = ['w', '', 't', '', 's', 's', '', 'w', 't', '', '', 's']
-    out = ''
-    for i, k in enumerate(items):
-        m = IMAGES[k]; USED.add(k)
-        cls = pattern[i % len(pattern)]
-        a = html.escape(ALT.get(k, ''), quote=True)
-        out += f'<a{(" class=" + chr(34) + cls + chr(34)) if cls else ""} href="{m["rel"]}-1600.webp" data-cat="{m["cat"]}" data-alt="{a}" data-caption="{a}"><img src="{m["rel"]}-800.webp" width="{m["w"]}" height="{m["h"]}" alt="{a}" loading="lazy" decoding="async"><figcaption>{a}</figcaption></a>'
+    for k in items: USED.add(k)
+    # the living archive: the same photographs, played as an exhibition in three frames (effects.js, [data-gx])
+    gx_list = json.dumps([{'s': IMAGES[k]['rel'], 'a': ALT.get(k, ''), 'c': IMAGES[k]['cat']} for k in items], ensure_ascii=False).replace('</', '<\\/')
+    GX0 = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial']
+    gx_frames = ''.join(f'<figure class="gx-f gx-{p}"><img class="on" src="{IMAGES[k]["rel"]}-{"1600" if p == "a" else "800"}.webp" alt="{html.escape(ALT.get(k, ""), quote=True)}" loading="lazy" decoding="async" data-k="{IMAGES[k]["rel"]}"></figure>'
+                        for p, k in zip('abc', GX0))
     chips = '<button type="button" data-filter="all" aria-pressed="true">All</button>' + ''.join(f'<button type="button" data-filter="{c}" aria-pressed="false">{CAT_LABEL[c]}</button>' for c in cats if any(IMAGES[k]['cat'] == c for k in items))
     LQ = [('pool-garden-view', 'The pool court and the guest wing'), ('hall-banquet-gold', 'A banquet hall dressed in gold'), ('room-grey-bedding', 'A room made up for the night'),
           ('marquee-lawn', 'A marquee on the lawn'), ('pool-lawn-view', 'Water, lawn and shade'), ('main-building-facade', 'The main building')]
@@ -1168,7 +1164,7 @@ def gallery():
 <section class="sec" aria-labelledby="arc-h">
   <div class="wrap">
     <div class="archive-head"><div><span class="hx-k">The archive</span><h2 id="arc-h">Every photograph</h2></div><div class="chips" data-filters="grid" role="group" aria-label="Filter photographs">{chips}</div></div>
-    <div class="gl-grid" id="grid" data-lightbox data-drift>{out}</div>
+    <div class="gx" id="grid" data-gx aria-roledescription="carousel" aria-label="Photographs of The Breez, changing on their own">{gx_frames}<script type="application/json" data-gx-list>{gx_list}</script></div>
     <p class="note" style="margin-top:32px">All photographs on this page are of The Breez Hotel, shared by the hotel. Stock photographs used elsewhere on the site are credited on the <a href="credits.html">credits page</a>.</p>
   </div>
 </section>'''
