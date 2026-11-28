@@ -5,12 +5,15 @@
    cladding, pool blue for water. Cormorant Garamond (display) + Karla (text).
    ========================================================================== */
 :root{
-  --ivory:#F6F1E7; --stone:#ECE4D6; --stone-2:#E0D5C2; --paper:#FFFCF6;
-  --ink:#1F1B17; --ink-2:#4E453B; --ink-3:#6E6355;
-  --green:#20392B; --green-2:#2E5340; --green-ink:#E9EFE7;
-  --sand:#B7772A; --sand-ink:#8A5414; --sand-soft:#E9CFA4;
-  --pool:#16708A; --pool-2:#0F5568; --pool-soft:#D4EBF0;
-  --rule:rgba(31,27,23,.16); --rule-strong:rgba(31,27,23,.85);
+  /* The Breez palette, taken from the hotel itself: ivory and botanical green lead, sand warms, pool blue and
+     terracotta are occasional accents, warm charcoal carries text and the photographic bands. */
+  --ivory:#F6F3EB; --stone:#EBE3D3; --stone-2:#D8C8AE; --paper:#FBF9F4;
+  --ink:#2C302B; --ink-2:#4A4E46; --ink-3:#686A60;
+  --green:#244638; --green-2:#3E6150; --green-ink:#EAF0E8; --garden:#718B70;
+  --sand:#B77C62; --sand-ink:#8C5A44; --sand-soft:#E2CFB6; --terracotta:#B77C62;
+  --pool:#3F7C7A; --pool-2:#2F6361; --pool-soft:#DDEBEA; --pool-blue:#83B6B4; --deep-pool:#2C5A58;
+  --charcoal:#2E322D;
+  --rule:rgba(44,48,43,.16); --rule-strong:rgba(44,48,43,.85);
   --f-display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
   --f-text:"Karla","Segoe UI",system-ui,sans-serif;
   --s--1:clamp(.78rem,.76rem + .1vw,.85rem);
@@ -62,7 +65,7 @@ p{margin:0 0 1em}p:last-child{margin-bottom:0}
 .btn:hover{background:var(--ink);border-color:var(--ink);color:var(--ivory)}
 .btn--solid{--bg:var(--green);--fg:#fff;border-color:var(--green)}
 .btn--solid:hover{background:var(--ink);border-color:var(--ink)}
-.btn--book{--bg:var(--sand);--fg:#1B1209;border-color:var(--sand)}
+.btn--book{--bg:var(--sand);--fg:#221A14;border-color:var(--sand)}
 .btn--book:hover{background:var(--green);border-color:var(--green);color:#fff}
 .btn--wa{--bg:#1FA855;--fg:#fff;border-color:#1FA855}
 .btn--wa:hover{background:#13803F;border-color:#13803F;color:#fff}

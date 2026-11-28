@@ -842,24 +842,28 @@
   }, 120); }, { passive: true });
 })();
 
-/* Gallery, the archive: every photograph played as an exhibition in three frames. Each category keeps its own
-   shuffled queue, so no photograph returns until all of that category's have appeared, and none shows in two frames
-   at once. A change waits until the incoming photograph has loaded and decoded, then dissolves over the outgoing
-   one (which stays until it is covered), easing slowly in scale. The frames take turns, one every few seconds.
-   Choosing a category prepares its first photographs, then turns the frames over in sequence and carries on with
-   that category. Playback pauses off screen and in a hidden tab, and resumes where it was. */
+/* Gallery, the archive: every photograph played as a living exhibition in the homepage mosaic's format (rows of three
+   on a dark band, column spans 5-3-4, 3-4-5, 4-5-3, 5-3-4). The frames stay where they are; the photographs in them
+   change. Each category keeps its own shuffled queue, so no photograph returns until all of that category's have
+   appeared, and none shows in two frames at once. A change waits until the incoming photograph has loaded and
+   decoded, then dissolves over the outgoing one, which stays until it is covered. One frame changes at a time, in a
+   reshuffled order, so the mosaic is always quietly moving. Choosing a category fills the frames with that
+   category's photographs, frame by frame, and carries on with it; a small category uses fewer frames, its last row
+   widened to the full measure. Playback pauses off screen and in a hidden tab and resumes where it was. */
 (function () {
   const gx = document.querySelector('[data-gx]'); if (!gx) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let all = []; try { all = JSON.parse(gx.querySelector('[data-gx-list]').textContent); } catch (e) { return; }
   const frames = [...gx.querySelectorAll('.gx-f')];
+  const SPANS = frames.map((f) => +getComputedStyle(f).getPropertyValue('--s') || 4);
   const bar = document.querySelector('[data-filters="grid"]');
-  const STEP = 2600;   // one frame changes every 2.6 s, so each frame holds a photograph for about 8 s
-  let cat = 'all', turn = 0, timer = 0, vis = false, busy = 0;
+  const STEP = 1150;   // one frame every 1.15 s: with twelve frames, each holds its photograph for about 14 s
+  let cat = 'all', order = [], timer = 0, vis = false;
   const queues = {};
   const pool = (c) => (c === 'all' ? all : all.filter((x) => x.c === c));
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const showing = () => frames.map((f) => (f.querySelector('img:last-child') || {}).dataset?.k);
+  const active = () => frames.filter((f) => !f.hidden);
+  const showing = () => active().map((f) => (f.querySelector('img:last-child') || {}).dataset?.k);
   const nextItem = (c) => {
     const q = queues[c] || (queues[c] = { list: [], last: null });
     const busyKeys = showing();
@@ -867,52 +871,64 @@
       if (!q.list.length) { q.list = shuffle(pool(c)); if (q.list.length > 1 && q.list[0].s === q.last) q.list.push(q.list.shift()); }
       const i = q.list.findIndex((x) => !busyKeys.includes(x.s));
       if (i >= 0) { const [it] = q.list.splice(i, 1); q.last = it.s; return it; }
-      if (pool(c).length <= busyKeys.filter(Boolean).length) return null;   // fewer photographs than frames
+      if (pool(c).length <= busyKeys.filter(Boolean).length) return null;   // every photograph of the category is already up
       q.list = [];
     }
     return null;
   };
-  const size = (f) => (f.classList.contains('gx-a') ? '1600' : '800');
-  const load = (f, it, quick) => new Promise((res) => {
+  const load = (it) => new Promise((res) => {
     const im = new Image(); im.alt = it.a; im.dataset.k = it.s; im.decoding = 'async';
     im.onload = () => (im.decode ? im.decode().catch(() => {}) : Promise.resolve()).then(() => res(im));
     im.onerror = () => res(null);
-    im.src = `${it.s}-${quick ? '800' : size(f)}.webp`;
+    im.src = `${it.s}-800.webp`;
   });
-  const sharpen = (f, im) => {   // the large frame opens on the lighter file, then takes the full-size one once it is here
-    if (size(f) !== '1600' || im.src.endsWith('-1600.webp')) return;
-    const hi = new Image(); hi.onload = () => { if (im.isConnected) im.src = hi.src; }; hi.src = `${im.dataset.k}-1600.webp`;
-  };
-  const warm = (c) => {   // a category button under the pointer or in focus starts fetching its first photographs
-    const q = queues[c] || (queues[c] = { list: [], last: null });
-    if (!q.list.length) q.list = shuffle(pool(c));
-    q.list.slice(0, 3).forEach((it) => { const im = new Image(); im.src = `${it.s}-800.webp`; });
+  const put = (f, im) => {
+    const old = [...f.querySelectorAll('img')];
+    f.appendChild(im); void im.offsetWidth; im.classList.add('on');
+    setTimeout(() => old.forEach((o) => o.remove()), 1900);   // the outgoing photograph stays until it is covered
   };
   const swap = async (f, c) => {
     if (f.dataset.busy) return; f.dataset.busy = '1';
     let im = null;
-    for (let tries = 0; tries < 3 && !im; tries++) { const it = nextItem(c); if (!it) break; im = await load(f, it); }
-    if (im && c === cat) {
-      const old = [...f.querySelectorAll('img')];
-      f.appendChild(im); void im.offsetWidth; im.classList.add('on');
-      setTimeout(() => old.forEach((o) => o.remove()), 1800);   // the outgoing photograph stays until it is covered
-    }
+    for (let tries = 0; tries < 3 && !im; tries++) { const it = nextItem(c); if (!it) break; im = await load(it); }
+    if (im && c === cat && !f.hidden) put(f, im);
     delete f.dataset.busy;
   };
-  const active = () => frames.slice(0, Math.min(frames.length, pool(cat).length));
-  const tick = () => { const fs = active(); if (!fs.length) return; swap(fs[turn % fs.length], cat); turn++; };
+  const tick = () => {
+    const fs = active(); if (!fs.length) return;
+    if (!order.length) order = shuffle(fs);
+    swap(order.shift(), cat);
+  };
   const play = () => { clearInterval(timer); if (!reduce && vis && !document.hidden) timer = setInterval(tick, STEP); };
+  const layout = (n) => {   // the first n frames, rows of three on the reference spans; a short last row is widened
+    frames.forEach((f, i) => { f.hidden = i >= n; f.style.setProperty('--s', SPANS[i]); });
+    const rem = n % 3, start = n - rem;
+    if (rem === 1) frames[start].style.setProperty('--s', 12);
+    if (rem === 2) { frames[start].style.setProperty('--s', 7); frames[start + 1].style.setProperty('--s', 5); }
+    gx.dataset.n = String(n);
+  };
+  const warm = (c) => {
+    const q = queues[c] || (queues[c] = { list: [], last: null });
+    if (!q.list.length) q.list = shuffle(pool(c));
+    q.list.slice(0, 6).forEach((it) => { const im = new Image(); im.src = `${it.s}-800.webp`; });
+  };
   const setCat = (c) => {
-    if (c === cat) return; cat = c; clearInterval(timer); turn = 0;
-    const n = Math.min(frames.length, pool(c).length); gx.dataset.n = String(n);
+    if (c === cat) return; cat = c; clearInterval(timer); order = [];
+    const n = Math.min(frames.length, pool(c).length);
+    const fs = frames.slice(0, n);
+    fs.forEach((f) => { f.querySelectorAll('img').forEach((im) => { im.dataset.k = ''; }); });   // the previous category no longer counts as showing
     const t0 = performance.now();
-    frames.slice(0, n).forEach((f, i) => {   // each frame turns over as soon as its own photograph is ready
-      const it = nextItem(c); if (!it) return;
-      load(f, it, true).then((im) => {
+    const picks = fs.map(() => nextItem(c));
+    let laid = false;
+    fs.forEach((f, i) => {
+      const it = picks[i]; if (!it) return;
+      load(it).then((im) => {
         if (!im || c !== cat) return;
-        setTimeout(() => { if (c !== cat) return; const old = [...f.querySelectorAll('img')];
-          f.appendChild(im); void im.offsetWidth; im.classList.add('on'); sharpen(f, im);
-          setTimeout(() => old.forEach((o) => o.remove()), 1800); }, Math.max(0, i * 240 - (performance.now() - t0)));
+        setTimeout(() => {
+          if (c !== cat) return;
+          if (!laid) { layout(n); laid = true; }
+          put(f, im);
+        }, Math.max(0, i * 110 - (performance.now() - t0)));
       });
     });
     play();
@@ -921,8 +937,6 @@
     bar.addEventListener('click', (e) => { const b = e.target.closest('button[data-filter]'); if (b) setCat(b.dataset.filter); });
     ['pointerover', 'focusin'].forEach((ev) => bar.addEventListener(ev, (e) => { const b = e.target.closest('button[data-filter]'); if (b && b.dataset.filter !== cat) warm(b.dataset.filter); }));
   }
-  // the first three photographs are in the page; keep them out of the opening queue
-  frames.forEach((f) => { const im = f.querySelector('img'); if (im) im.dataset.k = im.dataset.k || ''; });
   document.addEventListener('visibilitychange', play);
-  new IntersectionObserver(([e]) => { vis = e.isIntersecting; play(); }, { threshold: 0.2 }).observe(gx);
+  new IntersectionObserver(([e]) => { vis = e.isIntersecting; play(); }, { threshold: 0.15 }).observe(gx);
 })();

@@ -1105,9 +1105,11 @@ def gallery():
     for k in items: USED.add(k)
     # the living archive: the same photographs, played as an exhibition in three frames (effects.js, [data-gx])
     gx_list = json.dumps([{'s': IMAGES[k]['rel'], 'a': ALT.get(k, ''), 'c': IMAGES[k]['cat']} for k in items], ensure_ascii=False).replace('</', '<\\/')
-    GX0 = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial']
-    gx_frames = ''.join(f'<figure class="gx-f gx-{p}"><img class="on" src="{IMAGES[k]["rel"]}-{"1600" if p == "a" else "800"}.webp" alt="{html.escape(ALT.get(k, ""), quote=True)}" loading="lazy" decoding="async" data-k="{IMAGES[k]["rel"]}"></figure>'
-                        for p, k in zip('abc', GX0))
+    # the opening twelve, in the homepage mosaic's format: rows of three, column spans 5-3-4, 3-4-5, 4-5-3, 5-3-4
+    GX0 = ['building-palms-pool-court', 'room-four-poster-window', 'pool-aerial', 'room-grey-bedding', 'bar-counter-stools', 'buffet-samosa-chapati',
+           'poolside-meal-juice', 'room-desk-armchair', 'restaurant-interior-blue', 'courtyard-fountain-gazebos', 'stew-plate', 'gazebo-cypress']
+    gx_frames = ''.join(f'<figure class="gx-f" style="--s:{EXP_SPANS[i]}"><img class="on" src="{IMAGES[k]["rel"]}-800.webp" alt="{html.escape(ALT.get(k, ""), quote=True)}" loading="lazy" decoding="async" data-k="{IMAGES[k]["rel"]}"></figure>'
+                        for i, k in enumerate(GX0))
     chips = '<button type="button" data-filter="all" aria-pressed="true">All</button>' + ''.join(f'<button type="button" data-filter="{c}" aria-pressed="false">{CAT_LABEL[c]}</button>' for c in cats if any(IMAGES[k]['cat'] == c for k in items))
     LQ = [('pool-garden-view', 'The pool court and the guest wing'), ('hall-banquet-gold', 'A banquet hall dressed in gold'), ('room-grey-bedding', 'A room made up for the night'),
           ('marquee-lawn', 'A marquee on the lawn'), ('pool-lawn-view', 'Water, lawn and shade'), ('main-building-facade', 'The main building')]
@@ -1164,7 +1166,7 @@ def gallery():
 <section class="sec" aria-labelledby="arc-h">
   <div class="wrap">
     <div class="archive-head"><div><span class="hx-k">The archive</span><h2 id="arc-h">Every photograph</h2></div><div class="chips" data-filters="grid" role="group" aria-label="Filter photographs">{chips}</div></div>
-    <div class="gx" id="grid" data-gx aria-roledescription="carousel" aria-label="Photographs of The Breez, changing on their own">{gx_frames}<script type="application/json" data-gx-list>{gx_list}</script></div>
+    <div class="gx" id="grid" data-gx aria-roledescription="carousel" aria-label="Photographs of The Breez, changing on their own"><div class="gx-in">{gx_frames}</div><script type="application/json" data-gx-list>{gx_list}</script></div>
     <p class="note" style="margin-top:32px">All photographs on this page are of The Breez Hotel, shared by the hotel. Stock photographs used elsewhere on the site are credited on the <a href="credits.html">credits page</a>.</p>
   </div>
 </section>'''
