@@ -184,19 +184,6 @@
 /* ==========================================================================
    DINING — taste & atmosphere, warm split
    ========================================================================== */
-.hx-dining{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);min-height:calc(100svh - var(--hx-head));max-height:940px;background:var(--hx-cocoa);color:#EFE3CF}
-.hx-dining-text{position:relative;padding:clamp(36px,5vw,88px) var(--pad);display:grid;align-content:space-between;gap:36px}
-.hx-dining-text .hx-title{color:#fff;margin-top:18px}
-.hx-dining-text .hx-title em{color:var(--sand-soft)}
-.hx-dining-text .hx-sub{color:#E3D5BE}
-.hx-dining-text .hx-k{color:#E3C99A}
-.hx-dining-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(239,227,207,.3)}
-.hx-dining-meta div{padding:14px 12px 0 0;font-size:.9rem;color:#D8C9B1}
-.hx-dining-meta b{display:block;font:500 1.3rem var(--f-display);color:#fff}
-.hx-dining-media{position:relative}
-.hx-dining-media .main{position:absolute;inset:0;animation:hx-fade 1.6s var(--ease) backwards}
-.hx-dining-media .main img{object-position:50% 60%;animation:hx-settle 3s var(--ease) backwards}
-.hx-dining-media .detail{position:absolute;left:clamp(20px,3vw,44px);bottom:clamp(20px,3vw,44px);width:clamp(160px,17vw,250px);aspect-ratio:3/4;border:8px solid var(--hx-cocoa);z-index:2;animation:hx-rise 1.1s var(--ease) .7s backwards}
 
 /* ==========================================================================
    GALLERY. The opening after the supplied 'Our Work' reference: a heading and a button on one strong colour (here
@@ -297,7 +284,7 @@ html:not(.js) .gc-card{position:static;translate:none;flex:0 0 var(--gc-w)}
   .ab-story{grid-template-columns:repeat(12,minmax(0,1fr))}
   .ab-story .hx-v{display:none}
   .ab-story-main{grid-column:1/9}.ab-story-sign{grid-column:6/10}.ab-story-text{grid-column:9/13}
-  .hx-rooms,.hx-dining,.hx-contact{max-height:none}
+  .hx-rooms,.hx-contact{max-height:none}
 }
 @media (max-width:760px){
   :root{--hx-head:64px}
@@ -354,13 +341,6 @@ html:not(.js) .gc-card{position:static;translate:none;flex:0 0 var(--gc-w)}
   .hx-rail{grid-area:2/1}
   .hx-rail{position:relative;right:auto;top:auto;bottom:auto;width:auto;grid-template-rows:none;grid-template-columns:repeat(3,1fr);padding:10px;background:var(--pool-2)}
   .hx-rail .hx-ph{aspect-ratio:3/4}
-  /* dining: photo leads, panel overlaps upward */
-  .hx-dining{grid-template-columns:1fr;min-height:0;max-height:none}
-  .hx-dining-media{order:0;height:56svh;min-height:360px}
-  .hx-dining-media .detail{left:auto;right:16px;bottom:-56px;width:120px}
-  .hx-dining-text{order:1;padding:36px 18px 40px}
-  .hx-dining-meta{grid-template-columns:1fr 1fr}
-  .hx-dining-meta div:last-child{display:none}
   /* contact */
   .hx-contact{grid-template-columns:1fr;min-height:0;max-height:none}
   .hx-contact-media{order:0;height:62svh;min-height:400px;border-left:0}
@@ -381,32 +361,16 @@ html:not(.js) .gc-card{position:static;translate:none;flex:0 0 var(--gc-w)}
 /* ==========================================================================
    Enhancement pass: shaped details inside existing heroes
    ========================================================================== */
-.hx-dining-media .detail{border:0;aspect-ratio:1;width:clamp(150px,15vw,230px)}
-.hx-dining-media .detail .hx-ph{height:100%;--ring:rgba(233,207,164,.8)}
 .hx-contact-media .detail{border:0;box-shadow:none;--ring:rgba(31,27,23,.55)}
 .hx-contact-media .detail img{box-shadow:var(--shadow)}
 .hx-rooms-media .main.mask-arch{inset:clamp(18px,2.4vw,40px) clamp(18px,2.4vw,40px) 0;outline:1px solid var(--rule-strong);outline-offset:10px}
 .hx-rail .mask-pill{border-radius:9999px}
-/* dining: the hotel's own food photographs, layered */
-.real-food{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(6,clamp(50px,5.6vw,90px));gap:var(--gap)}
-.rf-a{grid-column:1/8;grid-row:1/7}
-.rf-b{grid-column:7/10;grid-row:3/7;z-index:2;border:8px solid var(--stone)}
-.rf-c{grid-column:10/13;grid-row:1/4}
-.rf-t{grid-column:10/13;grid-row:4/7;align-self:end;display:grid;gap:12px}
-.rf-t .ab-h{font-size:clamp(1.7rem,1.1rem + 1.6vw,2.6rem)}
-.real-food .hx-ph{height:100%}
 @media (max-width:760px){
   .hx-rooms-media .main.mask-arch{inset:14px 14px 0}
-  .real-food{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(7,54px);gap:10px}
-  .rf-a{grid-column:1/-1;grid-row:1/5}.rf-b{grid-column:1/4;grid-row:4/8;border-width:6px}.rf-c{grid-column:4/7;grid-row:5/8}
-  .rf-t{grid-column:1/-1;grid-row:auto;margin-top:18px}
   .hx-contact-media .detail{width:110px}
 }
 .hx-rooms-media .detail{left:clamp(28px,3vw,52px)}
-.hx-dining-media .detail{top:clamp(28px,4vw,56px);bottom:auto}
-@media (max-width:760px){.hx-dining-media .detail{top:auto;bottom:-46px}}
 @media (max-width:760px){
-  .hx-dining-media .cap{top:10px;bottom:auto}
   .hx-rooms-text{padding-top:60px}
 }
 
@@ -1667,3 +1631,101 @@ main:has(.rp-hero) > section{font-family:var(--rp-sans);overflow-x:clip}
 }
 @media (max-width:380px){ .gx{padding:20px} .gx-in{gap:14px} }
 @media (prefers-reduced-motion:reduce){ .gx-f img{transition:opacity .4s;scale:1;translate:none} .js .me-card img{transition:none;scale:1} }
+
+/* ===== DINING: the opening and "A taste of the good life", after the chosen reference (a full-bleed atmospheric
+   photograph with an editorial serif headline and one small button; then warm ivory, espresso and olive bands, each
+   with its photograph, a small label, a serif heading and a fine rule; a closing line set on its own).
+   Colours drawn from the photographs: espresso, caramel, muted bronze, warm ivory; the olive is the hotel garden. */
+main:has(.dn-hero){--dn-espresso:#2A1D16;--dn-ink:#33251C;--dn-caramel:#B7774A;--dn-bronze:#8C6A4A;--dn-ivory:#F4EDE2;--dn-cream:#EFE5D6;--dn-olive:#5F6B4C}
+.dn-hero{position:relative;min-height:calc(100svh - 84px);max-height:980px;display:grid;overflow:hidden;color:var(--dn-ivory);background:var(--dn-espresso)}
+.dn-hero-ph{position:absolute;top:0;right:0;bottom:0;left:34%;margin:0}
+.dn-hero-ph img{width:100%;height:100%;object-fit:cover;object-position:50% 55%;animation:dn-settle 2.6s cubic-bezier(.22,.61,.36,1) both}
+@keyframes dn-settle{from{opacity:0;scale:1.06}to{opacity:1;scale:1}}
+.dn-hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,var(--dn-espresso) 34%,rgba(42,29,22,.55) 42%,rgba(42,29,22,0) 54%),linear-gradient(0deg,rgba(32,22,16,.35),rgba(32,22,16,0) 30%)}
+.dn-hero-in{position:relative;display:grid;grid-template-rows:auto 1fr auto;padding:clamp(22px,2.4vw,36px) var(--pad) clamp(24px,3vw,40px)}
+.dn-hero .crumb,.dn-hero .crumb a{color:rgba(244,237,226,.75)}
+.dn-hero-copy{align-self:center;max-width:min(520px,34vw)}
+.dn-k{margin:0 0 22px;font:700 10px/1.2 var(--f-text);letter-spacing:.34em;text-transform:uppercase;color:#D9B98F;animation:dn-up 1.2s cubic-bezier(.22,.61,.36,1) .3s both}
+.dn-h{margin:0;font:400 clamp(3.4rem,1.4rem + 5.4vw,7.6rem)/.92 var(--f-display);letter-spacing:-.015em;color:var(--dn-ivory);animation:dn-up 1.4s cubic-bezier(.22,.61,.36,1) .45s both}
+.dn-h em{font-style:italic;color:#D9B98F}
+.dn-sub{margin:26px 0 0;max-width:30ch;font:italic 400 clamp(1.15rem,1rem + .5vw,1.5rem)/1.45 var(--f-display);color:rgba(244,237,226,.9);animation:dn-up 1.4s cubic-bezier(.22,.61,.36,1) .65s both}
+.dn-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 22px;margin:34px 0 0;padding-top:18px;border-top:1px solid rgba(217,185,143,.4);animation:dn-up 1.4s cubic-bezier(.22,.61,.36,1) .8s both}
+.dn-meta div{display:grid;gap:4px}
+.dn-meta dt{font:400 clamp(1.15rem,1rem + .4vw,1.4rem)/1.1 var(--f-display);color:var(--dn-ivory)}
+.dn-meta dd{margin:0;font:400 .82rem/1.4 var(--f-text);color:rgba(244,237,226,.72)}
+.dn-btn{display:inline-flex;align-items:center;gap:12px;margin-top:34px;padding:15px 24px;background:var(--dn-ivory);color:var(--dn-espresso);text-decoration:none;
+  font:700 10px/1 var(--f-text);letter-spacing:.24em;text-transform:uppercase;transition:background .45s,color .45s,gap .45s;animation:dn-up 1.4s cubic-bezier(.22,.61,.36,1) .95s both}
+.dn-btn svg{width:15px;height:15px;fill:currentColor}
+.dn-btn:hover,.dn-btn:focus-visible{background:var(--dn-caramel);color:#fff;gap:16px}
+.dn-credit{justify-self:end;margin:0;font:400 10px/1.4 var(--f-text);letter-spacing:.12em;text-transform:uppercase;color:rgba(244,237,226,.6)}
+@keyframes dn-up{from{opacity:0;translate:0 18px}to{opacity:1;translate:0 0}}
+
+.de{background:var(--dn-ivory);color:var(--dn-ink)}
+.de-intro{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);padding:clamp(90px,10vw,170px) var(--pad) clamp(60px,6vw,100px)}
+.de-k{grid-column:2/-1;margin:0 0 26px;font:700 10px/1.2 var(--f-text);letter-spacing:.34em;text-transform:uppercase;color:var(--dn-bronze)}
+.de-h{grid-column:2/9;margin:0;font:400 clamp(3rem,1.2rem + 5vw,7rem)/.95 var(--f-display);letter-spacing:-.015em;color:var(--dn-espresso)}
+.de-h em{display:block;padding-left:12%;font-style:italic;color:var(--dn-caramel)}
+.de-lead{grid-column:9/13;align-self:end;margin:0;max-width:34ch;font:400 clamp(1.05rem,.98rem + .3vw,1.22rem)/1.7 var(--f-display);color:#5B4A3C}
+.de-ph{position:relative;margin:0;overflow:hidden;background:var(--dn-cream)}
+.de-ph img{display:block;width:100%;height:100%;object-fit:cover;transition:scale 1.4s cubic-bezier(.22,.61,.36,1)}
+.de-ph:hover img{scale:1.03}
+.de-n{display:block;margin-bottom:18px;font:italic 400 1.05rem/1 var(--f-display);color:var(--dn-bronze)}
+.de-label{display:flex;align-items:center;gap:14px;margin:0;font:700 10px/1.2 var(--f-text);letter-spacing:.3em;text-transform:uppercase;color:var(--dn-bronze)}
+.de-label::after{content:"";width:46px;height:1px;background:currentColor;opacity:.6}
+.de-t{margin:16px 0 0;font:400 clamp(1.9rem,1.2rem + 1.9vw,3.2rem)/1.05 var(--f-display);letter-spacing:-.01em;color:var(--dn-espresso);text-wrap:balance}
+.de-txt p:not(.de-label),.de-card p:not(.de-label){margin:20px 0 0;max-width:36ch;font:400 1.02rem/1.75 var(--f-text);color:#5B4A3C}
+/* 01: the dominant photograph, the words beside it */
+.de-one{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);align-items:end;padding:0 var(--pad) clamp(100px,11vw,180px)}
+.de-one-ph{grid-column:1/9;aspect-ratio:3/2;margin-left:calc(-1 * var(--pad))}
+.de-one .de-txt{grid-column:9/13;padding-bottom:clamp(10px,2vw,30px)}
+/* 02: espresso, the photograph held at a size that keeps it sharp, the words in the open */
+.de-two{background:var(--dn-espresso);color:var(--dn-ivory)}
+.de-two .de-in{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);align-items:center;padding:clamp(90px,9vw,150px) var(--pad)}
+.de-two-ph{grid-column:2/6;aspect-ratio:3/4;max-width:460px;justify-self:end;width:100%}
+.de-two .de-txt{grid-column:6/11;padding-left:clamp(0px,2vw,40px)}
+.de-two .de-t{color:var(--dn-ivory)}
+.de-two .de-label,.de-two .de-n{color:#D9B98F}
+.de-two .de-txt p:not(.de-label){color:rgba(244,237,226,.8)}
+/* 03: olive, the photograph with an ivory card laid over its edge */
+.de-three{background:var(--dn-olive)}
+.de-three .de-in{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);align-items:center;padding:clamp(90px,9vw,150px) var(--pad)}
+.de-three-ph{grid-column:3/7;grid-row:1;aspect-ratio:4/5;max-width:480px;justify-self:end;width:100%}
+.de-card{grid-column:6/11;grid-row:1;position:relative;z-index:2;padding:clamp(30px,3.4vw,54px);background:var(--dn-ivory);box-shadow:0 30px 60px -40px rgba(20,14,10,.5)}
+.de-close{display:flex;align-items:center;justify-content:center;gap:clamp(16px,2vw,32px);margin:0;padding:clamp(80px,8vw,140px) var(--pad);text-align:center;
+  font:400 clamp(1.5rem,1.1rem + 1.4vw,2.6rem)/1.3 var(--f-display);color:var(--dn-espresso)}
+.de-close em{color:var(--dn-caramel)}
+.de-close::before,.de-close::after{content:"";flex:0 1 clamp(30px,8vw,140px);height:1px;background:var(--dn-bronze);opacity:.5}
+@media (max-width:1000px){
+  .dn-hero-ph{left:30%}
+  .dn-hero-shade{background:linear-gradient(90deg,var(--dn-espresso) 30%,rgba(42,29,22,.7) 40%,rgba(42,29,22,0) 58%)}
+  .dn-hero-copy{max-width:min(520px,44vw)}
+  .de-h{grid-column:1/-1}.de-lead{grid-column:1/-1;margin-top:28px;justify-self:end}
+  .de-one-ph{grid-column:1/-1}.de-one .de-txt{grid-column:2/12;padding-top:40px}
+  .de-two-ph{grid-column:1/6}.de-two .de-txt{grid-column:7/13}
+  .de-three-ph{grid-column:1/7}.de-card{grid-column:5/13}
+}
+@media (max-width:760px){
+  .dn-hero{min-height:0;max-height:none}
+  .dn-hero-ph{position:relative;left:auto;height:52svh;min-height:300px;grid-row:1}
+  .dn-hero-ph img{object-position:50% 50%}
+  .dn-hero-shade{inset:auto 0 auto 0;top:calc(52svh - 120px);height:120px;background:linear-gradient(0deg,var(--dn-espresso),rgba(42,29,22,0))}
+  .dn-hero-in{grid-row:2;padding-top:6px}
+  .dn-crumb{position:absolute;top:-52svh;left:var(--pad);margin-top:16px}
+  .dn-hero-copy{align-self:start;max-width:none;padding-bottom:12px}
+  .dn-meta{grid-template-columns:1fr 1fr 1fr;gap:0 12px}
+  .dn-meta dt{font-size:1.05rem}
+  .dn-credit{justify-self:start;margin-top:14px}
+  .de-intro{display:block;padding:80px var(--pad) 44px}
+  .de-h em{padding-left:8%}
+  .de-lead{margin-top:24px}
+  .de-one{display:block;padding-bottom:84px}
+  .de-one-ph{margin:0 calc(-1 * var(--pad))}
+  .de-one .de-txt{padding-top:30px}
+  .de-two .de-in,.de-three .de-in{display:block;padding:72px var(--pad)}
+  .de-two-ph{width:78%;max-width:none}
+  .de-two .de-txt{margin-top:34px}
+  .de-three-ph{width:84%;max-width:none;margin-left:auto}
+  .de-card{margin:-60px 20px 0 0}
+  .de-close{flex-direction:column;gap:18px}
+}
+@media (prefers-reduced-motion:reduce){ .dn-hero-ph img,.dn-k,.dn-h,.dn-sub,.dn-meta,.dn-btn{animation:none} .de-ph img{transition:none} }
